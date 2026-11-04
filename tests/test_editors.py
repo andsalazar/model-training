@@ -83,7 +83,29 @@ async def _no_sleep(_seconds: float) -> None:
 
 
 def test_registry_has_expected_editors() -> None:
-    assert set(EDITORS) == {"astra", "deepseek", "kimi", "muse"}
+    assert set(EDITORS) == {"astra", "deepseek", "kimi", "muse", "glm", "qwen"}
+
+
+def test_comparison_and_control_arms_are_disjoint() -> None:
+    from wsp.editors.registry import COMPARISON_ARMS, CONTROL_ARMS
+
+    assert set(COMPARISON_ARMS).isdisjoint(CONTROL_ARMS)
+    assert set(COMPARISON_ARMS) | set(CONTROL_ARMS) <= set(EDITORS)
+
+
+def test_qwen_is_a_control_arm() -> None:
+    from wsp.editors.registry import is_control
+
+    assert is_control("qwen")
+    assert not is_control("astra")
+
+
+def test_glm_is_cheapest_output_arm() -> None:
+    glm = get_spec("glm")
+    for alias, spec in EDITORS.items():
+        if alias == "glm":
+            continue
+        assert glm.usd_per_mtok_out <= spec.usd_per_mtok_out, f"{alias} is cheaper"
 
 
 def test_get_spec_rejects_unknown_alias() -> None:

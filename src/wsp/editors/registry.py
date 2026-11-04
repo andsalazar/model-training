@@ -60,7 +60,28 @@ EDITORS: dict[str, EditorSpec] = {
         usd_per_mtok_out=1.20,
         notes="Apache 2.0, 30B. Small enough to self-host later.",
     ),
+    "glm": EditorSpec(
+        alias="glm",
+        model_id="z-ai/glm-5.3-flash",
+        usd_per_mtok_in=0.03,
+        usd_per_mtok_out=0.08,
+        notes="MIT weights, 1M context. Cheapest output of any arm.",
+    ),
+    "qwen": EditorSpec(
+        alias="qwen",
+        model_id="qwen/qwen3.8-27b",
+        usd_per_mtok_in=0.15,
+        usd_per_mtok_out=1.88,
+        notes="Control arm, not a comparison arm. Same family as the target "
+        "model, so it may recall the fix instead of reading weights.",
+    ),
 }
+
+#: Arms that belong in the main comparison table.
+COMPARISON_ARMS: tuple[str, ...] = ("astra", "deepseek", "kimi", "glm")
+
+#: Arms that test a separate hypothesis and are reported apart.
+CONTROL_ARMS: tuple[str, ...] = ("qwen",)
 
 
 def get_spec(alias: str) -> EditorSpec:
@@ -69,6 +90,11 @@ def get_spec(alias: str) -> EditorSpec:
     except KeyError:
         known = ", ".join(sorted(EDITORS))
         raise KeyError(f"unknown editor {alias!r}; known editors: {known}") from None
+
+
+def is_control(alias: str) -> bool:
+    """Whether an arm tests a separate hypothesis rather than the main claim."""
+    return alias in CONTROL_ARMS
 
 
 def build_editor(alias: str, api_key: str) -> Editor:

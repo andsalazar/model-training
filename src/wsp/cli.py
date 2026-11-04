@@ -101,6 +101,100 @@ def ping(
     asyncio.run(_run())
 
 
+@app.command("ablate")
+def ablate(
+    editor: str = typer.Option("qwen", help="Editor alias to test."),
+    checkpoint: Path = typer.Option(
+        None, help="Checkpoint to slice. Omit to run the blind arm only."
+    ),
+    tensor: str = typer.Option(None, help="Tensor name to show the editor."),
+    cols: str = typer.Option("0:64", help="Column range as start:stop."),
+    out: Path = typer.Option(None, help="Write the result as JSON here."),
+) -> None:
+    """Run the blind-vs-weights ablation for one editor.
+
+    Tests whether an editor needs the weights, or can produce the fix from
+    recall of public documentation.
+    """
+    from wsp.tasks.ablation import AblationResult, build_prompts, detect_recall
+
+    settings = Settings.from_env()
+    spec = EDITORS.get(editor)
+    if spec is None:
+        console.print(f"[red]unknown editor[/red] {editor!r}; known: {sorted(EDITORS)}")
+        raise typer.Exit(1)
+
+    weight_block: str | None = None
+    if checkpoint and tensor:
+        from wsp.weights.slices import TensorSlice, to_text
+        from wsp.weights.store import WeightStore
+
+        start, stop = (int(v) for v in cols.split(":"))
+        with WeightStore(checkpoint) as store:
+            array = store.get(tensor)
+        weight_block = to_text(TensorSlice(name=tensor, cols=(start, stop)).apply(array))
+        console.print(f"[dim]showing {tensor} cols {start}:{stop}[/dim]")
+    elif checkpoint or tensor:
+        console.print("[red]--checkpoint and --tensor must be given together[/red]")
+        raise typer.Exit(1)
+
+    with_weights, blind = build_prompts(weight_block)
+
+    async def _run() -> tuple[str, str]:
+        async with build_editor(editor, settings.openrouter_api_key) as client:
+            w = await client.complete(with_weights.system, with_weights.user)
+            b = await client.complete(blind.system, blind.user)
+        return w.text, b.text
+
+    weights_text, blind_text = asyncio.run(_run())
+
+    result = AblationResult(
+        editor=editor,
+        weights_response=weights_text,
+        blind_response=blind_text,
+        weights_recall_markers=detect_recall(weights_text),
+        blind_recall_markers=detect_recall(blind_text),
+    )
+
+    table = Table(title=f"Ablation - {spec.model_id}")
+    table.add_column("Arm")
+    table.add_column("Proposes change")
+    table.add_column("Recall markers")
+    table.add_row(
+        "weights",
+        "yes" if result.weights_succeeded else "no",
+        ", ".join(result.weights_recall_markers) or "-",
+    )
+    table.add_row(
+        "blind",
+        "yes" if result.blind_succeeded else "no",
+        ", ".join(result.blind_recall_markers) or "-",
+    )
+    console.print(table)
+    console.print(f"[bold]verdict:[/bold] {result.verdict()}")
+
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(
+            json.dumps(
+                {
+                    "editor": editor,
+                    "model_id": spec.model_id,
+                    "weights_succeeded": result.weights_succeeded,
+                    "blind_succeeded": result.blind_succeeded,
+                    "verdict": result.verdict(),
+                    "weights_recall_markers": result.weights_recall_markers,
+                    "blind_recall_markers": result.blind_recall_markers,
+                    "weights_response": weights_text,
+                    "blind_response": blind_text,
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        console.print(f"[dim]written: {out}[/dim]")
+
+
 @app.command("pods")
 def pods() -> None:
     """List pods, marking which ones this project owns."""
