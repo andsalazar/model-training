@@ -204,6 +204,76 @@ def ablate(
         console.print(f"[dim]written: {out}[/dim]")
 
 
+@app.command("explore")
+def explore(
+    editor: str = typer.Option("deepseek", help="Editor alias."),
+    checkpoint: Path = typer.Option(..., help="Checkpoint to analyse."),
+    task: str = typer.Option(
+        "Find the weight edit that stops Qwen3.5-0.8B looping on math problems.",
+        help="What the editor should accomplish.",
+    ),
+    max_turns: int = typer.Option(12, help="Maximum editor turns."),
+    max_forward_passes: int = typer.Option(20, help="Model-run budget."),
+    out: Path = typer.Option(None, help="Write the run transcript here."),
+) -> None:
+    """Let an editor drive a measurement loop against a checkpoint.
+
+    Unlike `ablate`, the editor can run the model and inspect statistics, which
+    is what the Stage 0 ablation showed was necessary.
+    """
+    from wsp.agent import run_agent
+    from wsp.tools import WeightTools
+    from wsp.weights.store import WeightStore
+
+    settings = Settings.from_env()
+    spec = EDITORS.get(editor)
+    if spec is None:
+        console.print(f"[red]unknown editor[/red] {editor!r}; known: {sorted(EDITORS)}")
+        raise typer.Exit(1)
+
+    store = WeightStore(checkpoint)
+    tools = WeightTools(store, runner=_NullRunner(), max_forward_passes=max_forward_passes)
+
+    console.print(f"[bold]{spec.model_id}[/bold] on {checkpoint.name}")
+    console.print(f"[dim]budget: {max_turns} turns, {max_forward_passes} forward passes[/dim]")
+
+    async def _run():
+        async with build_editor(editor, settings.openrouter_api_key) as client:
+            return await run_agent(client, tools, task, max_turns=max_turns)
+
+    run = asyncio.run(_run())
+
+    console.print(f"\n[bold]turns:[/bold] {run.turns}")
+    console.print(f"[bold]forward passes:[/bold] {run.forward_passes}")
+    console.print(f"[bold]tool calls:[/bold] {len(run.tool_log.calls)}")
+    for call in run.tool_log.calls:
+        console.print(f"  - {call.name}({call.arguments}) -> {call.result_summary}")
+    console.print(f"\n[bold]conclusion:[/bold]\n{run.conclusion}")
+
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(run.as_dict(), indent=2), encoding="utf-8")
+        console.print(f"\n[dim]written: {out}[/dim]")
+
+
+class _NullRunner:
+    """Placeholder runner for local runs without a GPU.
+
+    The tool surface is exercised, but `run_model` and `measure_loop` report
+    that no model is attached rather than silently returning nothing.
+    """
+
+    def generate(self, prompt: str, max_tokens: int = 512) -> str:
+        raise RuntimeError(
+            "no model attached: run this on a pod, or pass a runner that can execute"
+        )
+
+    def measure(self, prompt: str, max_tokens: int = 2048) -> dict:
+        raise RuntimeError(
+            "no model attached: run this on a pod, or pass a runner that can execute"
+        )
+
+
 @app.command("pods")
 def pods() -> None:
     """List pods, marking which ones this project owns."""

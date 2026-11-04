@@ -1,0 +1,181 @@
+"""Tests for the editor loop, using a scripted editor and fake tools."""
+
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from wsp.agent import run_agent
+from wsp.editors.base import Editor, EditorResponse, Usage
+from wsp.tools import WeightTools
+
+
+class ScriptedEditor(Editor):
+    """Returns a fixed sequence of replies, one per turn."""
+
+    model_id = "test/scripted"
+
+    def __init__(self, replies: list[str]):
+        self._replies = list(replies)
+        self.prompts: list[str] = []
+
+    async def complete(self, system, user, *, temperature=0.0, max_tokens=8192):
+        self.prompts.append(user)
+        text = self._replies.pop(0) if self._replies else "DONE\nout of replies"
+        return EditorResponse(text=text, usage=Usage(), model=self.model_id)
+
+
+class FakeStore:
+    keys = ["w"]
+
+    def get(self, name):
+        return np.ones((4, 8), dtype=np.float32)
+
+    def info(self, name):
+        class I:
+            shape = (4, 8)
+            dtype = "BF16"
+
+        return I()
+
+
+class FakeRunner:
+    def generate(self, prompt, max_tokens=512):
+        return "generated"
+
+    def measure(self, prompt, max_tokens=2048):
+        return {"looped": True, "tokens": 100, "hit_cap": False}
+
+
+def _tools() -> WeightTools:
+    return WeightTools(FakeStore(), FakeRunner())
+
+
+@pytest.mark.asyncio
+async def test_agent_stops_on_done() -> None:
+    editor = ScriptedEditor(["DONE\nThe edit is to zero column 3."])
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    assert "zero column 3" in run.conclusion
+    assert run.turns == 1
+
+
+@pytest.mark.asyncio
+async def test_agent_executes_a_tool_call() -> None:
+    editor = ScriptedEditor(
+        [
+            'CALL list_tensors\n{"pattern": ""}',
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    names = [c["name"] for c in run.tool_log.summary()]
+    assert names == ["list_tensors"]
+    assert run.turns == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_feeds_tool_result_back() -> None:
+    editor = ScriptedEditor(
+        [
+            'CALL run_model\n{"prompt": "2+2?"}',
+            "DONE\nconcluded",
+        ]
+    )
+    await run_agent(editor, _tools(), "fix the loop")
+
+    # The second prompt must contain the tool's output.
+    assert "RESULT of run_model" in editor.prompts[1]
+    assert "generated" in editor.prompts[1]
+
+
+@pytest.mark.asyncio
+async def test_agent_reports_unknown_tool_without_crashing() -> None:
+    editor = ScriptedEditor(
+        [
+            'CALL no_such_tool\n{}',
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    tool_turns = [t for t in run.transcript if t["role"] == "tool"]
+    assert "no such tool" in tool_turns[0]["result"]
+
+
+@pytest.mark.asyncio
+async def test_agent_reports_bad_json_without_crashing() -> None:
+    editor = ScriptedEditor(
+        [
+            "CALL list_tensors\n{not json}",
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    tool_turns = [t for t in run.transcript if t["role"] == "tool"]
+    assert "not valid JSON" in tool_turns[0]["result"]
+
+
+@pytest.mark.asyncio
+async def test_agent_nudges_when_reply_has_no_call() -> None:
+    editor = ScriptedEditor(
+        [
+            "I am thinking about it.",
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    assert "no tool call" in editor.prompts[1]
+    assert run.turns == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_stops_at_turn_budget() -> None:
+    editor = ScriptedEditor(['CALL list_tensors\n{"pattern": ""}'] * 10)
+    run = await run_agent(editor, _tools(), "fix the loop", max_turns=3)
+
+    assert run.turns == 3
+    assert "no conclusion" in run.conclusion
+
+
+@pytest.mark.asyncio
+async def test_agent_records_forward_passes() -> None:
+    editor = ScriptedEditor(
+        [
+            'CALL run_model\n{"prompt": "a"}',
+            'CALL run_model\n{"prompt": "b"}',
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+    assert run.forward_passes == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_ignores_done_quoted_mid_line() -> None:
+    # An editor echoing the instructions must not be read as having concluded.
+    editor = ScriptedEditor(
+        [
+            'The format is "DONE\\n<paragraph>". Let me look first.\n'
+            'CALL list_tensors\n{"pattern": ""}',
+            "DONE\nreal conclusion",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    assert run.conclusion == "real conclusion"
+    assert run.turns == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_serializes_to_dict() -> None:
+    editor = ScriptedEditor(["DONE\nconcluded"])
+    run = await run_agent(editor, _tools(), "fix the loop")
+    d = run.as_dict()
+
+    assert d["editor"] == "test/scripted"
+    assert d["conclusion"] == "concluded"
+    assert isinstance(d["tool_calls"], list)
