@@ -1,0 +1,34 @@
+# Secrets — never commit. Use `doppler run --` to inject at runtime.
+.env
+.env.*
+*.pem
+
+# Model weights and checkpoints
+models/
+ckpts/
+checkpoints/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Run artifacts
+runs/
+wandb/
+outputs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
