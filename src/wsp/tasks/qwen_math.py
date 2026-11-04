@@ -45,7 +45,9 @@ def find_mlp_down_proj(keys: list[str], layer: int) -> str:
     """Locate the MLP down-projection tensor for a decoder layer.
 
     Naming differs across checkpoints, so match on the layer index plus the
-    common suffixes rather than assuming one convention.
+    common suffixes rather than assuming one convention. Qwen3.5 nests the
+    decoder under ``model.language_model`` because the checkpoint is a
+    conditional-generation model with a vision tower.
     """
     markers = (f"layers.{layer}.", f"h.{layer}.")
     suffixes = ("mlp.down_proj.weight", "mlp.c_proj.weight", "mlp.fc2.weight")
@@ -62,6 +64,28 @@ def find_mlp_down_proj(keys: list[str], layer: int) -> str:
     )
 
 
+#: Qwen3.5-0.8B interleaves linear and full attention every 4th layer.
+#: The paper's target layers are both full-attention layers, which is a
+#: plausible reason the looping direction is written there rather than in a
+#: linear-attention layer.
+FULL_ATTENTION_LAYERS: tuple[int, ...] = (3, 7, 11, 15, 19, 23)
+
+
+def is_full_attention(layer: int) -> bool:
+    """Whether a layer uses full attention in Qwen3.5-0.8B."""
+    return layer in FULL_ATTENTION_LAYERS
+
+
+def down_proj_shape(hidden_size: int = 1024, intermediate_size: int = 3584) -> tuple[int, int]:
+    """Shape of an MLP down-projection weight in Qwen3.5-0.8B.
+
+    ``down_proj`` maps intermediate -> hidden, so the tensor is
+    ``[hidden_size, intermediate_size]``. The paper's 64 columns are therefore
+    64 *input* channels of the down-projection, not output units.
+    """
+    return (hidden_size, intermediate_size)
+
+
 def describe_for_editor(
     tensor: np.ndarray,
     target: TensorSlice,
@@ -69,11 +93,18 @@ def describe_for_editor(
     layer: int,
     context: str = "",
 ) -> str:
-    """Render a slice as a prompt block for the editor."""
+    """Render a slice as a prompt block for the editor.
+
+    The header states the orientation explicitly, because "columns" is
+    ambiguous: in a ``[hidden, intermediate]`` down-projection, a column is an
+    input channel from the intermediate dimension, and the rows are the hidden
+    units the layer writes to.
+    """
     region = target.apply(tensor)
     header = (
-        f"Layer {layer} MLP down-projection, first {region.shape[1]} output columns "
-        f"of {tensor.shape[1]} (full tensor {tensor.shape[0]}x{tensor.shape[1]})."
+        f"Layer {layer} MLP down-projection, shape {tensor.shape[0]}x{tensor.shape[1]} "
+        f"(rows = hidden units written, columns = intermediate input channels). "
+        f"Showing rows 0:{region.shape[0]}, columns 0:{region.shape[1]}."
     )
     body = to_text(region)
     return f"{header}\n{context}\n\n{body}".strip()
