@@ -27,14 +27,15 @@ from wsp.eval.math500 import build_prompt, extract_answer, is_correct
 MODEL = "Qwen/Qwen3.5-0.8B"
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 30
 
-# From the model card, thinking mode for text tasks.
+# From the model card, thinking mode for text tasks. presence_penalty is a
+# server-side sampling parameter that transformers' generate() does not accept,
+# so it is omitted here; the remaining values are the card's.
 RECOMMENDED = {
     "do_sample": True,
     "temperature": 1.0,
     "top_p": 0.95,
     "top_k": 20,
     "min_p": 0.0,
-    "presence_penalty": 1.5,
     "repetition_penalty": 1.0,
 }
 
