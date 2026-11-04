@@ -104,8 +104,14 @@ def main() -> int:
     for pi, pid in enumerate(practice_ids):
         row = by_id[pid]
         messages = [{"role": "user", "content": build_prompt(row["problem"])}]
+        # The template defaults to thinking OFF (it emits an immediately closed
+        #  thinking block). The paper evaluates with thinking on, so this must be
+        # set explicitly or the run measures a different configuration.
         text = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=True,
         )
         inputs = tokenizer(text, return_tensors="pt").to(model.device)
 
