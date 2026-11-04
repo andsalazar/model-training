@@ -3,6 +3,10 @@
 Loads tensors lazily by name so a 1.6GB checkpoint does not have to be resident
 to inspect one matrix. Writes always go to a new file; the source is never
 modified in place.
+
+The torch backend is used rather than numpy because released checkpoints are
+stored in bfloat16, which numpy cannot represent. Tensors are converted to
+float32 on read, which is lossless for bf16 and adequate for inspection.
 """
 
 from __future__ import annotations
@@ -38,7 +42,7 @@ class WeightStore:
         self.path = Path(path)
         if not self.path.exists():
             raise FileNotFoundError(f"checkpoint not found: {self.path}")
-        self._handle = safe_open(str(self.path), framework="numpy")
+        self._handle = safe_open(str(self.path), framework="pt", device="cpu")
         self._keys = list(self._handle.keys())
 
     def __enter__(self) -> "WeightStore":
@@ -57,14 +61,17 @@ class WeightStore:
     def info(self, name: str) -> TensorInfo:
         if name not in self._keys:
             raise KeyError(f"{name!r} not in checkpoint ({len(self._keys)} tensors)")
-        tensor = self._handle.get_tensor(name)
-        return TensorInfo(name=name, shape=tuple(tensor.shape), dtype=str(tensor.dtype))
+        # Read the header only; get_slice avoids materialising the tensor.
+        shape = tuple(self._handle.get_slice(name).get_shape())
+        dtype = self._handle.get_slice(name).get_dtype()
+        return TensorInfo(name=name, shape=shape, dtype=str(dtype))
 
     def get(self, name: str) -> np.ndarray:
         """Load one tensor as a float32 array."""
         if name not in self._keys:
             raise KeyError(f"{name!r} not in checkpoint")
-        return np.asarray(self._handle.get_tensor(name), dtype=np.float32)
+        tensor = self._handle.get_tensor(name)
+        return tensor.to("cpu", dtype=None).float().numpy()
 
     def summary(self) -> dict[str, object]:
         """Shape and dtype for every tensor, without loading the data."""
