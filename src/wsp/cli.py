@@ -250,9 +250,25 @@ def explore(
         console.print(f"  - {call.name}({call.arguments}) -> {call.result_summary}")
     console.print(f"\n[bold]conclusion:[/bold]\n{run.conclusion}")
 
+    from wsp.audit import audit_run
+
+    audit = audit_run(run.as_dict())
+    if audit.clean:
+        console.print(f"\n[green]audit:[/green] {audit.summary()}")
+    else:
+        console.print(f"\n[red]audit:[/red] {audit.summary()}")
+
     if out:
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(run.as_dict(), indent=2), encoding="utf-8")
+        payload = run.as_dict()
+        payload["audit"] = {
+            "clean": audit.clean,
+            "findings": [
+                {"kind": f.kind, "claim": f.claim, "reason": f.reason}
+                for f in audit.findings
+            ],
+        }
+        out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         console.print(f"\n[dim]written: {out}[/dim]")
 
 
