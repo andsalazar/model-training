@@ -109,6 +109,7 @@ def ablate(
     ),
     tensor: str = typer.Option(None, help="Tensor name to show the editor."),
     cols: str = typer.Option("0:64", help="Column range as start:stop."),
+    rows: str = typer.Option(None, help="Row range as start:stop. Omit for all rows."),
     out: Path = typer.Option(None, help="Write the result as JSON here."),
 ) -> None:
     """Run the blind-vs-weights ablation for one editor.
@@ -129,11 +130,19 @@ def ablate(
         from wsp.weights.slices import TensorSlice, to_text
         from wsp.weights.store import WeightStore
 
-        start, stop = (int(v) for v in cols.split(":"))
+        c_start, c_stop = (int(v) for v in cols.split(":"))
+        r_range = None
+        if rows:
+            r_start, r_stop = (int(v) for v in rows.split(":"))
+            r_range = (r_start, r_stop)
         with WeightStore(checkpoint) as store:
             array = store.get(tensor)
-        weight_block = to_text(TensorSlice(name=tensor, cols=(start, stop)).apply(array))
-        console.print(f"[dim]showing {tensor} cols {start}:{stop}[/dim]")
+        target = TensorSlice(name=tensor, rows=r_range, cols=(c_start, c_stop))
+        weight_block = to_text(target.apply(array))
+        console.print(
+            f"[dim]showing {tensor} rows {rows or 'all'} cols {c_start}:{c_stop} "
+            f"({len(weight_block):,} chars)[/dim]"
+        )
     elif checkpoint or tensor:
         console.print("[red]--checkpoint and --tensor must be given together[/red]")
         raise typer.Exit(1)

@@ -45,12 +45,19 @@ SYSTEM_PROMPT = (
 )
 
 #: Shared instruction, so the two conditions differ only in the weight block.
+#: The architecture context is given to *both* arms: the blind arm tests whether
+#: the editor needs the weights, not whether it can work without any context.
 TASK_INSTRUCTION = (
-    "The model is Qwen3.5-0.8B, an 800M-parameter language model. It performs "
-    "poorly on grade-school math: it enters reasoning loops and fails to reach "
-    "an answer. Propose the minimal weight modification that would fix this. "
-    "If you can identify a specific direction or set of output columns to "
-    "change, name them and give the values."
+    "The model is Qwen3.5-0.8B, an 800M-parameter decoder-only language model "
+    "with 24 layers and hidden size 1024. It performs poorly on grade-school "
+    "math: in thinking mode it enters reasoning loops and runs to the token "
+    "limit without reaching an answer.\n\n"
+    "The tensor under consideration is the MLP down-projection of layer 15, "
+    "shape [1024, 3584] (rows = hidden units written, columns = intermediate "
+    "input channels). Layer 15 is one of the full-attention layers.\n\n"
+    "Propose the minimal weight modification that would stop the looping. If "
+    "you can identify a specific direction or set of columns to change, name "
+    "them and give the values."
 )
 
 BLIND_NOTE = (
