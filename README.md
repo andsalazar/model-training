@@ -110,6 +110,41 @@ a helped target cannot mask a broken held-out probe. The `baseline` and
 `verify_edit` tools expose it to the editor, so a run cannot report post-edit
 behaviour it never measured.
 
+The comparison is a fixed rule rather than a judgement call:
+
+| State | Condition |
+|---|---|
+| `broken` | the expected answer was present before the edit and is gone after |
+| `regressed` | now hits the token cap, or grew past 1.25× baseline |
+| `improved` | fell to 0.75× baseline or below |
+| `unchanged` | moved less than the 25-token noise floor |
+
+An edit is `validated` only when every target improved and nothing regressed or
+broke. A target that improves while a held-out question hits the cap is
+`harmful` — that is redistributing the behaviour, not suppressing it.
+
+### Running a verified exploration
+
+`scripts/run_explore_verified.py` runs the editor and then re-measures its edits
+itself, so the verdict does not depend on the editor's prose:
+
+```bash
+python scripts/run_explore_verified.py --editor deepseek \
+    --model Qwen/Qwen3.5-0.8B \
+    --checkpoint /workspace/models/Qwen3.5-0.8B/model.safetensors \
+    --out /workspace/explore15.json
+```
+
+It reads the checkpoints the editor actually wrote from the tool log, reloads
+each one, and measures the probe set against a baseline taken on the original
+checkpoint. The result lands in the `verification` key of the output JSON,
+alongside the transcript and the audit findings.
+
+This matters because both Stage 1 runs that got far enough to matter fabricated
+numbers: one inverted a `direction_similarity` sign, the other reported post-edit
+token counts without ever calling `measure_loop` after its edits. The auditor
+catches those after the fact; re-measurement catches them regardless.
+
 ## License
 
 Apache 2.0
