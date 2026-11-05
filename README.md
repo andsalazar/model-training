@@ -83,25 +83,28 @@ Stage 0 (reproduction) is complete and verified: the paper's headline result
 reproduces, and its arithmetic matches exactly. See
 [docs/stage0-findings.md](docs/stage0-findings.md).
 
-Stage 1 (a portable method) is complete. The edit can be derived from measurement
-alone, and two independent runs validated it — at layer 12 and layer 6, on
-different GPUs:
+Stage 1 produced a working edit, but **Stage 2 showed it does not reproduce**, so
+it is not yet a method. The honest current status:
 
-| run | layer | target | held-out | guard | verdict |
-|---|---|---|---|---|---|
-| ranked sweep, scale 0.5 | 12 | 2048 → **164** | 830→556, 827→259, 1309→183 | 204→204 | validated |
-| explore15, scale 1.0 | 6 | 1869 → **210** | 676→381, 181→166 | 232→265 | validated |
+| claim | status |
+|---|---|
+| An edit can be derived from activation measurement | **yes** |
+| That edit cut over-thinking, on one checkpoint and one GPU | **yes** — 2048 → 164 tokens, 1869 → 210 |
+| It reproduces on the same procedure, different hardware | **no** — verdict inverted |
+| It transfers to other behaviours | **no** — pushed a factual probe and a long-form task to the cap |
+| Measurement is deterministic on fixed hardware | **yes** — 7 repeats, stdev 0.0 |
+| The over-thinking direction is global | **no** — layer-local (+0.006 across layers) |
 
-Both cut the target by about 90% with every held-out probe better or unchanged.
+The reproducibility failure has a specific cause: the "top 12 columns" cut falls
+inside a plateau where alignment scores tie to within 0.0012, so a selection that
+changes with the last digit of a float decides the verdict. Two runs with 10 of 12
+columns in common got opposite results.
 
-What the method depends on is narrow, and Stage 1 found it the hard way. Editing
-the **ranked** columns works; editing a contiguous window around them is
-**harmful** — target 2048 → 190 but held-out `17×23` 830 → 2048 (cap) and `9×8`
-1309 → 1837. A range that contains a few ranked columns also edits dozens the
-measurement did not select.
-
-See [docs/stage1-findings.md](docs/stage1-findings.md) for the method as seven
-reproducible steps, the evidence, and both negative results.
+What survives is worth keeping: the activation tooling, the verifier that caught
+this, and a set of negative results (contiguous windows are harmful, `hit_cap` is
+not looping, a high `contrast_cosine` is not noise). Full analysis in
+[docs/stage2-findings.md](docs/stage2-findings.md); Stage 1's evidence, with
+corrections, in [docs/stage1-findings.md](docs/stage1-findings.md).
 
 ## Verification
 

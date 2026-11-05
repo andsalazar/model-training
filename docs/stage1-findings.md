@@ -1,5 +1,16 @@
 # Stage 1 — making WSP a portable method
 
+> **Correction, added after Stage 2.** This document's central claim is too
+> strong. Stage 2 re-ran the same procedure on different hardware and got the
+> opposite verdict, because the "top 12" column selection sits inside a plateau
+> where alignment scores tie to within 0.0012. The edit does not reproduce across
+> GPUs, and on a broad probe set it damages behaviour Stage 1 never tested —
+> including two of Stage 1's own arithmetic held-outs. Read sections 10–11 as
+> "the edit worked on this checkpoint on this hardware", not as "the method
+> works". See [stage2-findings.md](stage2-findings.md) for the failure analysis.
+> The sections below are otherwise unchanged, because the negative results and
+> the tooling findings still hold.
+
 Stage 0 reproduced the paper's result by *copying its published checkpoint*. That
 proves the effect is real, but it does not make the method usable: a method you
 can only apply by obtaining someone else's weights is not a method. Stage 1 asks
@@ -260,6 +271,14 @@ themselves, which needs a non-contiguous column selection in
 
 ## 10. Editing the ranked columns works
 
+> **Stage 2 correction.** This finding does not reproduce. The improvement was
+> real on this checkpoint and this GPU, but the column selection is not stable:
+> the top-12 cut falls inside a 0.0012 tie, and a re-run on different hardware
+> picked two different columns and inverted the verdict. The comparison below also
+> confounds ranking quality with edit size — `900:1000` contains 97 unranked
+> columns, so it mostly shows that editing 100 columns breaks things and editing
+> 12 does not. Treat this section as "an edit that worked, once".
+
 The window was the problem. `apply_directional_edit` now accepts an explicit
 column list as well as a range, so the edit can target exactly the columns
 `aligned_columns` ranked. Re-running the sweep on those 12 columns only:
@@ -314,6 +333,13 @@ a minimal edit should go.
 The mechanism gate is now **passed**, established by independent re-measurement
 rather than by an editor's summary. The remaining failure is the editor's
 reporting, which is a tooling problem with a known fix.
+
+> **Stage 2 correction.** "Generalises to held-out prompts" was true of the probe
+> set, not of the edit. Every held-out probe in that set was another multiplication
+> question. On a broad set the same edit pushed a factual question and a long-form
+> task to the token cap, and on this pod it regressed two of the four arithmetic
+> held-outs it was supposedly validated against. The gate was met for the
+> measurement, not for the behaviour.
 
 ## 12. explore14: the tool worked, the layer did not
 
