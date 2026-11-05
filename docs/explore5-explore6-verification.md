@@ -396,9 +396,47 @@ measurements it actually made. The remaining gap is the contrast design, not the
 tooling: a prose control against a math prompt conflates "looping" with
 "reasoning vs prose", so the direction is diluted. That is a task-design fix.
 
+### explore10 — and a correction to the task premise
+
+explore10 made 31 tool calls and 29 forward passes but never applied an edit. Its
+editor measured six prompts at caps of 32–256 tokens, saw `looped: true` for all
+of them, and concluded that no non-looping math control existed. That conclusion
+was reasonable given the tool's output, and it was wrong.
+
+`classify()` defined `looped` as `hit_cap or repeated`. On this checkpoint that
+made every short-cap measurement report a loop: even "Hello, how are you today?"
+returned `looped: true` at a 64-token cap while producing a coherent greeting.
+Every "loop" in explore9 and explore10 had `repeated: false` — pure truncation.
+
+Running the same prompts at a 2048-token cap shows the model **does not loop**:
+
+| prompt | tokens | hit_cap | repeated | outcome |
+|---|---|---|---|---|
+| 17 times 24, step by step | 1139 | no | no | terminates, answer 408 |
+| 12 times 11 | 2048 | yes | no | truncated mid-thought |
+| 2 plus 2 | 241 | no | no | terminates, answer 4 |
+| 391 divided by 17 | 1657 | no | no | terminates, answer 23 |
+| 48 times 37 | 569 | no | no | terminates, answer 1776 |
+
+`looped` now requires repetition; `hit_cap` is still reported so truncation stays
+visible. The repetition detector is unchanged and verified to fire on genuinely
+circling text and not on long varied reasoning.
+
+### The real behaviour to target
+
+The model is not looping — it is **over-thinking**. "What is 12 times 11? Reply
+with only the digits." produced 2048 tokens of self-doubt while the correct
+answer 132 was already present: "Wait, did I mess up 10*11 = 110 before?" That is
+excessive self-verification on a trivial problem, and it is a real, reproducible
+behaviour with a measurable cost. It is also a better target than a loop, because
+the failure is a *direction* the model keeps writing along rather than a repeated
+string — which is exactly what a directional edit can address.
+
 ### Still open
 
-Whether a direction captured against a *length-matched math control* stops the
-loop. explore9's two edits used a prose control and failed; the next run should
-use a control that is itself a math problem the model completes without looping.
+Whether a directional edit reduces over-thinking without breaking correctness.
+The control should be the same question phrased to elicit a short answer, which
+the model does complete (471 tokens for "Answer with just the number"). That gives
+a genuine contrast between two states of the same question rather than between
+math and prose.
 
