@@ -119,7 +119,73 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
             )
         )
 
+    # A conclusion can cite a tool that *was* called and still misreport what it
+    # returned. The sixth live run claimed "looped: false" after its edit while
+    # every successful measure_loop in the same run returned "looped": true; the
+    # presence check above passed it because measure_loop had been called. Check
+    # the claimed verdict against the verdicts actually observed.
+    for finding in _contradicted_verdicts(conclusion, tool_calls):
+        result.findings.append(finding)
+
     return result
+
+
+#: A claimed loop verdict in the conclusion, e.g. "looped: false" or
+#: "`looped: false`". Matched loosely so markdown backticks and spacing do not
+#: hide a misreport.
+_CLAIMED_LOOP_VERDICT = re.compile(
+    r"looped\W{0,3}(true|false)", re.IGNORECASE
+)
+
+#: A loop verdict inside a real measure_loop result.
+_OBSERVED_LOOP_VERDICT = re.compile(
+    r'"looped"\s*:\s*(true|false)', re.IGNORECASE
+)
+
+
+def _contradicted_verdicts(
+    conclusion: str, tool_calls: list[dict]
+) -> list[AuditFinding]:
+    """Findings for loop verdicts the conclusion asserts but no tool observed.
+
+    Only ``measure_loop`` results count as observations. A claim is contradicted
+    when it asserts a verdict that appears in no successful result — including
+    the case where the opposite verdict is what every result showed.
+    """
+    claimed = {m.group(1).lower() for m in _CLAIMED_LOOP_VERDICT.finditer(conclusion)}
+    if not claimed:
+        return []
+
+    observed: set[str] = set()
+    for call in tool_calls:
+        if call.get("name") != "measure_loop":
+            continue
+        if not call.get("ok", True):
+            continue
+        result = str(call.get("result", ""))
+        if result.startswith("ERROR"):
+            continue
+        observed.update(m.group(1).lower() for m in _OBSERVED_LOOP_VERDICT.finditer(result))
+
+    if not observed:
+        # No observation at all is already covered by the behaviour check.
+        return []
+
+    unsupported = claimed - observed
+    if not unsupported:
+        return []
+
+    return [
+        AuditFinding(
+            kind="contradicted-verdict",
+            claim=f"looped: {verdict}",
+            reason=(
+                "conclusion asserts a loop verdict that no measure_loop result "
+                f"showed; observed verdicts: {sorted(observed)}"
+            ),
+        )
+        for verdict in sorted(unsupported)
+    ]
 
 
 def audit_run(run_dict: dict) -> AuditResult:

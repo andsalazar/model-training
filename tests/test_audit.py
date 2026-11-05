@@ -115,3 +115,69 @@ def test_successful_call_alongside_a_failure_still_licenses() -> None:
         {"name": "tensor_stats", "args": {}, "ok": True, "result": "col\tnorm\n3\t0.29"},
     ]
     assert audit_conclusion("column norms peak at col 3", calls).clean
+
+
+def test_flags_loop_verdict_no_tool_observed() -> None:
+    """Regression for the sixth live run's central false claim.
+
+    The conclusion said the edit produced "looped: false" while every real
+    measure_loop in that run returned "looped": true. The presence check passed
+    it because measure_loop had been called at all.
+    """
+    calls = [
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": true, "hit_cap": true, "tokens": 128}',
+        }
+    ]
+    result = audit_conclusion(
+        "After the edit, measure_loop returned `looped: false`, 61 tokens.", calls
+    )
+    assert not result.clean
+    assert any(f.kind == "contradicted-verdict" for f in result.findings)
+
+
+def test_accepts_loop_verdict_a_tool_actually_observed() -> None:
+    calls = [
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": false, "hit_cap": false, "tokens": 61}',
+        }
+    ]
+    assert audit_conclusion("measure_loop returned looped: false", calls).clean
+
+
+def test_contradicted_verdict_ignores_errored_calls() -> None:
+    calls = [
+        {"name": "measure_loop", "args": {}, "ok": False, "result": "ERROR: no JSON"},
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": true, "tokens": 128}',
+        },
+    ]
+    result = audit_conclusion("the edit gave looped: false", calls)
+    assert any(f.kind == "contradicted-verdict" for f in result.findings)
+
+
+def test_audit_run_flags_bracket_framed_fabricated_evidence() -> None:
+    """Regression for the sixth live run.
+
+    That run's editor wrote 29 "[TOOL RESULT <tool>]" blocks itself. The
+    detector matched only "RESULT of <tool>", so ``fabricated`` came back empty
+    and the audit declared the run clean even though its central claim — a
+    layer-16 column edit that stopped the loop — never happened.
+    """
+    run = {
+        "conclusion": "subtracting 0.02 from layer 16 column 2949 stopped the loop",
+        "tool_calls": _calls("tensor_stats", "measure_loop"),
+        "fabricated": ["[TOOL RESULT read_slice]"],
+    }
+    result = audit_run(run)
+    assert not result.clean
+    assert any(f.kind == "fabricated-evidence" for f in result.findings)

@@ -58,7 +58,18 @@ _DONE = re.compile(r"^DONE\s*(.*)", re.DOTALL | re.MULTILINE)
 _CALL_TOKEN = re.compile(r"CALL[ \t]+([A-Za-z_]\w*)")
 
 # An editor writing its own tool output is fabricating evidence.
-_FABRICATED_RESULT = re.compile(r"\bRESULT of\s+([A-Za-z_]\w*)")
+#
+# Two formats have to be caught. The fifth live run used "RESULT of <tool>".
+# The sixth used the *real* framing, "[TOOL RESULT <tool>]", which is what the
+# harness itself emits — so matching only the first form let 29 fabricated
+# blocks through and the audit reported the run as clean. Both are matched
+# here, and the bracket form is matched case-insensitively with optional
+# whitespace so "TOOL RESULT" / "tool result" / "[TOOL  RESULT x]" all count.
+_FABRICATED_RESULT = re.compile(
+    r"\bRESULT of\s+([A-Za-z_]\w*)"
+    r"|\[\s*TOOL\s+RESULT\s+([A-Za-z_]\w*)\s*\]",
+    re.IGNORECASE,
+)
 
 
 def _balanced_object(text: str) -> str | None:
