@@ -52,6 +52,9 @@ class FakeRunner:
         self.calls.append((prompt, max_tokens))
         return {"looped": self.looped, "tokens": 2048, "hit_cap": self.looped}
 
+    def count_tokens(self, text: str) -> int:
+        return len(text.split())
+
 
 @pytest.fixture
 def tools() -> WeightTools:
@@ -155,6 +158,100 @@ class ReloadableRunner(FakeRunner):
 
     def reload(self, model_path: str) -> None:
         self.reloaded.append(model_path)
+
+
+class ScriptedRunner(FakeRunner):
+    """Returns a different answer per prompt, so a before/after is visible."""
+
+    def __init__(self, script: dict[str, str]):
+        super().__init__()
+        self.script = script
+
+    def generate(self, prompt: str, max_tokens: int = 512) -> str:
+        self.calls.append((prompt, max_tokens))
+        return self.script.get(prompt, "")
+
+
+def test_baseline_refuses_nothing_and_reports_each_probe() -> None:
+    runner = ScriptedRunner({})
+    tools = WeightTools(FakeStore({}), runner)
+    runner.script = {p.prompt: "132" for p in tools._probes}
+
+    out = tools.baseline()
+    assert "baseline captured" in out
+    assert "target_12x11" in out
+    assert len(tools._baseline) == len(tools._probes)
+
+
+def test_verify_edit_requires_a_baseline() -> None:
+    """A verification with no before has nothing to compare against.
+
+    This is the ordering explore14's conclusion got wrong: it reported post-edit
+    behaviour that was never measured after the edit.
+    """
+    tools = WeightTools(FakeStore({}), ScriptedRunner({}))
+    with pytest.raises(ToolError, match="no baseline"):
+        tools.verify_edit()
+
+
+def test_verify_edit_reports_harmful_when_the_target_is_helped_but_a_probe_regresses() -> None:
+    runner = ScriptedRunner({})
+    tools = WeightTools(FakeStore({}), runner)
+
+    # Baseline: target runs long, held-out stops, guard unchanged.
+    runner.script = {
+        "What is 12 times 11? Reply with only the digits.": "132 " * 100,
+        "What is 17 times 23? Reply with only the digits.": "391 " * 40,
+        "What is 9 times 8? Reply with only the digits.": "72 " * 60,
+        "Name the capital of France. Reply with only the city.": "Paris " * 20,
+    }
+    tools.baseline()
+
+    # After the "edit": target much shorter, but held-out grew 3x.
+    runner.script = {
+        "What is 12 times 11? Reply with only the digits.": "132 " * 8,
+        "What is 17 times 23? Reply with only the digits.": "391 " * 120,
+        "What is 9 times 8? Reply with only the digits.": "72 " * 60,
+        "Name the capital of France. Reply with only the city.": "Paris " * 20,
+    }
+    out = tools.verify_edit()
+    assert "HARMFUL" in out
+    assert "heldout_17x23 (regressed)" in out
+
+
+def test_verify_edit_reports_validated_when_everything_holds() -> None:
+    runner = ScriptedRunner({})
+    tools = WeightTools(FakeStore({}), runner)
+
+    runner.script = {
+        "What is 12 times 11? Reply with only the digits.": "132 " * 100,
+        "What is 17 times 23? Reply with only the digits.": "391 " * 40,
+        "What is 9 times 8? Reply with only the digits.": "72 " * 60,
+        "Name the capital of France. Reply with only the city.": "Paris " * 20,
+    }
+    tools.baseline()
+
+    runner.script = {
+        "What is 12 times 11? Reply with only the digits.": "132 " * 8,
+        "What is 17 times 23? Reply with only the digits.": "391 " * 30,
+        "What is 9 times 8? Reply with only the digits.": "72 " * 45,
+        "Name the capital of France. Reply with only the city.": "Paris " * 20,
+    }
+    out = tools.verify_edit()
+    assert "VALIDATED" in out
+
+
+def test_baseline_rejects_an_unknown_probe_name() -> None:
+    tools = WeightTools(FakeStore({}), ScriptedRunner({}))
+    with pytest.raises(ToolError, match="unknown probe"):
+        tools.baseline(probes="no_such_probe")
+
+
+def test_baseline_accounts_for_forward_passes() -> None:
+    """Verification costs forward passes like any other generation."""
+    tools = WeightTools(FakeStore({}), ScriptedRunner({}), max_forward_passes=2)
+    with pytest.raises(ToolError, match="forward-pass budget"):
+        tools.baseline()
 
 
 def test_apply_edit_writes_checkpoint_and_reloads(tmp_path) -> None:

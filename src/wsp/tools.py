@@ -23,6 +23,7 @@ from typing import Any, Callable
 
 import numpy as np
 
+from wsp import verify
 from wsp.activations import (
     ActivationRegistry,
     contrast_cosine,
@@ -31,6 +32,7 @@ from wsp.activations import (
     summarize_direction,
     top_aligned_columns,
 )
+from wsp.verify import Probe, Role
 from wsp.weights.slices import TensorSlice, apply_edit, to_text
 
 
@@ -96,6 +98,11 @@ class WeightTools:
         #: that no model is attached rather than pretending to have measured.
         self._capturer = capturer
         self._directions = ActivationRegistry()
+        #: Baseline readings captured before an edit, and the probes they came
+        #: from. Both are needed for verify_edit to re-measure exactly the same
+        #: prompts rather than whatever the editor remembers.
+        self._baseline: list[verify.Reading] | None = None
+        self._probes: list[Probe] = _default_probes()
 
     # -- introspection -----------------------------------------------------
 
@@ -383,6 +390,74 @@ class WeightTools:
         )
         return out
 
+    # -- verification ------------------------------------------------------
+
+    def baseline(self, probes: str = "", max_tokens: int = 2048) -> str:
+        """Measure named probes on the current checkpoint and remember them.
+
+        Call this *before* editing. The readings are kept so ``verify_edit`` can
+        compare against them afterwards; an edit is only a result if something
+        changed, and something only changed if there is a before.
+        """
+        if self._forward_passes + len(_parse_probes(probes)) > self._max_forward_passes:
+            raise ToolError(
+                "forward-pass budget too small for this baseline; "
+                f"{self.forward_passes_left} left"
+            )
+        chosen = _parse_probes(probes)
+        readings = verify.measure_all(self._runner, chosen)
+        self._forward_passes += len(readings)
+        self._baseline = readings
+
+        lines = [f"baseline captured on {len(readings)} probe(s)", ""]
+        for r in readings:
+            flag = "" if r.correct else "  WRONG"
+            cap = "  hit_cap" if r.hit_cap else ""
+            lines.append(
+                f"{r.probe:16s} {r.role.value:8s} {r.tokens:5d} tokens{cap}{flag}"
+            )
+        out = "\n".join(lines)
+        self.log.record(
+            ToolCall(
+                "baseline",
+                {"probes": probes or "default"},
+                f"{len(readings)} probes",
+            )
+        )
+        return out
+
+    def verify_edit(self, max_tokens: int = 2048) -> str:
+        """Re-measure the baseline probes on the current checkpoint and compare.
+
+        This is the check that a single improved prompt cannot fake: it measures
+        the target, held-out instances of the same behaviour, and a guard that
+        must not move. A target that improves while a held-out probe regresses is
+        reported as HARMFUL rather than validated.
+        """
+        if self._baseline is None:
+            raise ToolError(
+                "no baseline captured: call baseline before editing, so there is "
+                "something to compare against"
+            )
+        if self._forward_passes + len(self._baseline) > self._max_forward_passes:
+            raise ToolError(
+                "forward-pass budget too small for this verification; "
+                f"{self.forward_passes_left} left"
+            )
+        comparison = verify.verify_edit(self._runner, self._probes, self._baseline)
+        self._forward_passes += len(comparison.edited)
+
+        out = comparison.summary()
+        self.log.record(
+            ToolCall(
+                "verify_edit",
+                {},
+                f"{comparison.status}: "
+                + ", ".join(f"{v.probe}={v.state}" for v in comparison.verdicts),
+            )
+        )
+        return out
+
     def aligned_columns(
         self, tensor: str, direction: str, k: int = 16
     ) -> str:
@@ -583,6 +658,69 @@ def _parse_range(value: str | None) -> tuple[int, int] | None:
     return int(start), int(stop)
 
 
+#: The probe set used when the editor does not name one. Targets are the
+#: over-thinking behaviour; held-out probes are other instances of it; the guard
+#: is unrelated behaviour that a merely-terser model would also shorten.
+_PROBE_LIBRARY: dict[str, Probe] = {
+    "target_12x11": Probe(
+        name="target_12x11",
+        prompt="What is 12 times 11? Reply with only the digits.",
+        expected="132",
+        role=Role.TARGET,
+    ),
+    "heldout_17x23": Probe(
+        name="heldout_17x23",
+        prompt="What is 17 times 23? Reply with only the digits.",
+        expected="391",
+        role=Role.HELDOUT,
+    ),
+    "heldout_13x14": Probe(
+        name="heldout_13x14",
+        prompt="What is 13 times 14? Reply with only the digits.",
+        expected="182",
+        role=Role.HELDOUT,
+    ),
+    "heldout_9x8": Probe(
+        name="heldout_9x8",
+        prompt="What is 9 times 8? Reply with only the digits.",
+        expected="72",
+        role=Role.HELDOUT,
+    ),
+    "guard_capital": Probe(
+        name="guard_capital",
+        prompt="Name the capital of France. Reply with only the city.",
+        expected="Paris",
+        role=Role.GUARD,
+    ),
+}
+
+#: The set ``baseline`` measures when the editor passes no probe names. Kept
+#: small on purpose: every probe costs a forward pass, and a target with no
+#: held-out instance cannot tell a real suppressor from a prompt-specific fluke.
+_DEFAULT_PROBE_NAMES: tuple[str, ...] = (
+    "target_12x11",
+    "heldout_17x23",
+    "heldout_9x8",
+    "guard_capital",
+)
+
+
+def _default_probes() -> list[Probe]:
+    return [_PROBE_LIBRARY[name] for name in _DEFAULT_PROBE_NAMES]
+
+
+def _parse_probes(value: str | None) -> list[Probe]:
+    """Resolve a comma-separated probe list, or the default set when empty."""
+    if not value:
+        return _default_probes()
+    names = [part.strip() for part in value.split(",") if part.strip()]
+    unknown = [n for n in names if n not in _PROBE_LIBRARY]
+    if unknown:
+        known = ", ".join(sorted(_PROBE_LIBRARY))
+        raise ToolError(f"unknown probe(s) {unknown}; known: {known}")
+    return [_PROBE_LIBRARY[n] for n in names]
+
+
 def _parse_cols(value: str | None) -> tuple[int, int] | list[int] | None:
     """Parse a column selection: ``"start:stop"`` or ``"12,987,914"``.
 
@@ -720,6 +858,33 @@ TOOL_SCHEMA: list[dict[str, Any]] = [
             "direction": "captured direction name",
             "k": "how many columns to show",
         },
+    },
+    {
+        "name": "baseline",
+        "description": (
+            "Measure the probe set on the CURRENT checkpoint and remember the "
+            "readings. Call this before editing: an edit is only a result if "
+            "something changed, and something only changed if there is a before. "
+            "Probes cover the target, held-out instances of the same behaviour, "
+            "and a guard that must not move."
+        ),
+        "parameters": {
+            "probes": (
+                "comma-separated probe names, or empty for the default set: "
+                + ", ".join(sorted(_PROBE_LIBRARY))
+            ),
+        },
+    },
+    {
+        "name": "verify_edit",
+        "description": (
+            "Re-measure the baseline probes on the current checkpoint and compare. "
+            "This is the check a single improved prompt cannot fake: it reports "
+            "VALIDATED only when every target improved and no held-out or guard "
+            "probe was damaged, and HARMFUL when an edit that helped the target "
+            "pushed something else to the token cap."
+        ),
+        "parameters": {},
     },
     {
         "name": "apply_directional_edit",

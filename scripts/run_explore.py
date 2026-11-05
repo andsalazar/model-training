@@ -66,12 +66,15 @@ TASK = (
     "happens to contain a few of them also edits dozens of columns the evidence "
     "did not select. apply_directional_edit takes either form: 'start:stop' or a "
     "comma-separated list like '102,987,914'. Use the list.\n\n"
-    "A single prompt improving is not evidence the edit works. Measure held-out "
-    "prompts too -- other multiplication questions and a non-math control -- "
-    "before and after the edit. An edit that shortens one answer while pushing "
-    "another to the token cap has redistributed the behaviour, not suppressed "
-    "it. Report the held-out numbers you actually measured, including any that "
-    "got worse."
+    "A single prompt improving is not evidence the edit works. Call baseline "
+    "before you edit and verify_edit after: verify_edit re-measures the same "
+    "probes on the current checkpoint and reports VALIDATED only when every "
+    "target improved and nothing else was damaged. A target that improves while "
+    "a held-out question regresses is reported as HARMFUL, because shortening "
+    "one answer at the cost of pushing another to the token cap is redistributing "
+    "the behaviour, not suppressing it. If verify_edit says HARMFUL or NO EFFECT, "
+    "the edit did not work -- try a different layer or scale rather than "
+    "reporting it as a result."
 )
 
 

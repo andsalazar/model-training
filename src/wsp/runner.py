@@ -90,6 +90,11 @@ class NullRunner:
             "no model attached: run this on a pod, or pass a runner that can execute"
         )
 
+    def count_tokens(self, text: str) -> int:
+        raise RuntimeError(
+            "no model attached: run this on a pod, or pass a runner that can execute"
+        )
+
     def reload(self, model_path: str) -> None:
         raise RuntimeError("no model attached")
 
@@ -176,6 +181,16 @@ class VLLMRunner:
         text = out.outputs[0].text
         n_tokens = len(out.outputs[0].token_ids)
         return classify(text, n_tokens, max_tokens).as_dict()
+
+    def count_tokens(self, text: str) -> int:
+        """Token count of already-generated text, for verification runs.
+
+        Re-tokenising is not exactly the generated length, so this is only used
+        where the text is all the caller has. ``measure`` reads the real count
+        from vLLM.
+        """
+        self._ensure_loaded()
+        return len(self._tokenizer(text).input_ids)
 
     def reload(self, model_path: str) -> None:
         """Swap to a different checkpoint, e.g. after an edit."""
