@@ -9,6 +9,60 @@ The testbed is Qwen3.5-0.8B on a Runpod pod. The target behaviour is
 over-thinking on trivial arithmetic: the model reaches the right answer and then
 keeps re-verifying it, running to the token cap.
 
+## Summary
+
+**Yes.** The edit can be derived from measurement, and it works — but only if you
+edit the columns the measurement ranks, not a convenient block around them.
+
+Two independent runs produced validated edits, at different layers and on
+different GPUs:
+
+| Run | Layer | Columns | Target | Held-out | Guard | Verdict |
+|---|---|---|---|---|---|---|
+| sweep_ranked, scale 0.5 | 12 | 12 ranked | 2048 → **164** | 830 → 556, 827 → 259, 1309 → 183 | 204 → 204 | validated |
+| explore15, scale 1.0 | 6 | 12 ranked | 1869 → **210** | 676 → 381, 181 → 166 | 232 → 265 | validated |
+
+Both cut the target by roughly 90% with every held-out probe better or unchanged
+and the guard flat. The guard matters: an edit that simply made the model terser
+would shorten the non-math answer too, and it does not.
+
+The same direction applied to a **contiguous window** instead is actively harmful
+— target 2048 → 190 but held-out `17×23` 830 → 2048 (cap) and `9×8` 1309 → 1837.
+That negative result is the most useful thing Stage 1 produced, because it
+identifies what the method actually depends on.
+
+Three things Stage 1 did **not** establish: the result is one model and one
+behaviour; the direction is layer-local rather than a shared "over-thinking"
+vector; and every editor run fabricated numbers, so nothing here rests on an
+editor's own report.
+
+## The method, as it now stands
+
+The procedure the evidence supports. Steps 1–2 are what Stage 0 showed was
+missing; steps 5–7 are what Stage 1 added.
+
+1. **Characterise the behaviour before touching weights.** Use `measure_loop` and
+   read `hit_cap` and `repeated` separately. A verbose answer that reaches the cap
+   is truncation, not looping, and the two call for different edits.
+2. **Pick a control that is the same question phrased to elicit the short
+   answer**, and verify it terminates. A contrast between two truncations is not a
+   contrast. Capture with a cap large enough that the target stops on its own.
+3. **Capture the direction** at candidate layers with `capture_direction`.
+   `contrast_cosine` near 1.0 is a caution, not a verdict — a shared prefix
+   cancels in the subtraction, so a real direction can have a high cosine.
+4. **Test reproducibility** with `direction_similarity` across layers or token
+   windows. Disagreement across layers does **not** disqualify a within-layer
+   edit: both validated runs had cross-layer similarity near −0.06.
+5. **Rank columns** with `aligned_columns`. This is the step the method depends
+   on, and the one whose output must be used exactly.
+6. **Edit those columns and only those**, passing the explicit list
+   (`'12,987,914'`), never a range. A range that happens to contain a few ranked
+   columns also edits dozens the evidence did not select, and that is what turned
+   a good edit into a harmful one.
+7. **Verify with the fixed rule**, never with an editor's prose. `baseline` before,
+   `verify_edit` after. `validated` requires every target improved and nothing
+   else damaged; `harmful` is checked first.
+
 ## 1. The behaviour is over-thinking, not looping
 
 The first several runs were built on a false premise. `classify()` reported
