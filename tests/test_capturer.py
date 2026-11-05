@@ -105,6 +105,23 @@ def test_capture_rejects_a_bad_module_path(tiny_model_dir) -> None:
         capturer.capture("tok1", "model.layers.99.mlp.down_proj")
 
 
+def test_capture_resolves_a_checkpoint_key_with_an_extra_prefix(
+    tiny_model_dir,
+) -> None:
+    """A checkpoint key may carry a prefix the loaded model does not expose.
+
+    Qwen3.5 saves layer weights as ``model.language_model.layers.N...`` while
+    the loaded model has them at ``model.layers.N...``. Capture must translate
+    rather than fail on the name the checkpoint actually uses.
+    """
+    capturer = TransformersActivationCapturer(str(tiny_model_dir), device="cpu")
+    direct = capturer.capture("tok1 tok2", "model.layers.0.mlp.down_proj")
+    prefixed = capturer.capture(
+        "tok1 tok2", "model.language_model.layers.0.mlp.down_proj.weight"
+    )
+    assert np.allclose(direct, prefixed), "the prefix must not change the result"
+
+
 def test_capture_respects_max_tokens(tiny_model_dir) -> None:
     capturer = TransformersActivationCapturer(str(tiny_model_dir), device="cpu")
     acts = capturer.capture(

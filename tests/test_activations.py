@@ -129,6 +129,21 @@ def test_summary_renders_as_text() -> None:
     assert "loopdir" in text
     assert "layer 12" in text
     assert "dim\tvalue" in text
+    assert "WARNING" not in text, "a real contrast must not be warned about"
+
+
+def test_summary_warns_about_a_weak_contrast() -> None:
+    """A normalised direction hides how weak its contrast was.
+
+    The norm is always 1.0, so an editor reading only the norm would think it had
+    a strong signal when the two states were nearly identical. The warning makes
+    that visible.
+    """
+    vec = np.array([0.1, -0.9], dtype=np.float32)
+    s = summarize_direction("noise", 12, vec, n_tokens=4, contrast=0.9999, k=2)
+    text = s.as_text()
+    assert "WARNING" in text
+    assert "mostly noise" in text
 
 
 def test_subtract_direction_removes_the_component() -> None:

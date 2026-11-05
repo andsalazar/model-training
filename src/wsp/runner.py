@@ -252,6 +252,46 @@ class TransformersActivationCapturer:
         ).to(self.device)
         self._model.eval()
 
+    def _resolve_module(self, module_path: str) -> str:
+        """Map a checkpoint tensor name onto the loaded model's module path.
+
+        A safetensors key carries the full save-time prefix, which is not always
+        the attribute path the loaded model exposes. Qwen3.5 saves layer weights
+        as ``model.language_model.layers.N...`` while the loaded model has them
+        at ``model.layers.N...``. Rather than hard-code that, try the name as
+        given and then progressively drop leading components until one resolves.
+        """
+        candidate = module_path_for_tensor(module_path)
+        try:
+            self._model.get_submodule(candidate)
+        except AttributeError:
+            pass
+        else:
+            return candidate
+
+        # The extra component is not always a leading one: Qwen3.5 inserts
+        # ``language_model`` in the middle. Match on the suffix starting at the
+        # layer index, so the layer number stays part of the match and a wrong
+        # layer cannot silently resolve to a different one.
+        parts = candidate.split(".")
+        layer_at = next(
+            (i for i, p in enumerate(parts) if p == "layers"), None
+        )
+        if layer_at is None:
+            raise AttributeError(
+                f"no module in the loaded model matches {module_path!r}"
+            )
+        suffix = ".".join(parts[layer_at:])
+        names = [n for n, _ in self._model.named_modules() if n]
+        matches = [n for n in names if n == suffix or n.endswith("." + suffix)]
+        if not matches:
+            raise AttributeError(
+                f"no module in the loaded model matches {module_path!r}"
+            )
+        # Ambiguous only if the same layer suffix appears under several parents;
+        # prefer the shortest, which is the outermost match.
+        return min(matches, key=len)
+
     def _render(self, prompt: str) -> str:
         """Apply the chat template when the tokenizer has one.
 
@@ -282,7 +322,7 @@ class TransformersActivationCapturer:
         # Accept either a module path or a weight tensor name; an editor
         # addresses tensors, so the suffix is stripped here as well as in the
         # tool layer rather than failing on the more natural name.
-        module = self._model.get_submodule(module_path_for_tensor(module_path))
+        module = self._model.get_submodule(self._resolve_module(module_path))
 
         captured: list["object"] = []
 

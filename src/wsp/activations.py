@@ -27,6 +27,10 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+#: Above this cosine the two states are so similar that a direction derived from
+#: them is mostly noise. Reported as a warning rather than silently accepted.
+_WEAK_CONTRAST = 0.99
+
 
 @dataclass(frozen=True)
 class DirectionSummary:
@@ -49,8 +53,18 @@ class DirectionSummary:
             f"direction {self.name!r}  layer {self.layer}  dim {self.dim}",
             f"norm {self.norm:.4f}  tokens {self.n_tokens}  "
             f"contrast_cosine {self.contrast_cosine:+.4f}",
-            "dim\tvalue",
         ]
+        # A direction is normalised, so a contrast that found almost nothing is
+        # still reported at unit norm. Say so plainly: an editor reading only the
+        # norm would think it had a strong signal when it has amplified noise.
+        if abs(self.contrast_cosine) > _WEAK_CONTRAST:
+            lines.append(
+                f"WARNING: contrast_cosine {self.contrast_cosine:+.4f} is close to "
+                f"1.0, so the looping and control states were nearly identical. "
+                f"This direction is mostly noise; capture with prompts that differ "
+                f"more before relying on it."
+            )
+        lines.append("dim\tvalue")
         for dim, value in self.top_dims:
             lines.append(f"{dim}\t{value:+.5f}")
         return "\n".join(lines)
