@@ -599,7 +599,7 @@ TOOL_SCHEMA: list[dict[str, Any]] = [
         "parameters": {
             "tensor": "name of the weight whose module to hook",
             "prompt": "text",
-            "max_tokens": "int, prompt length bound",
+            "max_tokens": "integer, default 64",
         },
     },
     {
@@ -614,7 +614,7 @@ TOOL_SCHEMA: list[dict[str, Any]] = [
             "tensor": "name of the weight whose module to hook",
             "looping_prompt": "text that makes the model loop",
             "control_prompt": "text that does not",
-            "max_tokens": "int, prompt length bound",
+            "max_tokens": "integer, default 64",
         },
     },
     {
