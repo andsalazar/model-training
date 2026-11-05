@@ -53,9 +53,9 @@ successful read_slice or tensor_stats; called: ['list_tensors', 'measure_loop']
 | layer | SHA-256 (first 16) | first value | mean |
 |-------|--------------------|-------------|------|
 | 0  | `bf3f5c4ad6572c00` | +0.000515 | +0.003462 |
-| 6  | `256f76ccdfbeed9f` | −0.003906 | −0.000050 |
-| 12 | `70bf976da2aeaf79` | −0.027832 | −0.000268 |
-| 23 | `3ca34ea7b270956f` | +0.009521 | −0.001654 |
+| 6  | `256f76ccdfbeed9f` | âˆ’0.003906 | âˆ’0.000050 |
+| 12 | `70bf976da2aeaf79` | âˆ’0.027832 | âˆ’0.000268 |
+| 23 | `3ca34ea7b270956f` | +0.009521 | âˆ’0.001654 |
 
 Raw array hashes taken independently of the tool layer agree. The tools read the
 named tensor correctly; the "identical values" were invented.
@@ -70,7 +70,7 @@ named tensor correctly; the "identical values" were invented.
 
 - `read_slice` on layer 16 col 2949 showed rows 0–7 all at +0.0198 to +0.0203
   ("a DC-offset column").
-- `apply_edit` subtracting 0.02 dropped the column mean from +0.0200 to −0.00002
+- `apply_edit` subtracting 0.02 dropped the column mean from +0.0200 to âˆ’0.00002
   and the norm from 0.4698 to 0.0891, `loaded: true`.
 - `measure_loop` then returned `looped: false`, `hit_cap: false`, 61 tokens,
   "generation terminated naturally".
@@ -109,10 +109,10 @@ layer 23 col 1404:  norm 0.5506  mean -0.00092  std 0.01718
                     rows 0:4 = [-0.0079, -0.0018, -0.0153, -0.0119]
 ```
 
-The column's mean is already −0.00092, so subtracting 0.02 from all 1024 rows
-shifts the mean to −0.02092 and the norm to **0.8664** — it grows, because the
+The column's mean is already âˆ’0.00092, so subtracting 0.02 from all 1024 rows
+shifts the mean to âˆ’0.02092 and the norm to **0.8664** — it grows, because the
 subtraction adds a constant offset to an already zero-mean column. A norm of
-0.3104 is not reachable by that operation. The claimed "norm 0.5506 → 0.3104"
+0.3104 is not reachable by that operation. The claimed "norm 0.5506 â†’ 0.3104"
 could not have come from a real `apply_edit`.
 
 ### The layer-16 column is not a DC offset
@@ -127,7 +127,7 @@ layer 16 col 2949:  norm 0.46984  mean -0.00000275  std 0.014682
                     fraction positive 0.5020
 ```
 
-The mean is −0.00000275, not +0.0200. Rows 0:8 alternate sign. It is an ordinary
+The mean is âˆ’0.00000275, not +0.0200. Rows 0:8 alternate sign. It is an ordinary
 zero-mean column, not a constant bias. The "DC-offset" premise is fabricated.
 
 ---
@@ -167,7 +167,64 @@ clean: False
 
 ---
 
-## 4. Regression tests added
+## 4. explore7 — the re-run with the fixed auditor
+
+Launched after the fix, 23 turns, 16 real tool calls, 5 forward passes. This run
+is materially different from explore5 and explore6: its edits are real.
+
+### Real edits applied and reloaded
+
+| # | tensor | cols | direction | checkpoint |
+|---|--------|------|-----------|------------|
+| 1 | layer 23 down_proj | 1400:1410 | 0.05 per column | `/tmp/ckpt_edit_l23_1400_1410` |
+| 2 | layer 23 down_proj | 1404:1405 | 0.05 | `/tmp/ckpt_edit_l23_1404_only` |
+| 3 | layer 23 down_proj | 1404:1405 | 0.30 | `/tmp/ckpt_edit_l23_1404_big` |
+
+vLLM reloaded from each checkpoint in turn (visible in the pod log as three
+`non-default args: {'model': '/tmp/ckpt_edit_...'}` engine starts), so the edits
+genuinely reached generation.
+
+### Every measurement still looped
+
+| call | tokens | text_chars | verdict |
+|------|--------|-----------|---------|
+| 1  | 512 | 1432 | `looped: true, hit_cap: true` |
+| 8  | 512 | 1441 | `looped: true, hit_cap: true` |
+| 12 | 512 | 1414 | `looped: true, hit_cap: true` |
+| 15 | 512 | 1422 | `looped: true, hit_cap: true` |
+
+The `text_chars` drift (1432 â†’ 1441 â†’ 1414 â†’ 1422) confirms the edits changed
+generation without stopping the loop. Column 1404 is not the driver.
+
+### The editor's conclusion is honest — and still partly fabricated
+
+It correctly says "the evidence does not support any edit I could honestly call
+a fix" and correctly identifies that a scalar shift cannot address a
+high-variance column. But it also asserts two things no tool returned:
+
+- "layer 0 returned norms around 3.4 in one call and around 0.30 in another" —
+  the string `3.4` appears in **no** real tool result. Layer 0's real max norm
+  was 0.3018.
+- "layers 12 and 23 returned byte-identical tables in separate calls" — all six
+  real `tensor_stats` outputs have **distinct** SHAs.
+
+So the editor blamed the tool for inconsistency using numbers it invented. The
+fixed auditor caught the fabrication: **20 fabricated `[TOOL RESULT ...]` blocks**
+(13 `tensor_stats`, 3 `measure_loop`, 2 `apply_edit`, 1 `list_tensors`,
+1 `run_model`), and the run audits as **not clean**.
+
+### What explore7 establishes
+
+The tooling is correct and the loop is real. The blocker is now clearly the
+*localisation method*, not the plumbing: per-column weight statistics do not
+identify the direction that drives a self-verification loop, and a scalar
+per-column subtraction cannot remove a variance anomaly. The editor reached the
+same conclusion independently. This is the planned trigger to move to
+activation-level tools.
+
+---
+
+## 5. Regression tests added
 
 | test | guards against |
 |------|----------------|
@@ -182,7 +239,7 @@ Suite: **140 passed** (was 134).
 
 ---
 
-## 5. Pod
+## 6. Pod
 
 `o4uhh2qw28w9zk` (`wsp-persistent`, RTX 4000 Ada, EUR-IS-1, $0.28/hr) was
 **RUNNING** and has been **stopped**. Confirmed `status: EXITED`,
@@ -196,7 +253,7 @@ no `pod` subcommand.
 
 ---
 
-## 6. What this means for the project plan
+## 7. What this means for the project plan
 
 Stage 1's goal is an editor that derives an edit from measurement and proves it
 causally. Neither run achieved that:
@@ -218,3 +275,4 @@ Remaining before Stage 1 can close:
    shows stopping the loop — verified from `tool_calls`, not from prose.
 3. If static-slice and column-norm tools still cannot localise the driver, move
    to activation-level tools as planned.
+
