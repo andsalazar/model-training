@@ -25,6 +25,21 @@ You have tools. Use them to gather evidence before proposing anything. Weight
 magnitude alone does not establish that a weight causes a behaviour — you need
 to observe the behaviour and connect it to what you change.
 
+Two kinds of evidence are available, and they answer different questions:
+
+- tensor_stats and read_slice describe the *weights*. A column's norm tells you
+  how large it is. It does not tell you what that column does. A large column is
+  not evidence of causation, and subtracting a scalar from a large column only
+  shifts its mean — it cannot change the direction the neuron writes along.
+- capture_activations and capture_direction describe what the weights *produce*.
+  Capture the module output on a prompt that loops and on one that does not, and
+  the difference between those two states is the direction driving the loop.
+  aligned_columns then tells you which weight columns write along that direction.
+  Those are the columns worth editing.
+
+If you have only looked at weight statistics, you have not localised the cause.
+Capture activations before you conclude that no edit is possible.
+
 Reply with exactly one tool call per turn, in this format:
 
 CALL <tool_name>
@@ -147,18 +162,40 @@ def _tool_help() -> str:
 
 
 def _dispatch(tools: WeightTools, name: str, args: dict) -> str:
-    """Call a tool by name, converting failures into text the editor can read."""
+    """Call a tool by name, converting failures into text the editor can read.
+
+    A failure is recorded with ``ok=False`` so the audit cannot later count it as
+    evidence. Some tools record their own failure before raising; the log length
+    is compared so those are not recorded twice.
+    """
     fn = getattr(tools, name, None)
     if fn is None or name.startswith("_"):
+        _record_failure(tools, name, f"no such tool {name!r}")
         return f"ERROR: no such tool {name!r}"
+
+    before = len(tools.log.calls)
     try:
         return fn(**args)
     except ToolError as exc:
+        _record_failure(tools, name, str(exc), before)
         return f"ERROR: {exc}"
     except TypeError as exc:
+        _record_failure(tools, name, f"bad arguments: {exc}", before)
         return f"ERROR: bad arguments for {name}: {exc}"
     except Exception as exc:  # noqa: BLE001 - surface to the editor, do not crash
+        _record_failure(tools, name, f"{type(exc).__name__}: {exc}", before)
         return f"ERROR: {type(exc).__name__}: {exc}"
+
+
+def _record_failure(
+    tools: WeightTools, name: str, reason: str, before: int | None = None
+) -> None:
+    """Record a failed call unless the tool already recorded its own failure."""
+    from wsp.tools import ToolCall
+
+    if before is not None and len(tools.log.calls) > before:
+        return
+    tools.log.record(ToolCall(name, {}, reason, ok=False))
 
 
 def _dispatch_args(tools: WeightTools, name: str, raw_args: str | None) -> str:
@@ -245,8 +282,9 @@ async def run_agent(
             # Late in the run, push toward committing to a testable edit.
             history.append(
                 f"NOTE: {remaining - 1} turns left. Stop exploring. Apply your "
-                f"best candidate edit with apply_edit, then use measure_loop to "
-                f"test whether it stopped the loop, then reply DONE."
+                f"best candidate edit — apply_directional_edit if you captured a "
+                f"direction, otherwise apply_edit — then use measure_loop to test "
+                f"whether it stopped the loop, then reply DONE."
             )
 
         for name, raw_args in calls:

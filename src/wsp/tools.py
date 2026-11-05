@@ -23,6 +23,14 @@ from typing import Any, Callable
 
 import numpy as np
 
+from wsp.activations import (
+    ActivationRegistry,
+    contrast_cosine,
+    direction_from_contrast,
+    subtract_direction,
+    summarize_direction,
+    top_aligned_columns,
+)
 from wsp.weights.slices import TensorSlice, apply_edit, to_text
 
 
@@ -77,12 +85,17 @@ class WeightTools:
         *,
         log: ToolLog | None = None,
         max_forward_passes: int = 50,
+        capturer=None,
     ) -> None:
         self._store = store
         self._runner = runner
         self.log = log or ToolLog()
         self._forward_passes = 0
         self._max_forward_passes = max_forward_passes
+        #: Optional activation capturer. When absent, the capture tools report
+        #: that no model is attached rather than pretending to have measured.
+        self._capturer = capturer
+        self._directions = ActivationRegistry()
 
     # -- introspection -----------------------------------------------------
 
@@ -215,7 +228,227 @@ class WeightTools:
         )
         return json.dumps(result, indent=2)
 
+    # -- activation capture ------------------------------------------------
+
+    def _capture(self, prompt: str, tensor: str, max_tokens: int):
+        """Capture activations at the module a tensor belongs to."""
+        if self._capturer is None:
+            raise ToolError(
+                "no activation capturer attached: capture needs a pod, or pass "
+                "a capturer that can execute"
+            )
+        if self._forward_passes >= self._max_forward_passes:
+            raise ToolError(
+                f"forward-pass budget exhausted ({self._max_forward_passes})"
+            )
+        from wsp.runner import module_path_for_tensor
+
+        try:
+            module_path = module_path_for_tensor(tensor)
+        except ValueError as exc:
+            raise ToolError(str(exc)) from exc
+
+        self._forward_passes += 1
+        return self._capturer.capture(prompt, module_path, max_tokens=max_tokens)
+
+    def capture_activations(
+        self, tensor: str, prompt: str, max_tokens: int = 64
+    ) -> str:
+        """Capture the module output for ``tensor`` and summarise its statistics.
+
+        This is the observation ``tensor_stats`` cannot provide. A weight column's
+        norm says how large it is, not what it does; the activation it produces on
+        a looping prompt is what shows the loop's direction in hidden space.
+        """
+        array = self._capture(prompt, tensor, max_tokens)
+        norms = np.linalg.norm(array, axis=0)
+        means = array.mean(axis=0)
+        order = np.argsort(norms)[::-1]
+
+        lines = [
+            f"{tensor}  activations {array.shape}  (tokens x hidden)",
+            "dim\tnorm\tmean",
+        ]
+        for idx in order[:32]:
+            lines.append(f"{idx}\t{norms[idx]:.4f}\t{means[idx]:+.5f}")
+        out = "\n".join(lines)
+        self.log.record(
+            ToolCall(
+                "capture_activations",
+                {"tensor": tensor, "prompt": prompt[:120], "max_tokens": max_tokens},
+                f"{array.shape}",
+            )
+        )
+        return out
+
+    def capture_direction(
+        self,
+        name: str,
+        tensor: str,
+        looping_prompt: str,
+        control_prompt: str,
+        max_tokens: int = 64,
+    ) -> str:
+        """Derive a hidden-space direction from a looping vs control prompt.
+
+        The direction points from the control state toward the looping state and
+        is stored under ``name`` so ``apply_directional_edit`` can use it without
+        the vector being pasted through the transcript. ``contrast_cosine`` is
+        reported so the editor can see whether the contrast found anything: a
+        value near 1.0 means the two states were nearly identical and the
+        direction is noise.
+        """
+        looping = self._capture(looping_prompt, tensor, max_tokens)
+        control = self._capture(control_prompt, tensor, max_tokens)
+
+        try:
+            vector = direction_from_contrast(looping, control)
+        except ValueError as exc:
+            raise ToolError(str(exc)) from exc
+
+        layer = _layer_from_tensor(tensor)
+        summary = summarize_direction(
+            name,
+            layer,
+            vector,
+            n_tokens=int(np.asarray(looping).shape[0]),
+            contrast=contrast_cosine(looping, control),
+        )
+        self._directions.put(name, vector, summary)
+        self.log.record(
+            ToolCall(
+                "capture_direction",
+                {
+                    "name": name,
+                    "tensor": tensor,
+                    "looping_prompt": looping_prompt[:120],
+                    "control_prompt": control_prompt[:120],
+                },
+                f"norm {summary.norm:.4f}, contrast_cosine {summary.contrast_cosine:+.4f}",
+            )
+        )
+        return summary.as_text()
+
+    def list_directions(self) -> str:
+        """Names of captured directions, with their norms."""
+        names = self._directions.names
+        if not names:
+            self.log.record(ToolCall("list_directions", {}, "none", ok=False))
+            return "no captured directions"
+        lines = ["name\tlayer\tnorm\tcontrast_cosine"]
+        for name in names:
+            s = self._directions.summary(name)
+            lines.append(
+                f"{name}\t{s.layer}\t{s.norm:.4f}\t{s.contrast_cosine:+.4f}"
+            )
+        out = "\n".join(lines)
+        self.log.record(ToolCall("list_directions", {}, f"{len(names)} directions"))
+        return out
+
+    def aligned_columns(
+        self, tensor: str, direction: str, k: int = 16
+    ) -> str:
+        """Columns of ``tensor`` most aligned with a captured direction.
+
+        A column that writes along the loop direction is a candidate for the
+        edit; a column orthogonal to it cannot move the state that way however
+        large its norm is. This is the localisation ``tensor_stats`` cannot do.
+        """
+        try:
+            vector = self._directions.get(direction)
+        except KeyError as exc:
+            raise ToolError(str(exc)) from exc
+
+        array = self._store.get(tensor)
+        if array.ndim != 2:
+            raise ToolError(f"{tensor} is not 2-D (shape {array.shape})")
+
+        top = top_aligned_columns(array, vector, k=k)
+        lines = [f"{tensor}  alignment with {direction!r}", "col\tcosine"]
+        for col, score in top:
+            lines.append(f"{col}\t{score:+.5f}")
+        out = "\n".join(lines)
+        self.log.record(
+            ToolCall(
+                "aligned_columns",
+                {"tensor": tensor, "direction": direction, "k": k},
+                f"{len(top)} columns",
+            )
+        )
+        return out
+
     # -- mutation ----------------------------------------------------------
+
+    def apply_directional_edit(
+        self,
+        tensor: str,
+        direction: str,
+        cols: str | None,
+        scale: float,
+        out_path: str,
+    ) -> str:
+        """Subtract a captured direction from columns and load the result.
+
+        Unlike ``apply_edit``, which takes one scalar per column, this removes a
+        hidden-space vector from each selected column. That is the operation a
+        per-column scalar cannot express: it changes *which direction* a neuron
+        writes along, not just how large its output is.
+        """
+        try:
+            vector = self._directions.get(direction)
+        except KeyError as exc:
+            raise ToolError(str(exc)) from exc
+
+        array = self._store.get(tensor)
+        if array.ndim != 2:
+            raise ToolError(f"{tensor} is not 2-D (shape {array.shape})")
+
+        target = TensorSlice(name=tensor, cols=_parse_range(cols))
+        region = target.apply(array)
+        if region.shape[0] != vector.shape[0]:
+            raise ToolError(
+                f"direction has {vector.shape[0]} dims but {tensor} region has "
+                f"{region.shape[0]} rows"
+            )
+
+        edited = subtract_direction(array, _parse_range(cols), vector, scale)
+
+        out = Path(out_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+
+        from wsp.runner import write_edited_checkpoint
+
+        ckpt_dir = write_edited_checkpoint(
+            self._store.path, tensor, edited, out.with_suffix("")
+        )
+        self._runner.reload(str(ckpt_dir))
+
+        written = next(ckpt_dir.glob("*.safetensors"))
+        self._store.reopen(written)
+        reloaded = self._store.get(tensor)
+        changed = int(np.count_nonzero(~np.isclose(reloaded, array, rtol=0.0, atol=0.0)))
+        if changed == 0:
+            raise ToolError(
+                "edit did not change the tensor; refusing to report success"
+            )
+
+        self.log.record(
+            ToolCall(
+                "apply_directional_edit",
+                {
+                    "tensor": tensor,
+                    "direction": direction,
+                    "cols": cols,
+                    "scale": scale,
+                },
+                f"{changed} weights changed, reloaded from {ckpt_dir}",
+            )
+        )
+        return (
+            f"subtracted {scale} x direction {direction!r} from {region.shape} region "
+            f"({changed} weights changed) and reloaded the model from {ckpt_dir}. "
+            f"Call measure_loop to test it."
+        )
 
     def apply_edit(
         self,
@@ -305,6 +538,14 @@ def _parse_range(value: str | None) -> tuple[int, int] | None:
     return int(start), int(stop)
 
 
+def _layer_from_tensor(tensor: str) -> int:
+    """The decoder layer index in a tensor name, or -1 when there is none."""
+    import re
+
+    match = re.search(r"layers\.(\d+)\.", tensor)
+    return int(match.group(1)) if match else -1
+
+
 #: Schema shown to the editor, so it knows what it can call.
 TOOL_SCHEMA: list[dict[str, Any]] = [
     {
@@ -345,6 +586,66 @@ TOOL_SCHEMA: list[dict[str, Any]] = [
             "tensor": "name",
             "cols": "start:stop",
             "direction": "comma-separated numbers, one per column",
+            "out_path": "where to save",
+        },
+    },
+    {
+        "name": "capture_activations",
+        "description": (
+            "Run one forward pass and report the hooked module's output statistics "
+            "(tokens x hidden). Shows what a weight column actually produces, which "
+            "tensor_stats cannot."
+        ),
+        "parameters": {
+            "tensor": "name of the weight whose module to hook",
+            "prompt": "text",
+            "max_tokens": "int, prompt length bound",
+        },
+    },
+    {
+        "name": "capture_direction",
+        "description": (
+            "Derive a hidden-space direction from a looping prompt vs a control "
+            "prompt and store it under a name. Reports contrast_cosine: near 1.0 "
+            "means the contrast found nothing and the direction is noise."
+        ),
+        "parameters": {
+            "name": "short label to refer to it later",
+            "tensor": "name of the weight whose module to hook",
+            "looping_prompt": "text that makes the model loop",
+            "control_prompt": "text that does not",
+            "max_tokens": "int, prompt length bound",
+        },
+    },
+    {
+        "name": "list_directions",
+        "description": "Names of captured directions with their norms.",
+        "parameters": {},
+    },
+    {
+        "name": "aligned_columns",
+        "description": (
+            "Columns of a tensor most aligned with a captured direction. A column "
+            "orthogonal to the loop direction cannot move the state that way, "
+            "however large its norm."
+        ),
+        "parameters": {
+            "tensor": "name",
+            "direction": "captured direction name",
+            "k": "how many columns to show",
+        },
+    },
+    {
+        "name": "apply_directional_edit",
+        "description": (
+            "Subtract a captured direction from columns and load the result. "
+            "Changes which direction a neuron writes along, not just its magnitude."
+        ),
+        "parameters": {
+            "tensor": "name",
+            "direction": "captured direction name",
+            "cols": "start:stop or null for all",
+            "scale": "how far to move along the direction",
             "out_path": "where to save",
         },
     },

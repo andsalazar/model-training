@@ -51,6 +51,21 @@ def _tools() -> WeightTools:
     return WeightTools(FakeStore(), FakeRunner())
 
 
+class FakeCapturer:
+    """Returns a canned activation array per prompt."""
+
+    def __init__(self, by_prompt: dict[str, np.ndarray]):
+        self.by_prompt = by_prompt
+        self.calls: list[tuple[str, str, int]] = []
+
+    def capture(self, prompt: str, module_path: str, max_tokens: int = 64):
+        self.calls.append((prompt, module_path, max_tokens))
+        return self.by_prompt[prompt]
+
+    def reload(self, model_path: str) -> None:
+        pass
+
+
 @pytest.mark.asyncio
 async def test_agent_stops_on_done() -> None:
     editor = ScriptedEditor(["DONE\nThe edit is to zero column 3."])
@@ -308,3 +323,87 @@ async def test_agent_does_not_flag_a_genuine_tool_result() -> None:
     assert not run.fabricated
     # The harness did append a real result to the transcript.
     assert any(t.get("role") == "tool" for t in run.transcript)
+
+
+# -- activation tools through dispatch -------------------------------------
+
+
+def _capture_tools(by_prompt: dict[str, np.ndarray]) -> WeightTools:
+    return WeightTools(FakeStore(), FakeRunner(), capturer=FakeCapturer(by_prompt))
+
+
+@pytest.mark.asyncio
+async def test_agent_dispatches_capture_activations() -> None:
+    """The editor must be able to reach the capture tools through dispatch."""
+    acts = np.ones((4, 8), dtype=np.float32)
+    acts[:, 2] = 5.0
+    editor = ScriptedEditor(
+        [
+            'CALL capture_activations\n{"tensor": "w", "prompt": "loop"}',
+            "DONE\ncaptured",
+        ]
+    )
+    run = await run_agent(editor, _capture_tools({"loop": acts}), "fix the loop")
+
+    names = [c["name"] for c in run.tool_log.summary()]
+    assert names == ["capture_activations"]
+    tool_turns = [t for t in run.transcript if t.get("role") == "tool"]
+    assert "activations" in tool_turns[0]["result"]
+    assert "ERROR" not in tool_turns[0]["result"]
+
+
+@pytest.mark.asyncio
+async def test_agent_dispatches_capture_direction_then_aligned_columns() -> None:
+    """A two-call sequence: capture a direction, then rank columns by it."""
+    looping = np.array([[1.0, 0.0, 0.0, 0.0]], dtype=np.float32)
+    control = np.zeros((1, 4), dtype=np.float32)
+    editor = ScriptedEditor(
+        [
+            'CALL capture_direction\n{"name": "d", "tensor": "w", '
+            '"looping_prompt": "loop", "control_prompt": "calm"}',
+            'CALL aligned_columns\n{"tensor": "w", "direction": "d", "k": 3}',
+            "DONE\nranked",
+        ]
+    )
+    run = await run_agent(
+        editor, _capture_tools({"loop": looping, "calm": control}), "fix the loop"
+    )
+
+    names = [c["name"] for c in run.tool_log.summary()]
+    assert names == ["capture_direction", "aligned_columns"]
+    tool_turns = [t for t in run.transcript if t.get("role") == "tool"]
+    assert "direction 'd'" in tool_turns[0]["result"]
+    assert "alignment with 'd'" in tool_turns[1]["result"]
+
+
+@pytest.mark.asyncio
+async def test_agent_reports_capture_without_a_capturer() -> None:
+    """Without a capturer the tool errors rather than pretending to measure."""
+    editor = ScriptedEditor(
+        [
+            'CALL capture_activations\n{"tensor": "w", "prompt": "loop"}',
+            "DONE\ncould not capture",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    tool_turns = [t for t in run.transcript if t.get("role") == "tool"]
+    assert "no activation capturer" in tool_turns[0]["result"]
+    assert run.tool_log.calls[0].ok is False
+
+
+@pytest.mark.asyncio
+async def test_agent_prompt_mentions_activation_capture() -> None:
+    """The editor must be told capture exists, or it will never use it.
+
+    explore7's editor correctly concluded weight statistics could not localise
+    the cause and stopped. It had no alternative because nothing told it one
+    existed.
+    """
+    editor = ScriptedEditor(["DONE\ndone"])
+    await run_agent(editor, _tools(), "fix the loop")
+
+    prompt = editor.prompts[0]
+    assert "capture_direction" in prompt
+    assert "aligned_columns" in prompt
+    assert "capture_activations" in prompt

@@ -14,8 +14,21 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-#: Tools whose results contain numeric tensor data.
+#: Tools whose results contain numeric *weight* data.
 DATA_TOOLS = frozenset({"read_slice", "tensor_stats"})
+
+#: Tools whose results contain numeric *activation* data. Kept separate from
+#: DATA_TOOLS because the two are different evidence: a tensor_stats call says
+#: nothing about what a module produces on a prompt, so it must not license a
+#: conclusion that quotes activation statistics.
+ACTIVATION_TOOLS = frozenset(
+    {
+        "capture_activations",
+        "capture_direction",
+        "aligned_columns",
+        "list_directions",
+    }
+)
 
 #: Tools that observe behaviour.
 BEHAVIOUR_TOOLS = frozenset({"run_model", "measure_loop"})
@@ -34,6 +47,40 @@ _TENSOR_CLAIM = re.compile(
 _BEHAVIOUR_CLAIM = re.compile(
     r"\b(looped|looping|did not loop|failed to (?:run|execute)|"
     r"no baseline generation|never observed)\b",
+    re.IGNORECASE,
+)
+
+#: Tools that mutate the checkpoint.
+EDIT_TOOLS = frozenset({"apply_edit", "apply_directional_edit"})
+
+#: Phrases asserting that an edit was actually applied. A conclusion that says
+#: it applied an edit needs a successful edit call behind it: the smoke test
+#: caught a run whose apply_directional_edit had errored on bad JSON while the
+#: conclusion still reported the edit as applied.
+_EDIT_CLAIM = re.compile(
+    r"\b(applied|made|performed|wrote|saved|committed)\b[^.]{0,40}?"
+    r"\b(edit|change|modification|subtraction)\b"
+    r"|\bedit (?:was )?(?:applied|made|written|saved)\b",
+    re.IGNORECASE,
+)
+
+#: Phrases asserting a *quantitative* claim about captured activations.
+#:
+#: Deliberately narrow, because a bare mention of "activations" is not a claim.
+#: explore2 correctly reported that its tools "exposed no activations"; explore3
+#: proposed a "residual-space direction" as a future edit; explore7 noted that a
+#: direction would need "activations rather than weight magnitude". None of those
+#: asserts a measured activation value, so none should be flagged. What must be
+#: caught is a conclusion quoting activation statistics it never captured, so the
+#: activation word has to be followed by a statistical term or a number.
+#:
+#: "mean" and "magnitude" are deliberately absent: both are ordinary English
+#: words ("a mean move", "weight magnitude") and matching them produced false
+#: positives on real runs.
+_ACTIVATION_CLAIM = re.compile(
+    r"\b(?:activations?|hidden states?|residual stream|contrast_cosine|"
+    r"aligned columns?)\b[^.]{0,60}?"
+    r"\b(?:norms?|std|variance|cosine|peaks?|\d+(?:\.\d+)?)\b",
     re.IGNORECASE,
 )
 
@@ -93,7 +140,12 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
     if not conclusion:
         return result
 
-    if _TENSOR_CLAIM.search(conclusion) and not _succeeded(tool_calls, DATA_TOOLS):
+    # A numeric claim is licensed by any real observation: weight statistics,
+    # activation statistics, or an edit call (which reports how many weights it
+    # changed). The activation check below is an *additional* requirement for
+    # claims specifically about activations, not a replacement for this one.
+    numeric_tools = DATA_TOOLS | ACTIVATION_TOOLS | EDIT_TOOLS
+    if _TENSOR_CLAIM.search(conclusion) and not _succeeded(tool_calls, numeric_tools):
         match = _TENSOR_CLAIM.search(conclusion)
         result.findings.append(
             AuditFinding(
@@ -101,7 +153,8 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
                 claim=match.group(0),
                 reason=(
                     "claims about tensor contents require a successful "
-                    f"read_slice or tensor_stats; called: {sorted(set(called)) or 'none'}"
+                    "read_slice, tensor_stats or capture call; called: "
+                    f"{sorted(set(called)) or 'none'}"
                 ),
             )
         )
@@ -119,6 +172,25 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
             )
         )
 
+    # Activation statistics are a different observation from weight statistics.
+    # A tensor_stats call describes the weights and says nothing about what the
+    # module produced on a prompt, so it cannot license a claim about activations.
+    if _ACTIVATION_CLAIM.search(conclusion) and not _succeeded(
+        tool_calls, ACTIVATION_TOOLS
+    ):
+        match = _ACTIVATION_CLAIM.search(conclusion)
+        result.findings.append(
+            AuditFinding(
+                kind="activation-data",
+                claim=match.group(0),
+                reason=(
+                    "claims about activations require a successful "
+                    "capture_activations or capture_direction; called: "
+                    f"{sorted(set(called)) or 'none'}"
+                ),
+            )
+        )
+
     # A conclusion can cite a tool that *was* called and still misreport what it
     # returned. The sixth live run claimed "looped: false" after its edit while
     # every successful measure_loop in the same run returned "looped": true; the
@@ -126,6 +198,25 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
     # the claimed verdict against the verdicts actually observed.
     for finding in _contradicted_verdicts(conclusion, tool_calls):
         result.findings.append(finding)
+
+    # Claiming an edit was applied when the edit call errored is fabrication of
+    # a different kind: the conclusion reports a mutation that never happened.
+    if _EDIT_CLAIM.search(conclusion) and not _succeeded(tool_calls, EDIT_TOOLS):
+        match = _EDIT_CLAIM.search(conclusion)
+        attempted = [c for c in tool_calls if c.get("name") in EDIT_TOOLS]
+        if attempted:
+            reason = (
+                "conclusion reports an edit as applied but every edit call "
+                f"failed; called: {sorted({c['name'] for c in attempted})}"
+            )
+        else:
+            reason = (
+                "conclusion reports an edit as applied but no edit tool was "
+                f"called; called: {sorted(set(called)) or 'none'}"
+            )
+        result.findings.append(
+            AuditFinding(kind="edit-claim", claim=match.group(0), reason=reason)
+        )
 
     return result
 

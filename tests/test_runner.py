@@ -107,3 +107,42 @@ def test_write_edited_checkpoint_keeps_plain_name_without_index(tmp_path) -> Non
         src / "model.safetensors", "w", np.zeros((2, 2), dtype=np.float32), tmp_path / "out"
     )
     assert (out / "model.safetensors").exists()
+
+
+# -- activation capture ----------------------------------------------------
+
+
+def test_module_path_strips_weight_suffix() -> None:
+    from wsp.runner import module_path_for_tensor
+
+    assert (
+        module_path_for_tensor("model.language_model.layers.16.mlp.down_proj.weight")
+        == "model.language_model.layers.16.mlp.down_proj"
+    )
+
+
+def test_module_path_passes_through_a_module_name() -> None:
+    from wsp.runner import module_path_for_tensor
+
+    assert module_path_for_tensor("model.layers.0.mlp.down_proj") == "model.layers.0.mlp.down_proj"
+
+
+def test_module_path_rejects_empty() -> None:
+    from wsp.runner import module_path_for_tensor
+
+    with pytest.raises(ValueError, match="empty"):
+        module_path_for_tensor("")
+
+
+def test_null_capturer_raises() -> None:
+    from wsp.runner import NullActivationCapturer
+
+    with pytest.raises(RuntimeError, match="no model attached"):
+        NullActivationCapturer().capture("p", "m")
+
+
+def test_null_capturer_reload_raises() -> None:
+    from wsp.runner import NullActivationCapturer
+
+    with pytest.raises(RuntimeError, match="no model attached"):
+        NullActivationCapturer().reload("x")

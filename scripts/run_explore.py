@@ -23,7 +23,7 @@ sys.path.insert(0, "/workspace/src")
 from wsp.agent import run_agent
 from wsp.audit import audit_run
 from wsp.editors.registry import build_editor
-from wsp.runner import VLLMRunner
+from wsp.runner import TransformersActivationCapturer, VLLMRunner
 from wsp.tools import WeightTools
 from wsp.weights.store import WeightStore
 
@@ -34,7 +34,12 @@ TASK = (
     "is the MLP down-projection of a decoder layer, shape [1024, 3584].\n\n"
     "Use measure_loop to confirm the loop exists before proposing anything, and "
     "again after any edit to confirm it is fixed. Use tensor_stats to find "
-    "candidate columns. Do not propose an edit you have not tested."
+    "candidate columns. Do not propose an edit you have not tested.\n\n"
+    "Weight statistics alone cannot tell you which column causes the loop. "
+    "capture_direction compares the module's activations on a looping prompt "
+    "against a control prompt and gives you the direction driving the loop; "
+    "aligned_columns then shows which columns write along it. Prefer that over "
+    "guessing from column norms."
 )
 
 
@@ -60,8 +65,14 @@ def main() -> int:
 
     runner = VLLMRunner(args.model)
     store = WeightStore(args.checkpoint)
+    # Capture runs on transformers: vLLM's forward pass is inside compiled CUDA
+    # graphs, so there is nowhere to attach a hook. Generation stays on vLLM.
+    capturer = TransformersActivationCapturer(args.model)
     tools = WeightTools(
-        store, runner, max_forward_passes=args.max_forward_passes
+        store,
+        runner,
+        max_forward_passes=args.max_forward_passes,
+        capturer=capturer,
     )
 
     async def _run():

@@ -212,3 +212,167 @@ def test_forward_passes_left_decrements(tools: WeightTools) -> None:
     before = tools.forward_passes_left
     tools.run_model("p")
     assert tools.forward_passes_left == before - 1
+
+
+# -- activation capture ----------------------------------------------------
+
+
+class FakeCapturer:
+    """Returns a canned activation array per prompt."""
+
+    def __init__(self, by_prompt: dict[str, np.ndarray]):
+        self.by_prompt = by_prompt
+        self.calls: list[tuple[str, str, int]] = []
+
+    def capture(self, prompt: str, module_path: str, max_tokens: int = 64):
+        self.calls.append((prompt, module_path, max_tokens))
+        return self.by_prompt[prompt]
+
+    def reload(self, model_path: str) -> None:
+        pass
+
+
+def _capture_tools(tmp_path, by_prompt):
+    store = _real_checkpoint(tmp_path)
+    capturer = FakeCapturer(by_prompt)
+    return WeightTools(store, ReloadableRunner(), capturer=capturer), capturer
+
+
+def test_capture_activations_reports_shape_and_stats(tmp_path) -> None:
+    acts = np.ones((4, 8), dtype=np.float32)
+    acts[:, 2] = 5.0
+    tools, _ = _capture_tools(tmp_path, {"p": acts})
+
+    out = tools.capture_activations("w", "p")
+    assert "activations (4, 8)" in out
+    assert "tokens x hidden" in out
+    # Highest-norm dimension first.
+    assert out.splitlines()[2].startswith("2\t")
+
+
+def test_capture_activations_hooks_the_tensor_module(tmp_path) -> None:
+    tools, capturer = _capture_tools(tmp_path, {"p": np.ones((2, 4), dtype=np.float32)})
+    tools.capture_activations("w", "p")
+    assert capturer.calls[0][1] == "w", "module path derived from the tensor name"
+
+
+def test_capture_activations_without_capturer_raises(tools: WeightTools) -> None:
+    with pytest.raises(ToolError, match="no activation capturer"):
+        tools.capture_activations("model.layers.15.mlp.down_proj.weight", "p")
+
+
+def test_capture_activations_respects_budget(tmp_path) -> None:
+    tools, _ = _capture_tools(tmp_path, {"p": np.ones((2, 4), dtype=np.float32)})
+    tools._max_forward_passes = 1
+    tools.capture_activations("w", "p")
+    with pytest.raises(ToolError, match="budget exhausted"):
+        tools.capture_activations("w", "p")
+
+
+def test_capture_direction_stores_a_named_direction(tmp_path) -> None:
+    looping = np.array([[1.0, 0.0, 0.0, 0.0]], dtype=np.float32)
+    control = np.array([[0.0, 0.0, 0.0, 0.0]], dtype=np.float32)
+    tools, _ = _capture_tools(tmp_path, {"loop": looping, "calm": control})
+
+    out = tools.capture_direction("d", "w", "loop", "calm")
+    assert "direction 'd'" in out
+    assert "norm 1.0000" in out
+    assert tools.list_directions().count("d") >= 1
+
+
+def test_capture_direction_reports_contrast_cosine(tmp_path) -> None:
+    looping = np.array([[1.0, 0.0]], dtype=np.float32)
+    control = np.array([[1.0, 0.0]], dtype=np.float32)
+    tools, _ = _capture_tools(tmp_path, {"loop": looping, "calm": control})
+
+    # Identical states: no direction to derive.
+    with pytest.raises(ToolError, match="identical"):
+        tools.capture_direction("d", "w", "loop", "calm")
+
+
+def test_capture_direction_flags_a_weak_contrast(tmp_path) -> None:
+    looping = np.array([[1.0, 0.001]], dtype=np.float32)
+    control = np.array([[1.0, 0.0]], dtype=np.float32)
+    tools, _ = _capture_tools(tmp_path, {"loop": looping, "calm": control})
+
+    out = tools.capture_direction("d", "w", "loop", "calm")
+    # Nearly parallel states: the cosine rounds to 1.0, which is the warning the
+    # editor needs — the contrast found essentially nothing.
+    assert "contrast_cosine +1.0000" in out
+
+
+def test_list_directions_when_empty(tools: WeightTools) -> None:
+    assert tools.list_directions() == "no captured directions"
+
+
+def test_aligned_columns_ranks_by_alignment(tmp_path) -> None:
+    weight = np.zeros((4, 8), dtype=np.float32)
+    weight[0, 5] = 1.0  # column 5 points along +x
+    store = FakeStore({"w": weight})
+    capturer = FakeCapturer(
+        {
+            "loop": np.array([[1.0, 0.0, 0.0, 0.0]], dtype=np.float32),
+            "calm": np.zeros((1, 4), dtype=np.float32),
+        }
+    )
+    tools = WeightTools(store, FakeRunner(), capturer=capturer)
+    tools.capture_direction("d", "w", "loop", "calm")
+
+    out = tools.aligned_columns("w", "d", k=3)
+    assert out.splitlines()[2].startswith("5\t")
+
+
+def test_aligned_columns_rejects_unknown_direction(tools: WeightTools) -> None:
+    with pytest.raises(ToolError, match="no captured direction"):
+        tools.aligned_columns("model.layers.15.mlp.down_proj.weight", "missing")
+
+
+def test_apply_directional_edit_changes_weights(tmp_path) -> None:
+    weight = np.ones((4, 8), dtype=np.float32)
+    store = FakeStore({"w": weight})
+    store.path = tmp_path / "src" / "model.safetensors"
+    store.path.parent.mkdir(parents=True, exist_ok=True)
+    from safetensors.numpy import save_file
+
+    save_file({"w": weight}, str(store.path))
+    (store.path.parent / "config.json").write_text("{}", encoding="utf-8")
+
+    def reopen(path):
+        from safetensors import safe_open
+
+        with safe_open(str(path), framework="np") as handle:
+            store._tensors = {"w": handle.get_tensor("w")}
+
+    store.reopen = reopen
+
+    capturer = FakeCapturer(
+        {
+            "loop": np.array([[1.0, 0.0, 0.0, 0.0]], dtype=np.float32),
+            "calm": np.zeros((1, 4), dtype=np.float32),
+        }
+    )
+    runner = ReloadableRunner()
+    tools = WeightTools(store, runner, capturer=capturer)
+    tools.capture_direction("d", "w", "loop", "calm")
+
+    out = tools.apply_directional_edit(
+        "w", "d", cols="0:2", scale=1.0, out_path=str(tmp_path / "edited")
+    )
+    assert "subtracted" in out
+    assert runner.reloaded
+
+    edited = store.get("w")
+    # Row 0 carried the whole direction, so it drops by 1.0 in the edited columns.
+    assert edited[0, 0] == pytest.approx(0.0)
+    assert edited[0, 2] == pytest.approx(1.0), "column 2 is outside the range"
+
+
+def test_apply_directional_edit_rejects_unknown_direction(tools: WeightTools) -> None:
+    with pytest.raises(ToolError, match="no captured direction"):
+        tools.apply_directional_edit(
+            "model.layers.15.mlp.down_proj.weight",
+            "missing",
+            cols="0:2",
+            scale=1.0,
+            out_path="x",
+        )

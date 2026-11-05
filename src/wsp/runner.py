@@ -176,6 +176,157 @@ class VLLMRunner:
         self._ensure_loaded()
 
 
+def module_path_for_tensor(tensor: str) -> str:
+    """The module a weight tensor belongs to, e.g. ``...down_proj.weight`` -> ``...down_proj``.
+
+    Activation capture hooks a module, but an editor addresses a tensor, so the
+    two names have to be reconciled. Stripping the trailing ``.weight`` is the
+    convention every decoder checkpoint in this project follows. A name without
+    the suffix is returned unchanged: it is already a module path, and hooking it
+    is the right thing to do rather than an error.
+    """
+    if not tensor:
+        raise ValueError("empty tensor name")
+    suffix = ".weight"
+    return tensor[: -len(suffix)] if tensor.endswith(suffix) else tensor
+
+
+class NullActivationCapturer:
+    """A capturer with no model attached, for local runs and tests."""
+
+    def capture(
+        self, prompt: str, module_path: str, max_tokens: int = 64
+    ) -> "object":
+        raise RuntimeError(
+            "no model attached: activation capture needs a pod, or pass a "
+            "capturer that can execute"
+        )
+
+    def reload(self, model_path: str) -> None:
+        raise RuntimeError("no model attached")
+
+
+class TransformersActivationCapturer:
+    """Captures residual-stream activations with a transformers forward pass.
+
+    vLLM is the right tool for generation but its forward pass runs inside
+    compiled CUDA graphs, so there is nowhere to attach a hook. Capture is a
+    different job: one short forward pass over a prompt, which transformers does
+    cheaply. Generation stays on vLLM; only capture comes here.
+
+    The hook is attached to the module named by the tensor being edited, so the
+    captured tensor has the same orientation as that weight's columns. For a
+    ``down_proj`` of shape ``[hidden, intermediate]`` the module output is
+    hidden-space, which is exactly what a column of that weight writes into.
+    """
+
+    def __init__(
+        self,
+        model_path: str,
+        *,
+        device: str = "cuda",
+        dtype: str = "bfloat16",
+    ) -> None:
+        self.model_path = model_path
+        self.device = device
+        self.dtype = dtype
+        self._model = None
+        self._tokenizer = None
+
+    def _ensure_loaded(self) -> None:
+        if self._model is not None:
+            return
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        torch_dtype = getattr(torch, self.dtype)
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            self.model_path, trust_remote_code=True
+        )
+        # ``.to(device)`` rather than ``device_map``: device_map pulls in
+        # accelerate as a hard dependency, and capture is a single-GPU job.
+        self._model = AutoModelForCausalLM.from_pretrained(
+            self.model_path,
+            torch_dtype=torch_dtype,
+            trust_remote_code=True,
+        ).to(self.device)
+        self._model.eval()
+
+    def _render(self, prompt: str) -> str:
+        """Apply the chat template when the tokenizer has one.
+
+        A checkpoint without a chat template is still capturable: the raw prompt
+        is a valid input. Falling back keeps capture working on base models and
+        on test fixtures rather than failing on a missing template.
+        """
+        if getattr(self._tokenizer, "chat_template", None):
+            messages = [{"role": "user", "content": prompt}]
+            return self._tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+        return prompt
+
+    def capture(
+        self, prompt: str, module_path: str, max_tokens: int = 64
+    ) -> "object":
+        """Run one forward pass and return the hooked module's output.
+
+        Returns a ``[n_tokens, hidden]`` float32 array. ``max_tokens`` bounds the
+        prompt length so a long prompt cannot make capture expensive; the tail is
+        kept because the state that drives a loop is the one nearest the point of
+        looping.
+        """
+        import torch
+
+        self._ensure_loaded()
+        # Accept either a module path or a weight tensor name; an editor
+        # addresses tensors, so the suffix is stripped here as well as in the
+        # tool layer rather than failing on the more natural name.
+        module = self._model.get_submodule(module_path_for_tensor(module_path))
+
+        captured: list["object"] = []
+
+        def hook(_module, _args, output):
+            tensor = output[0] if isinstance(output, tuple) else output
+            captured.append(tensor.detach())
+
+        handle = module.register_forward_hook(hook)
+        try:
+            text = self._render(prompt)
+            encoded = self._tokenizer(
+                text, return_tensors="pt", truncation=True, max_length=max_tokens
+            )
+            input_ids = encoded["input_ids"].to(self.device)
+            if input_ids.numel() == 0:
+                # A tokenizer that maps the prompt to nothing would otherwise
+                # fail deep inside attention with an ambiguous-reshape error.
+                raise ValueError(
+                    f"prompt tokenized to zero tokens; check the tokenizer for "
+                    f"{self.model_path!r}"
+                )
+            with torch.no_grad():
+                self._model(input_ids=input_ids)
+        finally:
+            handle.remove()
+
+        if not captured:
+            raise RuntimeError(
+                f"hook on {module_path!r} never fired; check the module name"
+            )
+
+        array = captured[0]
+        if array.ndim == 3:
+            array = array[0]
+        return array.float().cpu().numpy()
+
+    def reload(self, model_path: str) -> None:
+        """Swap to a different checkpoint, e.g. after an edit."""
+        self._model = None
+        self._tokenizer = None
+        self.model_path = model_path
+        self._ensure_loaded()
+
+
 def write_edited_checkpoint(
     source: str | Path,
     tensor: str,

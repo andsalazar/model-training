@@ -28,6 +28,28 @@ def test_accepts_tensor_claim_with_data_tool() -> None:
     assert result.clean
 
 
+def test_accepts_activation_claim_with_capture_tool() -> None:
+    result = audit_conclusion(
+        "the activation norms peak at dim 2011", _calls("capture_activations")
+    )
+    assert result.clean, "a real capture call licenses an activation claim"
+
+
+def test_flags_activation_claim_without_capture_tool() -> None:
+    """Quoting activation statistics without capturing them is fabrication.
+
+    explore7's editor correctly reported that weight statistics could not
+    localise the cause. An editor that instead invents activation numbers would
+    be claiming evidence it never gathered. A tensor_stats call is not that
+    evidence: it describes the weights, not what the module produced.
+    """
+    result = audit_conclusion(
+        "the activation norms peak at dim 2011", _calls("tensor_stats")
+    )
+    assert not result.clean
+    assert result.findings[0].kind == "activation-data"
+
+
 def test_flags_behaviour_claim_without_behaviour_tool() -> None:
     result = audit_conclusion(
         "the model looped on every prompt", _calls("list_tensors")
@@ -163,6 +185,52 @@ def test_contradicted_verdict_ignores_errored_calls() -> None:
     ]
     result = audit_conclusion("the edit gave looped: false", calls)
     assert any(f.kind == "contradicted-verdict" for f in result.findings)
+
+
+def test_flags_edit_claim_when_the_edit_call_errored() -> None:
+    """A conclusion reporting an applied edit needs a successful edit call.
+
+    The smoke test caught this: apply_directional_edit errored on bad JSON while
+    the conclusion still said the edit was applied. The audit passed it because
+    no check covered edit claims.
+    """
+    calls = [
+        {"name": "capture_direction", "args": {}, "ok": True, "result": "direction 'd'"},
+        {
+            "name": "apply_directional_edit",
+            "args": {},
+            "ok": False,
+            "result": "ERROR: arguments were not valid JSON",
+        },
+    ]
+    result = audit_conclusion(
+        "I applied the edit to columns 0:4 and saved the checkpoint.", calls
+    )
+    assert not result.clean
+    assert result.findings[0].kind == "edit-claim"
+    assert "failed" in result.findings[0].reason
+
+
+def test_flags_edit_claim_when_no_edit_tool_was_called() -> None:
+    result = audit_conclusion(
+        "I applied the edit to columns 0:4.", _calls("tensor_stats")
+    )
+    assert not result.clean
+    assert result.findings[0].kind == "edit-claim"
+    assert "no edit tool was called" in result.findings[0].reason
+
+
+def test_accepts_edit_claim_with_a_successful_edit() -> None:
+    calls = [
+        {
+            "name": "apply_directional_edit",
+            "args": {},
+            "ok": True,
+            "result": "subtracted 0.5 x direction 'd' ... and reloaded",
+        }
+    ]
+    result = audit_conclusion("I applied the edit to columns 0:4.", calls)
+    assert result.clean
 
 
 def test_audit_run_flags_bracket_framed_fabricated_evidence() -> None:
