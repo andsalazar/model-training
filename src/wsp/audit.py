@@ -20,10 +20,13 @@ DATA_TOOLS = frozenset({"read_slice", "tensor_stats"})
 #: Tools that observe behaviour.
 BEHAVIOUR_TOOLS = frozenset({"run_model", "measure_loop"})
 
-#: Phrases asserting something about tensor contents.
+#: Phrases asserting something about tensor contents. Covers both qualitative
+#: claims ("all zeros") and specific numeric ones ("column norms peak at col
+#: 2011", "std 0.0314"), because an editor can fabricate either.
 _TENSOR_CLAIM = re.compile(
     r"\b(all zeros?|all zero|every (?:tensor|column|value)|norm\s*=\s*0|"
-    r"renders? as (?:all )?zero|degenerate|no non-?zero)\b",
+    r"renders? as (?:all )?zero|degenerate|no non-?zero)\b"
+    r"|\b(?:column|col|norm|std|mean)s?\b[^.]{0,40}?\b\d+(?:\.\d+)?\b",
     re.IGNORECASE,
 )
 
@@ -64,36 +67,54 @@ class AuditResult:
         return "\n".join(lines)
 
 
+def _succeeded(tool_calls: list[dict], names: frozenset[str]) -> bool:
+    """Whether any of ``names`` was called *and* returned data.
+
+    A call that errored produced no evidence, so it must not license a claim.
+    An editor that called tensor_stats and got a KeyError has seen nothing.
+    """
+    for call in tool_calls:
+        if call.get("name") not in names:
+            continue
+        if not call.get("ok", True):
+            continue
+        result = str(call.get("result", ""))
+        if result.startswith("ERROR"):
+            continue
+        return True
+    return False
+
+
 def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
-    """Check a conclusion against the tools that were actually called."""
+    """Check a conclusion against the tools that actually returned data."""
     called = [c["name"] for c in tool_calls]
     result = AuditResult(tools_called=called)
 
     if not conclusion:
         return result
 
-    if _TENSOR_CLAIM.search(conclusion) and not (set(called) & DATA_TOOLS):
+    if _TENSOR_CLAIM.search(conclusion) and not _succeeded(tool_calls, DATA_TOOLS):
         match = _TENSOR_CLAIM.search(conclusion)
         result.findings.append(
             AuditFinding(
                 kind="tensor-data",
                 claim=match.group(0),
                 reason=(
-                    "claims about tensor contents require read_slice or "
-                    f"tensor_stats; called: {sorted(set(called)) or 'none'}"
+                    "claims about tensor contents require a successful "
+                    f"read_slice or tensor_stats; called: {sorted(set(called)) or 'none'}"
                 ),
             )
         )
 
-    if _BEHAVIOUR_CLAIM.search(conclusion) and not (set(called) & BEHAVIOUR_TOOLS):
+    if _BEHAVIOUR_CLAIM.search(conclusion) and not _succeeded(tool_calls, BEHAVIOUR_TOOLS):
         match = _BEHAVIOUR_CLAIM.search(conclusion)
         result.findings.append(
             AuditFinding(
                 kind="behaviour",
                 claim=match.group(0),
                 reason=(
-                    "claims about behaviour require run_model or measure_loop; "
-                    f"called: {sorted(set(called)) or 'none'}"
+                    "claims about behaviour require a successful run_model or "
+                    f"measure_loop; called: {sorted(set(called)) or 'none'}"
                 ),
             )
         )

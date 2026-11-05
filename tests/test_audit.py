@@ -83,3 +83,35 @@ def test_audit_run_clean_when_tools_support_claim() -> None:
         "tool_calls": _calls("measure_loop"),
     }
     assert audit_run(run).clean
+
+
+def test_errored_data_tool_does_not_license_a_tensor_claim() -> None:
+    # The editor called tensor_stats but it raised KeyError, so it saw nothing.
+    calls = [
+        {
+            "name": "tensor_stats",
+            "args": {},
+            "ok": True,
+            "result": "ERROR: KeyError: 'model.layers.0.mlp.down_proj.weight' not in checkpoint",
+        }
+    ]
+    result = audit_conclusion("column norms peak at col 2011", calls)
+    assert not result.clean
+    assert result.findings[0].kind == "tensor-data"
+
+
+def test_errored_behaviour_tool_does_not_license_a_behaviour_claim() -> None:
+    calls = [
+        {"name": "measure_loop", "args": {}, "ok": True, "result": "ERROR: no model attached"}
+    ]
+    result = audit_conclusion("the model looped", calls)
+    assert not result.clean
+    assert result.findings[0].kind == "behaviour"
+
+
+def test_successful_call_alongside_a_failure_still_licenses() -> None:
+    calls = [
+        {"name": "tensor_stats", "args": {}, "ok": True, "result": "ERROR: KeyError"},
+        {"name": "tensor_stats", "args": {}, "ok": True, "result": "col\tnorm\n3\t0.29"},
+    ]
+    assert audit_conclusion("column norms peak at col 3", calls).clean
