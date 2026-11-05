@@ -57,12 +57,20 @@ class DirectionSummary:
         # A direction is normalised, so a contrast that found almost nothing is
         # still reported at unit norm. Say so plainly: an editor reading only the
         # norm would think it had a strong signal when it has amplified noise.
+        #
+        # The cosine is a caution, not a verdict. It compares the two *means*, and
+        # a prefix the prompts share appears in both and cancels when they are
+        # subtracted — so a high cosine does not by itself mean the direction is
+        # noise. explore12's editor read it as fatal and abandoned a usable
+        # direction. Point at the check that actually settles it instead.
         if abs(self.contrast_cosine) > _WEAK_CONTRAST:
             lines.append(
-                f"WARNING: contrast_cosine {self.contrast_cosine:+.4f} is close to "
-                f"1.0, so the looping and control states were nearly identical. "
-                f"This direction is mostly noise; capture with prompts that differ "
-                f"more before relying on it."
+                f"CAUTION: contrast_cosine {self.contrast_cosine:+.4f} is close to "
+                f"1.0, so the two states look similar. That is not proof the "
+                f"direction is noise: a prefix both prompts share cancels in the "
+                f"subtraction. Test it instead — capture the same direction at "
+                f"another layer or with a token_window past the shared prefix and "
+                f"compare the two vectors. Agreement means the signal is real."
             )
         lines.append("dim\tvalue")
         for dim, value in self.top_dims:
@@ -102,6 +110,26 @@ class ActivationRegistry:
     def names(self) -> list[str]:
         return sorted(self._directions)
 
+    def similarity(self, a: str, b: str) -> float:
+        """Cosine between two captured directions.
+
+        This is the check that settles whether a direction is signal or noise. A
+        high ``contrast_cosine`` only says the two states looked alike; if the
+        same direction comes back from a different layer or a different token
+        window, the component is real and reproducible rather than an artefact of
+        one comparison.
+        """
+        va = self.get(a)
+        vb = self.get(b)
+        if va.shape != vb.shape:
+            raise ValueError(
+                f"directions have different dims: {a} {va.shape} vs {b} {vb.shape}"
+            )
+        denom = float(np.linalg.norm(va) * np.linalg.norm(vb))
+        if denom == 0.0:
+            return 0.0
+        return float(np.dot(va, vb) / denom)
+
 
 def _as_2d(activations: np.ndarray) -> np.ndarray:
     """Coerce captured activations to ``[n_tokens, hidden]``."""
@@ -118,8 +146,35 @@ def mean_state(activations: np.ndarray) -> np.ndarray:
     return _as_2d(activations).mean(axis=0)
 
 
+def _window(array: np.ndarray, token_window: str | None) -> np.ndarray:
+    """Restrict an activation array to a token range.
+
+    ``token_window`` is ``"start:stop"`` in token indices, or ``None`` for all
+    tokens. A contrast taken over all tokens averages mostly over the prefix the
+    two prompts share, which is why a looping run and its control can come back
+    with a cosine near 1.0 even when their behaviour differs sharply. Restricting
+    to the region where they diverge is what makes the contrast informative.
+    """
+    matrix = np.asarray(array, dtype=np.float32)
+    if matrix.ndim != 2:
+        raise ValueError(f"expected a 2-D activation array, got {matrix.shape}")
+    if not token_window:
+        return matrix
+    try:
+        start_text, _, stop_text = token_window.partition(":")
+        start = int(start_text) if start_text.strip() else 0
+        stop = int(stop_text) if stop_text.strip() else matrix.shape[0]
+    except ValueError as exc:
+        raise ValueError(f"token_window must be 'start:stop': {exc}") from exc
+    if start < 0 or stop > matrix.shape[0] or start >= stop:
+        raise ValueError(
+            f"token_window {token_window!r} is outside 0:{matrix.shape[0]}"
+        )
+    return matrix[start:stop]
+
+
 def direction_from_contrast(
-    looping: np.ndarray, control: np.ndarray
+    looping: np.ndarray, control: np.ndarray, token_window: str | None = None
 ) -> np.ndarray:
     """A unit direction pointing from the control state toward the looping state.
 
@@ -127,9 +182,13 @@ def direction_from_contrast(
     ``[n_tokens, hidden]``; each is reduced to its mean over tokens first. The
     result is normalised, so its scale carries no meaning and only its direction
     does — the caller chooses how far to move along it.
+
+    ``token_window`` restricts both arrays to a token range before averaging. Use
+    it to contrast the region where the two prompts diverge rather than the
+    prefix they share.
     """
-    loop_mean = mean_state(looping)
-    control_mean = mean_state(control)
+    loop_mean = mean_state(_window(looping, token_window))
+    control_mean = mean_state(_window(control, token_window))
     if loop_mean.shape != control_mean.shape:
         raise ValueError(
             f"shape mismatch: looping {loop_mean.shape} vs control {control_mean.shape}"
@@ -143,15 +202,20 @@ def direction_from_contrast(
     return (delta / norm).astype(np.float32)
 
 
-def contrast_cosine(looping: np.ndarray, control: np.ndarray) -> float:
+def contrast_cosine(
+    looping: np.ndarray, control: np.ndarray, token_window: str | None = None
+) -> float:
     """Cosine similarity between the two mean states.
 
     Near 1.0 means the contrast found almost no difference, so a direction
     derived from it is mostly noise. Reported alongside the direction so an
     editor can judge whether the capture is worth acting on.
+
+    ``token_window`` must match the one passed to :func:`direction_from_contrast`,
+    or the reported cosine describes a different region than the direction.
     """
-    loop_mean = mean_state(looping)
-    control_mean = mean_state(control)
+    loop_mean = mean_state(_window(looping, token_window))
+    control_mean = mean_state(_window(control, token_window))
     denom = float(np.linalg.norm(loop_mean) * np.linalg.norm(control_mean))
     if denom == 0.0:
         return 0.0
@@ -213,7 +277,7 @@ def summarize_direction(
 
 def subtract_direction(
     weight: np.ndarray,
-    cols: tuple[int, int] | None,
+    cols: tuple[int, int] | list[int] | None,
     direction: np.ndarray,
     scale: float,
 ) -> np.ndarray:
@@ -222,6 +286,13 @@ def subtract_direction(
     ``direction`` is hidden-space and is broadcast down each selected column, so
     the edit removes the loop direction from those neurons' write vectors. This
     is the operation a scalar per-column subtraction cannot express.
+
+    ``cols`` is either a half-open ``(start, stop)`` range or an explicit list of
+    column indices. The list form matters: ``aligned_columns`` ranks columns by
+    alignment and the top-ranked ones are scattered across the matrix, so a
+    contiguous range forces the edit to include columns the evidence did not
+    select. explore13's window ``900:1000`` contained only 3 of the 12 columns its
+    own ranking identified.
     """
     matrix = np.asarray(weight, dtype=np.float32)
     if matrix.ndim != 2:
@@ -233,6 +304,11 @@ def subtract_direction(
         )
 
     out = matrix.copy()
-    c = slice(*cols) if cols else slice(None)
-    out[:, c] = out[:, c] - np.float32(scale) * vec[:, None]
+    if cols is None:
+        selection: slice | list[int] = slice(None)
+    elif isinstance(cols, list):
+        selection = cols
+    else:
+        selection = slice(*cols)
+    out[:, selection] = out[:, selection] - np.float32(scale) * vec[:, None]
     return out

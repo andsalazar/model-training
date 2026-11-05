@@ -288,6 +288,7 @@ class WeightTools:
         looping_prompt: str,
         control_prompt: str,
         max_tokens: int = 64,
+        token_window: str | None = None,
     ) -> str:
         """Derive a hidden-space direction from a looping vs control prompt.
 
@@ -297,12 +298,17 @@ class WeightTools:
         reported so the editor can see whether the contrast found anything: a
         value near 1.0 means the two states were nearly identical and the
         direction is noise.
+
+        ``token_window`` (``"start:stop"``) restricts the contrast to a token
+        range. Averaging over all tokens averages mostly over the prefix the two
+        prompts share, which is why a looping run and its control can come back
+        with a cosine near 1.0 even when their behaviour differs sharply.
         """
         looping = self._capture(looping_prompt, tensor, max_tokens)
         control = self._capture(control_prompt, tensor, max_tokens)
 
         try:
-            vector = direction_from_contrast(looping, control)
+            vector = direction_from_contrast(looping, control, token_window)
         except ValueError as exc:
             raise ToolError(str(exc)) from exc
 
@@ -312,7 +318,7 @@ class WeightTools:
             layer,
             vector,
             n_tokens=int(np.asarray(looping).shape[0]),
-            contrast=contrast_cosine(looping, control),
+            contrast=contrast_cosine(looping, control, token_window),
         )
         self._directions.put(name, vector, summary)
         self.log.record(
@@ -323,6 +329,7 @@ class WeightTools:
                     "tensor": tensor,
                     "looping_prompt": looping_prompt[:120],
                     "control_prompt": control_prompt[:120],
+                    "token_window": token_window,
                 },
                 f"norm {summary.norm:.4f}, contrast_cosine {summary.contrast_cosine:+.4f}",
             )
@@ -343,6 +350,37 @@ class WeightTools:
             )
         out = "\n".join(lines)
         self.log.record(ToolCall("list_directions", {}, f"{len(names)} directions"))
+        return out
+
+    def direction_similarity(self, a: str, b: str) -> str:
+        """Cosine between two captured directions.
+
+        The check that settles whether a direction is signal or noise. A high
+        ``contrast_cosine`` only says the two states looked alike; if the same
+        direction comes back from a different layer or token window, the
+        component is reproducible rather than an artefact of one comparison.
+        """
+        try:
+            score = self._directions.similarity(a, b)
+        except (KeyError, ValueError) as exc:
+            raise ToolError(str(exc)) from exc
+
+        lines = [f"cosine({a!r}, {b!r}) = {score:+.4f}"]
+        if score > 0.9:
+            lines.append(
+                "The two directions agree closely: the component is reproducible, "
+                "so it is signal rather than noise from one comparison."
+            )
+        elif score < 0.3:
+            lines.append(
+                "The two directions disagree: at least one is dominated by noise "
+                "from its own comparison. Prefer a capture with lower "
+                "contrast_cosine, or a token_window past the shared prefix."
+            )
+        out = "\n".join(lines)
+        self.log.record(
+            ToolCall("direction_similarity", {"a": a, "b": b}, f"{score:+.4f}")
+        )
         return out
 
     def aligned_columns(
@@ -406,15 +444,16 @@ class WeightTools:
         if array.ndim != 2:
             raise ToolError(f"{tensor} is not 2-D (shape {array.shape})")
 
-        target = TensorSlice(name=tensor, cols=_parse_range(cols))
-        region = target.apply(array)
+        selection = _parse_cols(cols)
+        target = TensorSlice(name=tensor, cols=selection if isinstance(selection, tuple) else None)
+        region = target.apply(array) if isinstance(selection, tuple) else array[:, selection]
         if region.shape[0] != vector.shape[0]:
             raise ToolError(
                 f"direction has {vector.shape[0]} dims but {tensor} region has "
                 f"{region.shape[0]} rows"
             )
 
-        edited = subtract_direction(array, _parse_range(cols), vector, scale)
+        edited = subtract_direction(array, selection, vector, scale)
 
         out = Path(out_path)
         out.parent.mkdir(parents=True, exist_ok=True)
@@ -544,6 +583,30 @@ def _parse_range(value: str | None) -> tuple[int, int] | None:
     return int(start), int(stop)
 
 
+def _parse_cols(value: str | None) -> tuple[int, int] | list[int] | None:
+    """Parse a column selection: ``"start:stop"`` or ``"12,987,914"``.
+
+    ``aligned_columns`` ranks columns by alignment and the top-ranked ones are
+    scattered, so a contiguous range cannot express the edit the evidence points
+    at. explore13's editor used ``900:1000`` because that was the only form
+    available, and 97 of those 100 columns were not ranked as aligned at all.
+    """
+    if not value:
+        return None
+    text = value.strip()
+    if ":" in text:
+        return _parse_range(text)
+    try:
+        indices = [int(part) for part in text.replace(" ", "").split(",") if part]
+    except ValueError as exc:
+        raise ToolError(
+            f"cols must be 'start:stop' or comma-separated indices: {exc}"
+        ) from exc
+    if not indices:
+        raise ToolError("cols was empty")
+    return indices
+
+
 def _layer_from_tensor(tensor: str) -> int:
     """The decoder layer index in a tensor name, or -1 when there is none."""
     import re
@@ -621,12 +684,29 @@ TOOL_SCHEMA: list[dict[str, Any]] = [
             "looping_prompt": "text that makes the model loop",
             "control_prompt": "text that does not",
             "max_tokens": "integer, default 64",
+            "token_window": (
+                "optional 'start:stop' token range to contrast; use the region "
+                "where the two prompts diverge, not the prefix they share"
+            ),
         },
     },
     {
         "name": "list_directions",
         "description": "Names of captured directions with their norms.",
         "parameters": {},
+    },
+    {
+        "name": "direction_similarity",
+        "description": (
+            "Cosine between two captured directions. Use this to test whether a "
+            "direction is signal: a high contrast_cosine only means the two states "
+            "looked alike, but agreement between captures at different layers or "
+            "token windows means the component is reproducible."
+        ),
+        "parameters": {
+            "a": "first captured direction name",
+            "b": "second captured direction name",
+        },
     },
     {
         "name": "aligned_columns",
@@ -650,7 +730,10 @@ TOOL_SCHEMA: list[dict[str, Any]] = [
         "parameters": {
             "tensor": "name",
             "direction": "captured direction name",
-            "cols": "start:stop or null for all",
+            "cols": (
+                "start:stop, or comma-separated indices like '12,987,914' to "
+                "edit exactly the columns aligned_columns ranked, or null for all"
+            ),
             "scale": "how far to move along the direction",
             "out_path": "where to save",
         },

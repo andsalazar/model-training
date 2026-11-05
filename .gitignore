@@ -32,3 +32,6 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Downloaded run evidence (large JSON from pod runs)
+artifacts/

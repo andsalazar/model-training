@@ -52,10 +52,15 @@ TASK = (
     "answer -- 'What is 12 times 11? Answer with just the number.' completes in "
     "471 tokens, while 'Reply with only the digits.' runs to 2048. That is a "
     "genuine contrast between two states of the same question, not between math "
-    "and prose. A contrast_cosine near 1.0 means the contrast found nothing; a "
-    "low one means the two states genuinely differ. Capture directions at more "
-    "than one layer and compare their contrast_cosine before choosing where to "
-    "edit."
+    "and prose.\n\n"
+    "A high contrast_cosine is a caution, not a verdict. It compares the two "
+    "mean states, and a prefix both prompts share appears in both means and "
+    "cancels when they are subtracted -- so the direction can be real even when "
+    "the cosine is near 1.0. Do not abandon a direction on the cosine alone. "
+    "Test it: capture the same direction at another layer or with a token_window "
+    "past the shared prefix, then call direction_similarity. Agreement means the "
+    "component is reproducible and worth acting on; disagreement means it is "
+    "noise. Only then choose where to edit."
 )
 
 

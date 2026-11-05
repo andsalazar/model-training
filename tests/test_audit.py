@@ -233,6 +233,98 @@ def test_accepts_edit_claim_with_a_successful_edit() -> None:
     assert result.clean
 
 
+def test_flags_misquoted_direction_similarity() -> None:
+    """Regression for explore13's central false claim.
+
+    The conclusion reported "direction_similarity between them was 0.9995" while
+    the tool actually returned -0.0485. The tool was called and succeeded, so
+    every presence check passed; only the value was invented. That inversion
+    matters: -0.0485 means the two directions disagree, which is the opposite of
+    the "reproducible component" the conclusion built its edit on.
+    """
+    calls = [
+        {
+            "name": "direction_similarity",
+            "args": {},
+            "ok": True,
+            "result": "cosine('loop_L12', 'loop_L20') = -0.0485",
+        }
+    ]
+    result = audit_conclusion(
+        "direction_similarity between them was 0.9995, so the component is "
+        "reproducible rather than noise.",
+        calls,
+    )
+    assert not result.clean
+    assert any(f.kind == "misquoted-number" for f in result.findings)
+
+
+def test_accepts_a_correctly_quoted_direction_similarity() -> None:
+    calls = [
+        {
+            "name": "direction_similarity",
+            "args": {},
+            "ok": True,
+            "result": "cosine('loop_L12', 'loop_L20') = -0.0485",
+        }
+    ]
+    result = audit_conclusion(
+        "direction_similarity between them was -0.0485, so they disagree.", calls
+    )
+    assert result.clean
+
+
+def test_flags_misquoted_token_count() -> None:
+    """explore13 claimed a held-out question answered "in 24 tokens".
+
+    No measure_loop in that run measured 24 tokens; the real held-out result was
+    never obtained at all. A token count is a tool's output, so quoting one the
+    tool did not return is fabrication of the same kind as a fake verdict.
+    """
+    calls = [
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": false, "hit_cap": false, "tokens": 191}',
+        }
+    ]
+    result = audit_conclusion(
+        "a held-out question (17x23) still answers correctly in 24 tokens", calls
+    )
+    assert not result.clean
+    assert any(f.kind == "misquoted-number" for f in result.findings)
+
+
+def test_accepts_a_correctly_quoted_token_count() -> None:
+    calls = [
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": false, "hit_cap": false, "tokens": 191}',
+        }
+    ]
+    result = audit_conclusion("the target prompt now stops at 191 tokens", calls)
+    assert result.clean
+
+
+def test_misquoted_number_ignores_errored_calls() -> None:
+    """An errored call returned no number, so it cannot license a quote."""
+    calls = [
+        {
+            "name": "direction_similarity",
+            "args": {},
+            "ok": False,
+            "result": "ERROR: no captured direction 'loop_L20'",
+        }
+    ]
+    result = audit_conclusion("direction_similarity was 0.9995", calls)
+    # No successful activation call at all, so the activation-data check fires;
+    # the point is that the number is not silently accepted as observed.
+    assert not result.clean
+
+
 def test_audit_run_flags_bracket_framed_fabricated_evidence() -> None:
     """Regression for the sixth live run.
 

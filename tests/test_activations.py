@@ -73,6 +73,61 @@ def test_contrast_cosine_handles_zero_state() -> None:
     assert contrast_cosine(zero, np.ones((1, 4))) == 0.0
 
 
+def _shared_prefix_fixture(prefix_len: int = 40, tail_len: int = 4):
+    """Two runs that share a long prefix and diverge only at the end.
+
+    This is the explore12 failure in miniature: averaged over all tokens the two
+    states look nearly identical, because the prefix dominates the mean.
+    """
+    prefix = np.tile(np.array([1.0, 0.0], dtype=np.float32), (prefix_len, 1))
+    looping = np.vstack([prefix, np.tile([1.0, 0.0], (tail_len, 1))])
+    control = np.vstack([prefix, np.tile([0.0, 1.0], (tail_len, 1))])
+    return looping, control, prefix_len, prefix_len + tail_len
+
+
+def test_token_window_isolates_the_divergent_region() -> None:
+    looping, control, start, stop = _shared_prefix_fixture()
+
+    # Over all tokens the states are dominated by the shared prefix.
+    assert contrast_cosine(looping, control) > 0.9
+
+    # Past the prefix they are orthogonal.
+    window = f"{start}:{stop}"
+    assert contrast_cosine(looping, control, window) == pytest.approx(0.0, abs=1e-6)
+
+
+def test_shared_prefix_cancels_in_the_direction() -> None:
+    """The prefix cancels in the subtraction, so the direction is unaffected.
+
+    This is why explore12's conclusion was too pessimistic. A cosine near 1.0
+    between the two *means* says the states look alike, not that the direction is
+    noise: the shared prefix appears in both means and cancels when they are
+    subtracted. The window changes how much of the divergent tail is averaged in,
+    which changes the direction's weighting, but not its sign or its existence.
+    """
+    looping, control, start, stop = _shared_prefix_fixture()
+
+    whole = direction_from_contrast(looping, control)
+    windowed = direction_from_contrast(looping, control, f"{start}:{stop}")
+
+    # Both point the same way: +x, -y. The prefix did not corrupt the direction.
+    assert whole.tolist() == pytest.approx([0.70710665, -0.7071069], abs=1e-5)
+    assert windowed.tolist() == pytest.approx([0.70710677, -0.70710677], abs=1e-5)
+    assert float(np.dot(whole, windowed)) > 0.9999
+
+
+def test_token_window_rejects_out_of_range() -> None:
+    array = np.ones((4, 2), dtype=np.float32)
+    with pytest.raises(ValueError, match="outside"):
+        direction_from_contrast(array, array, "0:9")
+
+
+def test_token_window_rejects_empty_range() -> None:
+    array = np.ones((4, 2), dtype=np.float32)
+    with pytest.raises(ValueError, match="outside"):
+        direction_from_contrast(array, array, "2:2")
+
+
 def test_column_alignment_scores_each_column() -> None:
     # Column 0 points along +x, column 1 along +y.
     weight = np.array([[1.0, 0.0], [0.0, 1.0]], dtype=np.float32)
@@ -132,18 +187,22 @@ def test_summary_renders_as_text() -> None:
     assert "WARNING" not in text, "a real contrast must not be warned about"
 
 
-def test_summary_warns_about_a_weak_contrast() -> None:
-    """A normalised direction hides how weak its contrast was.
+def test_summary_cautions_about_a_high_contrast_cosine() -> None:
+    """A normalised direction hides how similar its two states were.
 
     The norm is always 1.0, so an editor reading only the norm would think it had
-    a strong signal when the two states were nearly identical. The warning makes
-    that visible.
+    a strong signal when the two states were nearly identical. The caution makes
+    that visible — but it must not claim the direction is noise, because a shared
+    prefix cancels in the subtraction. explore12's editor read the old wording as
+    fatal and abandoned a usable direction.
     """
     vec = np.array([0.1, -0.9], dtype=np.float32)
     s = summarize_direction("noise", 12, vec, n_tokens=4, contrast=0.9999, k=2)
     text = s.as_text()
-    assert "WARNING" in text
-    assert "mostly noise" in text
+    assert "CAUTION" in text
+    assert "not proof the direction is noise" in text
+    # It must point at the check that settles it.
+    assert "direction_similarity" in text or "compare the two vectors" in text
 
 
 def test_subtract_direction_removes_the_component() -> None:
@@ -166,6 +225,22 @@ def test_subtract_direction_only_touches_selected_columns() -> None:
     assert out[0, 1] == pytest.approx(0.5)
     assert out[0, 2] == pytest.approx(0.5)
     assert out[0, 3] == pytest.approx(1.0), "column 3 is outside the half-open range"
+
+
+def test_subtract_direction_accepts_an_explicit_column_list() -> None:
+    """The ranked columns are scattered, so a range cannot express the edit.
+
+    explore13's editor used ``900:1000`` because that was the only form the tool
+    accepted, and only 3 of the 12 columns its own alignment ranking identified
+    fell inside it. An explicit list edits exactly the ranked columns.
+    """
+    weight = np.ones((2, 6), dtype=np.float32)
+    d = np.array([1.0, 1.0], dtype=np.float32)
+    out = subtract_direction(weight, [1, 4], d, scale=0.5)
+    assert out[0, 1] == pytest.approx(0.5)
+    assert out[0, 4] == pytest.approx(0.5)
+    for col in (0, 2, 3, 5):
+        assert out[0, col] == pytest.approx(1.0), f"column {col} must be untouched"
 
 
 def test_subtract_direction_does_not_mutate_the_input() -> None:
@@ -201,3 +276,24 @@ def test_registry_lists_known_names_in_the_error() -> None:
     reg.put("alpha", vec, summarize_direction("alpha", 1, vec, n_tokens=1, contrast=0.1))
     with pytest.raises(KeyError, match="alpha"):
         reg.get("beta")
+
+
+def test_registry_similarity_measures_agreement() -> None:
+    """Agreement between captures is what distinguishes signal from noise."""
+    reg = ActivationRegistry()
+    same = np.array([0.6, 0.8], dtype=np.float32)
+    opposite = np.array([-0.6, -0.8], dtype=np.float32)
+    for name, vec in (("a", same), ("b", same), ("c", opposite)):
+        reg.put(name, vec, summarize_direction(name, 1, vec, n_tokens=1, contrast=0.5))
+
+    assert reg.similarity("a", "b") == pytest.approx(1.0)
+    assert reg.similarity("a", "c") == pytest.approx(-1.0)
+
+
+def test_registry_similarity_rejects_dim_mismatch() -> None:
+    reg = ActivationRegistry()
+    for name, dim in (("a", 2), ("b", 3)):
+        vec = np.ones(dim, dtype=np.float32)
+        reg.put(name, vec, summarize_direction(name, 1, vec, n_tokens=1, contrast=0.5))
+    with pytest.raises(ValueError, match="different dims"):
+        reg.similarity("a", "b")

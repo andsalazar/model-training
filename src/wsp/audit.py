@@ -27,6 +27,7 @@ ACTIVATION_TOOLS = frozenset(
         "capture_direction",
         "aligned_columns",
         "list_directions",
+        "direction_similarity",
     }
 )
 
@@ -199,6 +200,13 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
     for finding in _contradicted_verdicts(conclusion, tool_calls):
         result.findings.append(finding)
 
+    # A conclusion can also cite a tool's *number* while misquoting it. The
+    # checks above only ask whether a tool was called; explore13's conclusion
+    # reported a direction_similarity of 0.9995 when the tool returned -0.0485,
+    # and a held-out "24 tokens" that no measurement produced.
+    for finding in _misquoted_numbers(conclusion, tool_calls):
+        result.findings.append(finding)
+
     # Claiming an edit was applied when the edit call errored is fabrication of
     # a different kind: the conclusion reports a mutation that never happened.
     if _EDIT_CLAIM.search(conclusion) and not _succeeded(tool_calls, EDIT_TOOLS):
@@ -227,6 +235,97 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
 _CLAIMED_LOOP_VERDICT = re.compile(
     r"looped\W{0,3}(true|false)", re.IGNORECASE
 )
+
+#: Metric names a tool reports, paired with the tools whose results carry them.
+#: Ordered longest-first so "contrast_cosine" is matched before "cosine".
+_METRIC_TOOLS: tuple[tuple[str, frozenset[str]], ...] = (
+    ("contrast_cosine", ACTIVATION_TOOLS),
+    ("direction_similarity", ACTIVATION_TOOLS),
+    ("cosine", ACTIVATION_TOOLS),
+)
+
+#: A decimal number quoted next to a metric name, e.g. "cosine 0.9995".
+_QUOTED_DECIMAL = re.compile(r"-?\d+\.\d+")
+
+#: A token count quoted next to the word "tokens", e.g. "191 tokens".
+_QUOTED_TOKEN_COUNT = re.compile(r"\b(\d+)\s*tokens\b", re.IGNORECASE)
+
+
+def _real_results(tool_calls: list[dict], names: frozenset[str]) -> str:
+    """Concatenated results of the successful calls to ``names``."""
+    parts: list[str] = []
+    for call in tool_calls:
+        if call.get("name") not in names:
+            continue
+        if not call.get("ok", True):
+            continue
+        result = str(call.get("result", ""))
+        if result.startswith("ERROR"):
+            continue
+        parts.append(result)
+    return "\n".join(parts).replace(",", "")
+
+
+def _misquoted_numbers(conclusion: str, tool_calls: list[dict]) -> list[AuditFinding]:
+    """Findings for numbers the conclusion attributes to a tool but misquotes.
+
+    explore13's conclusion reported "direction_similarity between them was
+    0.9995" while the tool returned -0.0485, and "a held-out question (17x23)
+    still answers correctly in 24 tokens" when no such measurement was ever
+    made. Both are the same failure: the conclusion cites a tool's number
+    without that number appearing in the tool's output. The presence checks
+    above cannot see it, because the tool really was called and really did
+    succeed — only the value is invented.
+    """
+    findings: list[AuditFinding] = []
+    seen: set[str] = set()
+
+    for metric, names in _METRIC_TOOLS:
+        results = _real_results(tool_calls, names)
+        for match in re.finditer(re.escape(metric), conclusion, re.IGNORECASE):
+            window = conclusion[match.end() : match.end() + 80]
+            for number in _QUOTED_DECIMAL.findall(window):
+                if number in seen:
+                    continue
+                if results and number.lstrip("-") in results:
+                    continue
+                seen.add(number)
+                reason = (
+                    "conclusion quotes a value the tool did not return; "
+                    f"real results: {results[:200]!r}"
+                    if results
+                    else "conclusion quotes a value from a tool that never "
+                    "returned a result"
+                )
+                findings.append(
+                    AuditFinding(
+                        kind="misquoted-number",
+                        claim=f"{metric} {number}",
+                        reason=reason,
+                    )
+                )
+
+    behaviour = _real_results(tool_calls, BEHAVIOUR_TOOLS)
+    if behaviour:
+        for match in _QUOTED_TOKEN_COUNT.finditer(conclusion):
+            number = match.group(1)
+            if number in seen:
+                continue
+            if re.search(rf"\b{number}\b", behaviour):
+                continue
+            seen.add(number)
+            findings.append(
+                AuditFinding(
+                    kind="misquoted-number",
+                    claim=f"{number} tokens",
+                    reason=(
+                        "conclusion quotes a token count no measure_loop or "
+                        f"run_model returned; real results: {behaviour[:200]!r}"
+                    ),
+                )
+            )
+
+    return findings
 
 #: A loop verdict inside a real measure_loop result.
 _OBSERVED_LOOP_VERDICT = re.compile(

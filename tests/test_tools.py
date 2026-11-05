@@ -315,6 +315,41 @@ def test_list_directions_when_empty(tools: WeightTools) -> None:
     assert tools.list_directions() == "no captured directions"
 
 
+def test_direction_similarity_reports_agreement(tmp_path) -> None:
+    """Two captures of the same direction should agree closely."""
+    looping = np.array([[1.0, 0.0, 0.0, 0.0]], dtype=np.float32)
+    control = np.zeros((1, 4), dtype=np.float32)
+    tools, _ = _capture_tools(tmp_path, {"loop": looping, "calm": control})
+
+    tools.capture_direction("a", "w", "loop", "calm")
+    tools.capture_direction("b", "w", "loop", "calm")
+
+    out = tools.direction_similarity("a", "b")
+    assert "cosine('a', 'b') = +1.0000" in out
+    assert "reproducible" in out
+
+
+def test_direction_similarity_rejects_unknown_name(tools: WeightTools) -> None:
+    with pytest.raises(ToolError, match="no captured direction"):
+        tools.direction_similarity("missing", "also_missing")
+
+
+def test_capture_direction_accepts_a_token_window(tmp_path) -> None:
+    """The window must reach the contrast, not just be accepted and ignored."""
+    # A long shared prefix, so averaging over all tokens hides the divergence.
+    prefix = np.tile(np.array([1.0, 0.0], dtype=np.float32), (40, 1))
+    looping = np.vstack([prefix, np.tile([1.0, 0.0], (4, 1))])
+    control = np.vstack([prefix, np.tile([0.0, 1.0], (4, 1))])
+    tools, _ = _capture_tools(tmp_path, {"loop": looping, "calm": control})
+
+    whole = tools.capture_direction("whole", "w", "loop", "calm")
+    windowed = tools.capture_direction("win", "w", "loop", "calm", token_window="40:44")
+
+    # Over all tokens the states look alike; past the prefix they do not.
+    assert "contrast_cosine +0.9" in whole
+    assert "contrast_cosine +0.0000" in windowed
+
+
 def test_aligned_columns_ranks_by_alignment(tmp_path) -> None:
     weight = np.zeros((4, 8), dtype=np.float32)
     weight[0, 5] = 1.0  # column 5 points along +x
@@ -375,6 +410,46 @@ def test_apply_directional_edit_changes_weights(tmp_path) -> None:
     # Row 0 carried the whole direction, so it drops by 1.0 in the edited columns.
     assert edited[0, 0] == pytest.approx(0.0)
     assert edited[0, 2] == pytest.approx(1.0), "column 2 is outside the range"
+
+
+def test_apply_directional_edit_accepts_a_column_list(tmp_path) -> None:
+    """Editing exactly the ranked columns, not a range that contains them."""
+    weight = np.ones((4, 8), dtype=np.float32)
+    store = FakeStore({"w": weight})
+    store.path = tmp_path / "src" / "model.safetensors"
+    store.path.parent.mkdir(parents=True, exist_ok=True)
+    from safetensors.numpy import save_file
+
+    save_file({"w": weight}, str(store.path))
+    (store.path.parent / "config.json").write_text("{}", encoding="utf-8")
+
+    def reopen(path):
+        from safetensors import safe_open
+
+        with safe_open(str(path), framework="np") as handle:
+            store._tensors = {"w": handle.get_tensor("w")}
+
+    store.reopen = reopen
+
+    capturer = FakeCapturer(
+        {
+            "loop": np.array([[1.0, 0.0, 0.0, 0.0]], dtype=np.float32),
+            "calm": np.zeros((1, 4), dtype=np.float32),
+        }
+    )
+    tools = WeightTools(store, ReloadableRunner(), capturer=capturer)
+    tools.capture_direction("d", "w", "loop", "calm")
+
+    out = tools.apply_directional_edit(
+        "w", "d", cols="1,4", scale=1.0, out_path=str(tmp_path / "edited")
+    )
+    assert "subtracted" in out
+
+    edited = store.get("w")
+    assert edited[0, 1] == pytest.approx(0.0)
+    assert edited[0, 4] == pytest.approx(0.0)
+    for col in (0, 2, 3, 5, 6, 7):
+        assert edited[0, col] == pytest.approx(1.0), f"column {col} must be untouched"
 
 
 def test_apply_directional_edit_rejects_unknown_direction(tools: WeightTools) -> None:
