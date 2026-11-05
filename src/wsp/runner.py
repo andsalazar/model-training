@@ -211,5 +211,31 @@ def write_edited_checkpoint(
             else:
                 tensors[key] = handle.get_tensor(key).float().numpy()
 
-    save_file(tensors, str(out_dir / "model.safetensors"))
+    # Write under the filename the index expects. A sharded checkpoint's
+    # model.safetensors.index.json names its shards explicitly, so writing
+    # "model.safetensors" leaves the index pointing at a file that is not there.
+    target_name = _shard_name_for(source, out_dir)
+    save_file(tensors, str(out_dir / target_name))
+
+    # Drop any stale index: the single written file now holds every tensor.
+    index = out_dir / "model.safetensors.index.json"
+    if index.exists():
+        index.unlink()
+
     return out_dir
+
+
+def _shard_name_for(source: Path, out_dir: Path) -> str:
+    """The filename the checkpoint's index expects, or a safe default."""
+    index = out_dir / "model.safetensors.index.json"
+    if index.exists():
+        try:
+            import json
+
+            data = json.loads(index.read_text(encoding="utf-8"))
+            shards = set((data.get("weight_map") or {}).values())
+            if len(shards) == 1:
+                return shards.pop()
+        except Exception:  # noqa: BLE001 - fall through to the default
+            pass
+    return source.name

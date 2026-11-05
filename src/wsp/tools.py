@@ -266,7 +266,7 @@ class WeightTools:
 
         # Verify against the written file, not the in-memory array, so a silent
         # no-op cannot recur.
-        written = ckpt_dir / "model.safetensors"
+        written = next(ckpt_dir.glob("*.safetensors"))
         self._store.reopen(written)
         reloaded = self._store.get(tensor)
         changed = int(np.count_nonzero(~np.isclose(reloaded, array, rtol=0.0, atol=0.0)))

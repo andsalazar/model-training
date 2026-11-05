@@ -60,3 +60,50 @@ def test_null_runner_measure_raises() -> None:
 def test_null_runner_reload_raises() -> None:
     with pytest.raises(RuntimeError, match="no model attached"):
         NullRunner().reload("x")
+
+
+def test_write_edited_checkpoint_uses_index_shard_name(tmp_path) -> None:
+    """A sharded checkpoint's index names its shard; the write must match it.
+
+    Writing 'model.safetensors' while the index points at
+    'model.safetensors-00001-of-00001.safetensors' makes vLLM fail to load.
+    """
+    import json
+
+    import numpy as np
+    from safetensors.numpy import save_file
+
+    from wsp.runner import write_edited_checkpoint
+
+    src = tmp_path / "src"
+    src.mkdir()
+    shard = "model.safetensors-00001-of-00001.safetensors"
+    save_file({"w": np.ones((2, 2), dtype=np.float32)}, str(src / shard))
+    (src / "config.json").write_text("{}", encoding="utf-8")
+    (src / "model.safetensors.index.json").write_text(
+        json.dumps({"weight_map": {"w": shard}}), encoding="utf-8"
+    )
+
+    out = write_edited_checkpoint(
+        src / shard, "w", np.zeros((2, 2), dtype=np.float32), tmp_path / "out"
+    )
+
+    assert (out / shard).exists(), "must write under the indexed shard name"
+    assert not (out / "model.safetensors").exists()
+    assert not (out / "model.safetensors.index.json").exists(), "stale index removed"
+
+
+def test_write_edited_checkpoint_keeps_plain_name_without_index(tmp_path) -> None:
+    import numpy as np
+    from safetensors.numpy import save_file
+
+    from wsp.runner import write_edited_checkpoint
+
+    src = tmp_path / "src"
+    src.mkdir()
+    save_file({"w": np.ones((2, 2), dtype=np.float32)}, str(src / "model.safetensors"))
+
+    out = write_edited_checkpoint(
+        src / "model.safetensors", "w", np.zeros((2, 2), dtype=np.float32), tmp_path / "out"
+    )
+    assert (out / "model.safetensors").exists()
