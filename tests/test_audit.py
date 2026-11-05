@@ -325,6 +325,74 @@ def test_misquoted_number_ignores_errored_calls() -> None:
     assert not result.clean
 
 
+def test_flags_an_edit_that_was_never_measured() -> None:
+    """Regression for explore14.
+
+    The editor applied two directional edits and then reported post-edit token
+    counts without calling measure_loop after either one. The edit succeeded and
+    measure_loop was called earlier in the run, so every presence check passed
+    while the "after the edit" numbers were invented. Ordering is the evidence.
+    """
+    calls = [
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": false, "hit_cap": true, "tokens": 2048}',
+        },
+        {
+            "name": "apply_directional_edit",
+            "args": {},
+            "ok": True,
+            "result": "subtracted 1.0 x direction 'd' ... and reloaded",
+        },
+    ]
+    result = audit_conclusion(
+        "I applied the edit. After the edit the target prompt ran 191 tokens.",
+        calls,
+    )
+    assert not result.clean
+    assert any(f.kind == "unmeasured-edit" for f in result.findings)
+
+
+def test_accepts_an_edit_measured_afterwards() -> None:
+    calls = [
+        {
+            "name": "apply_directional_edit",
+            "args": {},
+            "ok": True,
+            "result": "subtracted 1.0 x direction 'd' ... and reloaded",
+        },
+        {
+            "name": "measure_loop",
+            "args": {},
+            "ok": True,
+            "result": '{"looped": false, "hit_cap": false, "tokens": 191}',
+        },
+    ]
+    result = audit_conclusion(
+        "I applied the edit. After the edit the target prompt ran 191 tokens.",
+        calls,
+    )
+    assert result.clean
+
+
+def test_unmeasured_edit_ignores_a_failed_edit() -> None:
+    """A failed edit is already an edit-claim finding; do not double-report."""
+    calls = [
+        {
+            "name": "apply_directional_edit",
+            "args": {},
+            "ok": False,
+            "result": "ERROR: arguments were not valid JSON",
+        }
+    ]
+    result = audit_conclusion("I applied the edit to columns 0:4.", calls)
+    kinds = {f.kind for f in result.findings}
+    assert "edit-claim" in kinds
+    assert "unmeasured-edit" not in kinds
+
+
 def test_audit_run_flags_bracket_framed_fabricated_evidence() -> None:
     """Regression for the sixth live run.
 

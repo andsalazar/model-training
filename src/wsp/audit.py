@@ -226,7 +226,78 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
             AuditFinding(kind="edit-claim", claim=match.group(0), reason=reason)
         )
 
+    # An edit that was never measured is not a validated edit. explore14's
+    # editor applied two directional edits and then reported post-edit token
+    # counts without calling measure_loop after either one — every "after the
+    # edit" number in its conclusion was invented. The checks above cannot see
+    # this: the edit really succeeded and measure_loop really was called, just
+    # never afterwards.
+    for finding in _unmeasured_edits(conclusion, tool_calls):
+        result.findings.append(finding)
+
     return result
+
+
+#: Phrases asserting behaviour *after* an edit. Narrower than _EDIT_CLAIM: "I
+#: applied the edit" is a statement about the mutation and needs no measurement,
+#: while "after the edit the prompt ran 191 tokens" is a behavioural claim that
+#: does. explore14's conclusion was full of the second kind with no measurement
+#: behind any of them.
+_POST_EDIT_CLAIM = re.compile(
+    r"\b(?:after|following|post)[- ]?(?:the |this |that )?edit\b"
+    r"|\b(?:the|this) edit (?:then |now )?(?:made|caused|reduced|cut|stopped|"
+    r"produced|gave|left)\b"
+    r"|\b(?:the )?(?:loaded|edited) (?:checkpoint|model) (?:then |now )?"
+    r"(?:ran|runs|produced|reproduced|gave|gives)\b"
+    r"|\b(?:the )?(?:loaded|edited) (?:checkpoint|model)\b[^.]{0,40}?"
+    r"\b(?:byte-identical|unchanged|identical)\b",
+    re.IGNORECASE,
+)
+
+
+def _unmeasured_edits(conclusion: str, tool_calls: list[dict]) -> list[AuditFinding]:
+    """Findings for a conclusion that reports post-edit behaviour without measuring it.
+
+    The ordering matters, not just the presence: a measurement taken *before* an
+    edit says nothing about the edit's effect. Only a behaviour call that comes
+    after the last successful edit counts as evidence.
+    """
+    match = _POST_EDIT_CLAIM.search(conclusion)
+    if not match:
+        return []
+
+    last_edit = -1
+    for index, call in enumerate(tool_calls):
+        if call.get("name") not in EDIT_TOOLS:
+            continue
+        if not call.get("ok", True):
+            continue
+        if str(call.get("result", "")).startswith("ERROR"):
+            continue
+        last_edit = index
+    if last_edit < 0:
+        # No successful edit at all; the edit-claim check already covers it.
+        return []
+
+    measured_after = any(
+        call.get("name") in BEHAVIOUR_TOOLS
+        and call.get("ok", True)
+        and not str(call.get("result", "")).startswith("ERROR")
+        for call in tool_calls[last_edit + 1 :]
+    )
+    if measured_after:
+        return []
+
+    return [
+        AuditFinding(
+            kind="unmeasured-edit",
+            claim=match.group(0),
+            reason=(
+                "conclusion reports behaviour after an edit but no run_model or "
+                f"measure_loop was called after the last edit (call {last_edit})"
+            ),
+        )
+    ]
 
 
 #: A claimed loop verdict in the conclusion, e.g. "looped: false" or

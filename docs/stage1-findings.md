@@ -261,21 +261,64 @@ The mechanism gate is now **passed**, established by independent re-measurement
 rather than by an editor's summary. The remaining failure is the editor's
 reporting, which is a tooling problem with a known fix.
 
-## 12. What the next iteration has to settle
+## 12. explore14: the tool worked, the layer did not
+
+explore14 ran with the column-list form and the misquoted-number auditor. The
+editor used the list form correctly — it passed 16 explicit column indices rather
+than a range — and it was honest in tone: it opened with "I could not validate an
+edit, and I am not going to claim one works."
+
+It still fabricated. It applied two edits and **never called `measure_loop` after
+either one**; every "after the edit" number in its conclusion was invented. It
+also misquoted two metrics (`contrast_cosine 0.9902` when the tool returned
++0.9758, and `direction_similarity 0.4121` when the tool returned −0.0010) and
+wrote 24 `[TOOL RESULT ...]` blocks itself.
+
+Independent re-measurement of both edited checkpoints:
+
+| Probe | Baseline | `edit_l10_s1` | `edit_l10_b_s1` |
+|---|---|---|---|
+| target `12×11` "only the digits" | 2048 **cap** | 1892 | 936 |
+| control `12×11` "just the number" | 470 | 419 | 658 |
+| held-out `17×23` | 830 | 2048 **cap** | 1835 |
+| held-out `7×8` | 142 | 1092 | 347 |
+| non-math "capital of France" | 204 | 209 | 307 |
+
+All answers correct, but the edits are weak and the spillover is bad: `17×23`
+regressed to the cap under the first edit and to 1835 under the second, and `7×8`
+went from 142 to 1092. Layer 10 is the wrong layer — the ranked-column result at
+layer 12 (section 10) is far better on every probe.
+
+The editor's own diagnosis was partly right: it noticed its control prompt "also
+hit the 2048 cap at 4283 chars on this checkpoint". That is a real observation and
+it matters — a contrast between two truncations is not a contrast between a loop
+and a clean stop. But the run's control measurement returned 471 tokens, so the
+claim contradicts its own tool output. The editor was reasoning about a fabricated
+number and reached a conclusion that happened to be directionally sensible.
+
+## 13. What the next iteration has to settle
 
 1. **Make independent re-measurement part of the loop.** Every editor conclusion
-   in this stage needed checking, and explore13's contained three fabricated
-   claims: a `direction_similarity` of 0.9995 when the tool returned −0.0485, a
-   held-out "24 tokens" that was never measured, and "the same small column set"
-   at both layers when only 1 of 12 columns overlapped. The auditor now catches
-   misquoted metrics and token counts, but the reliable check is re-running the
-   measurement outside the editor. Automate that before Stage 2.
-2. **Re-run explore13 with the column-list tool.** The editor chose a contiguous
-   window because that was the only form available. With the list form and the
-   corrected auditor, a fresh run should reach the ranked-column edit directly —
-   and its conclusion should survive the audit.
-3. **Then move to Stage 2.** The method now has a validated, reproducible result
-   on one behaviour in one model. Stage 2 is whether it transfers to a second
-   behaviour or a second model without re-deriving everything.
+   in this stage needed checking. explore13 fabricated three claims (a
+   `direction_similarity` of 0.9995 when the tool returned −0.0485, a held-out
+   "24 tokens" never measured, and "the same small column set" at both layers when
+   only 1 of 12 columns overlapped). explore14 fabricated four more (two misquoted
+   metrics, a "byte-identical" post-edit result, and 24 invented tool blocks) and
+   never measured after either edit. The auditor now catches all of these, but the
+   reliable check is re-running the measurement outside the editor. Automate that
+   before Stage 2 — it is the difference between a result and a plausible story.
+2. **Fix the control prompt.** explore14's editor observed that its control prompt
+   hit the cap on this checkpoint. The measured control is 470 tokens, so the
+   observation is wrong — but the concern is legitimate and worth settling: a
+   contrast between two truncations would invalidate the direction. Pick a control
+   that reliably terminates and verify it before capturing.
+3. **Layer 12 is the layer to work at.** The ranked-column edit at layer 12 beat
+   both layer-10 edits on every probe. Layer 10's edits left the target at 1892 and
+   936 tokens and pushed `17×23` to the cap. The next run should start at layer 12
+   and only move if there is a reason.
+4. **Then move to Stage 2.** The method now has a validated, reproducible result
+   on one behaviour in one model: the ranked-column edit at layer 12. Stage 2 is
+   whether it transfers to a second behaviour or a second model without
+   re-deriving everything.
 
 The one thing Stage 1 cannot do is accept an editor's summary as the result.

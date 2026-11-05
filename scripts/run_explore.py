@@ -60,7 +60,18 @@ TASK = (
     "Test it: capture the same direction at another layer or with a token_window "
     "past the shared prefix, then call direction_similarity. Agreement means the "
     "component is reproducible and worth acting on; disagreement means it is "
-    "noise. Only then choose where to edit."
+    "noise. Only then choose where to edit.\n\n"
+    "Edit the columns aligned_columns ranked, not a contiguous window around "
+    "them. The ranked columns are scattered across the matrix, and a range that "
+    "happens to contain a few of them also edits dozens of columns the evidence "
+    "did not select. apply_directional_edit takes either form: 'start:stop' or a "
+    "comma-separated list like '102,987,914'. Use the list.\n\n"
+    "A single prompt improving is not evidence the edit works. Measure held-out "
+    "prompts too -- other multiplication questions and a non-math control -- "
+    "before and after the edit. An edit that shortens one answer while pushing "
+    "another to the token cap has redistributed the behaviour, not suppressed "
+    "it. Report the held-out numbers you actually measured, including any that "
+    "got worse."
 )
 
 
