@@ -171,6 +171,32 @@ async def test_agent_ignores_done_quoted_mid_line() -> None:
 
 
 @pytest.mark.asyncio
+async def test_agent_reports_turn_budget_in_prompt() -> None:
+    editor = ScriptedEditor(["DONE\nconcluded"])
+    await run_agent(editor, _tools(), "fix the loop", max_turns=7)
+
+    assert "turn 1 of 7" in editor.prompts[0]
+    assert "6 turns" in editor.prompts[0]
+
+
+@pytest.mark.asyncio
+async def test_agent_nudges_toward_testing_late_in_run() -> None:
+    # Three turns of exploration, then the budget is nearly gone.
+    editor = ScriptedEditor(
+        [
+            'CALL list_tensors\n{"pattern": ""}',
+            'CALL list_tensors\n{"pattern": ""}',
+            'CALL list_tensors\n{"pattern": ""}',
+            "DONE\nconcluded",
+        ]
+    )
+    await run_agent(editor, _tools(), "fix the loop", max_turns=4)
+
+    # The third prompt should carry the commit-to-a-test nudge.
+    assert any("Stop exploring" in p for p in editor.prompts)
+
+
+@pytest.mark.asyncio
 async def test_agent_serializes_to_dict() -> None:
     editor = ScriptedEditor(["DONE\nconcluded"])
     run = await run_agent(editor, _tools(), "fix the loop")

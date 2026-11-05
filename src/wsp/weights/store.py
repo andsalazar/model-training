@@ -54,6 +54,18 @@ class WeightStore:
     def close(self) -> None:
         self._handle = None  # type: ignore[assignment]
 
+    def reopen(self, path: str | Path) -> None:
+        """Point the store at a different checkpoint.
+
+        Used after an edit so subsequent reads see the edited weights rather
+        than the original.
+        """
+        self.path = Path(path)
+        if not self.path.exists():
+            raise FileNotFoundError(f"checkpoint not found: {self.path}")
+        self._handle = safe_open(str(self.path), framework="pt", device="cpu")
+        self._keys = list(self._handle.keys())
+
     @property
     def keys(self) -> list[str]:
         return list(self._keys)

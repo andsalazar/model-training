@@ -107,12 +107,21 @@ async def run_agent(
 
     history = [
         f"{task}\n\n{_tool_help()}\n\n"
-        f"You have {tools.forward_passes_left} forward passes available."
+        f"You have {tools.forward_passes_left} forward passes and {max_turns} turns. "
+        f"Budget them: gather evidence early, then test an edit. Do not spend "
+        f"every turn inspecting."
     ]
 
     for turn in range(max_turns):
         run.turns = turn + 1
+        remaining = max_turns - turn
         prompt = "\n\n".join(history)
+        # A per-turn budget reminder keeps the editor from exploring until it
+        # runs out, which is what happened in the first live run.
+        prompt += (
+            f"\n\n[turn {turn + 1} of {max_turns}; {remaining - 1} turns and "
+            f"{tools.forward_passes_left} forward passes left]"
+        )
         response = await editor.complete(SYSTEM_PROMPT, prompt, max_tokens=max_tokens)
         text = response.text.strip()
         run.transcript.append({"turn": turn + 1, "role": "editor", "text": text})
@@ -130,6 +139,27 @@ async def run_agent(
                 "That reply contained no tool call and no DONE. Reply with one "
                 "CALL block or a DONE block."
             )
+            continue
+
+        # Late in the run, push toward committing to a testable edit.
+        if remaining <= 3 and tools.forward_passes_left > 0:
+            history.append(text)
+            history.append(
+                f"NOTE: {remaining - 1} turns left. Stop exploring. Apply your "
+                f"best candidate edit with apply_edit, then use measure_loop to "
+                f"test whether it stopped the loop, then reply DONE."
+            )
+            for name, raw_args in calls:
+                try:
+                    args = json.loads(raw_args)
+                except json.JSONDecodeError as exc:
+                    result = f"ERROR: arguments were not valid JSON: {exc}"
+                else:
+                    result = _dispatch(tools, name, args)
+                run.transcript.append(
+                    {"turn": turn + 1, "role": "tool", "name": name, "result": result[:4000]}
+                )
+                history.append(f"RESULT of {name}:\n{result[:4000]}")
             continue
 
         for name, raw_args in calls:

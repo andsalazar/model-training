@@ -86,20 +86,37 @@ class WeightTools:
 
     # -- introspection -----------------------------------------------------
 
-    def list_tensors(self, pattern: str = "") -> str:
-        """Names and shapes of tensors, optionally filtered by substring."""
+    def list_tensors(self, pattern: str = "", limit: int = 200) -> str:
+        """Names and shapes of tensors, optionally filtered by substring.
+
+        Truncation is stated explicitly rather than silently cutting the list:
+        an editor that sees a partial list without being told will reasonably
+        conclude the naming is inconsistent.
+        """
         keys = [k for k in self._store.keys if pattern in k]
         if not keys:
             self.log.record(ToolCall("list_tensors", {"pattern": pattern}, "no matches", ok=False))
             raise ToolError(f"no tensors match {pattern!r}")
 
+        shown = keys[:limit]
         lines = []
-        for key in keys[:200]:
+        for key in shown:
             info = self._store.info(key)
             lines.append(f"{key}  {list(info.shape)} {info.dtype}")
+
+        if len(keys) > len(shown):
+            lines.append(
+                f"... showing {len(shown)} of {len(keys)} matches. "
+                f"Narrow the pattern or raise limit to see the rest."
+            )
+
         out = "\n".join(lines)
         self.log.record(
-            ToolCall("list_tensors", {"pattern": pattern}, f"{len(keys)} tensors")
+            ToolCall(
+                "list_tensors",
+                {"pattern": pattern, "limit": limit},
+                f"{len(shown)}/{len(keys)} tensors",
+            )
         )
         return out
 
@@ -207,10 +224,15 @@ class WeightTools:
         direction: str,
         out_path: str,
     ) -> str:
-        """Subtract a direction from the given columns and save a new checkpoint.
+        """Subtract a direction from the given columns and load the result.
 
         ``direction`` is a comma-separated list of numbers, one per column. The
         edit is additive and reversible; the source checkpoint is untouched.
+
+        The edited tensor is written to a full checkpoint directory and the
+        runner is reloaded from it, so a subsequent ``run_model`` or
+        ``measure_loop`` actually observes the edit. An earlier version saved a
+        bare ``.npy`` that nothing loaded, which made every edit a silent no-op.
         """
         try:
             values = np.array(
@@ -233,16 +255,37 @@ class WeightTools:
 
         out = Path(out_path)
         out.parent.mkdir(parents=True, exist_ok=True)
-        np.save(out.with_suffix(".npy"), edited)
+
+        # Materialise a loadable checkpoint and point the runner at it.
+        from wsp.runner import write_edited_checkpoint
+
+        ckpt_dir = write_edited_checkpoint(
+            self._store.path, tensor, edited, out.with_suffix("")
+        )
+        self._runner.reload(str(ckpt_dir))
+
+        # Verify against the written file, not the in-memory array, so a silent
+        # no-op cannot recur.
+        written = ckpt_dir / "model.safetensors"
+        self._store.reopen(written)
+        reloaded = self._store.get(tensor)
+        changed = int(np.count_nonzero(~np.isclose(reloaded, array, rtol=0.0, atol=0.0)))
+        if changed == 0:
+            raise ToolError(
+                "edit did not change the tensor; refusing to report success"
+            )
 
         self.log.record(
             ToolCall(
                 "apply_edit",
                 {"tensor": tensor, "cols": cols, "n_values": int(values.size)},
-                f"wrote {out.with_suffix('.npy')}",
+                f"{changed} weights changed, reloaded from {ckpt_dir}",
             )
         )
-        return f"edited {region.shape} region, wrote {out.with_suffix('.npy')}"
+        return (
+            f"edited {region.shape} region ({changed} weights changed) and reloaded "
+            f"the model from {ckpt_dir}. Call measure_loop to test it."
+        )
 
     # -- budget ------------------------------------------------------------
 
@@ -266,8 +309,14 @@ def _parse_range(value: str | None) -> tuple[int, int] | None:
 TOOL_SCHEMA: list[dict[str, Any]] = [
     {
         "name": "list_tensors",
-        "description": "List tensor names and shapes, filtered by substring.",
-        "parameters": {"pattern": "substring to match, or empty for all"},
+        "description": (
+            "List tensor names and shapes, filtered by substring. Reports when "
+            "the list is truncated."
+        ),
+        "parameters": {
+            "pattern": "substring to match, or empty for all",
+            "limit": "max entries to show (default 200)",
+        },
     },
     {
         "name": "read_slice",

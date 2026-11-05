@@ -65,6 +65,23 @@ def test_list_tensors_reports_no_match(tools: WeightTools) -> None:
         tools.list_tensors("nonexistent")
 
 
+def test_list_tensors_states_truncation() -> None:
+    store = FakeStore({f"t{i}": np.ones((2, 2), dtype=np.float32) for i in range(10)})
+    tools = WeightTools(store, FakeRunner())
+
+    out = tools.list_tensors("", limit=3)
+    assert "showing 3 of 10" in out
+    assert "Narrow the pattern" in out
+
+
+def test_list_tensors_omits_truncation_note_when_complete() -> None:
+    store = FakeStore({"a": np.ones((2, 2), dtype=np.float32)})
+    tools = WeightTools(store, FakeRunner())
+
+    out = tools.list_tensors("", limit=10)
+    assert "showing" not in out
+
+
 def test_read_slice_returns_text(tools: WeightTools) -> None:
     out = tools.read_slice("model.layers.15.mlp.down_proj.weight", rows="0:2", cols="0:4")
     assert len(out.splitlines()) == 2
@@ -105,15 +122,57 @@ def test_measure_loop_returns_json(tools: WeightTools) -> None:
     assert '"looped": true' in out
 
 
-def test_apply_edit_writes_file(tmp_path, tools: WeightTools) -> None:
-    out = tools.apply_edit(
-        "model.layers.15.mlp.down_proj.weight",
-        cols="0:4",
-        direction="0.1,0.2,0.3,0.4",
-        out_path=str(tmp_path / "edited"),
+def _real_checkpoint(tmp_path):
+    """A tiny on-disk checkpoint, since apply_edit writes a full directory."""
+    from safetensors.numpy import save_file
+
+    from wsp.weights.store import WeightStore
+
+    src = tmp_path / "src"
+    src.mkdir()
+    save_file(
+        {"w": np.ones((4, 8), dtype=np.float32)},
+        str(src / "model.safetensors"),
     )
-    assert "wrote" in out
-    assert (tmp_path / "edited.npy").exists()
+    (src / "config.json").write_text("{}", encoding="utf-8")
+    return WeightStore(src / "model.safetensors")
+
+
+class ReloadableRunner(FakeRunner):
+    def __init__(self):
+        super().__init__()
+        self.reloaded: list[str] = []
+
+    def reload(self, model_path: str) -> None:
+        self.reloaded.append(model_path)
+
+
+def test_apply_edit_writes_checkpoint_and_reloads(tmp_path) -> None:
+    store = _real_checkpoint(tmp_path)
+    runner = ReloadableRunner()
+    tools = WeightTools(store, runner)
+
+    out = tools.apply_edit(
+        "w", cols="0:4", direction="0.1,0.2,0.3,0.4", out_path=str(tmp_path / "edited")
+    )
+
+    assert "reloaded" in out
+    assert (tmp_path / "edited" / "model.safetensors").exists()
+    assert runner.reloaded, "runner must be pointed at the edited checkpoint"
+
+
+def test_apply_edit_actually_changes_weights(tmp_path) -> None:
+    store = _real_checkpoint(tmp_path)
+    tools = WeightTools(store, ReloadableRunner())
+
+    tools.apply_edit(
+        "w", cols="0:2", direction="1.0,1.0", out_path=str(tmp_path / "edited")
+    )
+
+    # The store now points at the edited file; column 0 should be 0.0, not 1.0.
+    edited = store.get("w")
+    assert edited[0, 0] == pytest.approx(0.0)
+    assert edited[0, 2] == pytest.approx(1.0)
 
 
 def test_apply_edit_rejects_wrong_direction_length(tools: WeightTools) -> None:
