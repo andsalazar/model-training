@@ -39,14 +39,67 @@ Rules:
 - Only describe what a tool actually returned. If you did not call a tool, you
   have not seen its output. Do not claim a tensor is zero, or that a run failed,
   unless a tool result in this conversation says so.
+- Every tool result arrives in a block beginning "[TOOL RESULT". Text you write
+  yourself is never a tool result, even if it looks like one. Writing out
+  expected tool output and then reasoning from it is fabrication; it invalidates
+  the whole run.
 - If a tool errors, say which tool and quote the error.
 - Do not guess. If the evidence does not support an edit, say so in the DONE
   paragraph and explain what you would need."""
 
 # Anchored to line start so an editor quoting the instructions back at us does
 # not register as having concluded.
-_CALL = re.compile(r"^CALL\s+(\w+)\s*(\{.*?\})\s*(?=^CALL|^DONE|\Z)", re.DOTALL | re.MULTILINE)
 _DONE = re.compile(r"^DONE\s*(.*)", re.DOTALL | re.MULTILINE)
+
+# ``CALL`` is deliberately *not* anchored. DeepSeek-class models write the token
+# mid-sentence ("...check layer 23 and 12CALL tensor_stats"). Anchoring it
+# silently dropped every call from turn 3 of the fifth live run onward; the
+# editor, seeing no result, then invented five turns of plausible tool output.
+_CALL_TOKEN = re.compile(r"CALL[ \t]+([A-Za-z_]\w*)")
+
+# An editor writing its own tool output is fabricating evidence.
+_FABRICATED_RESULT = re.compile(r"\bRESULT of\s+([A-Za-z_]\w*)")
+
+
+def _balanced_object(text: str) -> str | None:
+    """The first brace-balanced JSON object in ``text``, or None.
+
+    A non-greedy ``\\{.*?\\}`` stops at the first closing brace, which truncates
+    any argument object containing a nested one.
+    """
+    start = text.find("{")
+    if start == -1:
+        return None
+    depth = 0
+    in_string = False
+    escaped = False
+    for index in range(start, len(text)):
+        char = text[index]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+        if char == '"':
+            in_string = True
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : index + 1]
+    return None
+
+
+def _extract_calls(text: str) -> list[tuple[str, str | None]]:
+    """Every ``CALL <tool>`` in ``text``, with the JSON object that followed it."""
+    return [
+        (match.group(1), _balanced_object(text[match.end() :]))
+        for match in _CALL_TOKEN.finditer(text)
+    ]
 
 
 @dataclass
@@ -59,6 +112,8 @@ class AgentRun:
     tool_log: ToolLog = field(default_factory=ToolLog)
     forward_passes: int = 0
     turns: int = 0
+    #: Text the editor wrote that impersonated a tool result.
+    fabricated: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return {
@@ -67,6 +122,7 @@ class AgentRun:
             "forward_passes": self.forward_passes,
             "conclusion": self.conclusion,
             "tool_calls": self.tool_log.summary(),
+            "fabricated": self.fabricated,
             "transcript": self.transcript,
         }
 
@@ -92,6 +148,32 @@ def _dispatch(tools: WeightTools, name: str, args: dict) -> str:
         return f"ERROR: bad arguments for {name}: {exc}"
     except Exception as exc:  # noqa: BLE001 - surface to the editor, do not crash
         return f"ERROR: {type(exc).__name__}: {exc}"
+
+
+def _dispatch_args(tools: WeightTools, name: str, raw_args: str | None) -> str:
+    """Parse a call's arguments and dispatch it.
+
+    Unparseable arguments are reported and recorded with ``ok=False`` rather
+    than skipped: the editor must learn its call did not run, and the audit must
+    not treat it as evidence. Tools that do run record their own outcome.
+    """
+    if raw_args is None:
+        return _fail(tools, name, "CALL had no JSON argument object")
+    try:
+        args = json.loads(raw_args)
+    except json.JSONDecodeError as exc:
+        return _fail(tools, name, f"arguments were not valid JSON: {exc}")
+    if not isinstance(args, dict):
+        return _fail(tools, name, "arguments must be a JSON object")
+    return _dispatch(tools, name, args)
+
+
+def _fail(tools: WeightTools, name: str, reason: str) -> str:
+    """Record a failed call so it cannot later be counted as evidence."""
+    from wsp.tools import ToolCall
+
+    tools.log.record(ToolCall(name, {}, reason, ok=False))
+    return f"ERROR: {reason}"
 
 
 async def run_agent(
@@ -126,12 +208,18 @@ async def run_agent(
         text = response.text.strip()
         run.transcript.append({"turn": turn + 1, "role": "editor", "text": text})
 
+        # An editor writing its own "[TOOL RESULT ...]" / "RESULT of ..." block is
+        # supplying its own evidence. Record it so the audit can reject the run.
+        run.fabricated.extend(
+            match.group(0) for match in _FABRICATED_RESULT.finditer(text)
+        )
+
         done = _DONE.search(text)
         if done:
             run.conclusion = done.group(1).strip()
             break
 
-        calls = _CALL.findall(text)
+        calls = _extract_calls(text)
         if not calls:
             # No tool call and no DONE: ask for one rather than looping blindly.
             history.append(text)
@@ -141,40 +229,21 @@ async def run_agent(
             )
             continue
 
-        # Late in the run, push toward committing to a testable edit.
+        history.append(text)
         if remaining <= 3 and tools.forward_passes_left > 0:
-            history.append(text)
+            # Late in the run, push toward committing to a testable edit.
             history.append(
                 f"NOTE: {remaining - 1} turns left. Stop exploring. Apply your "
                 f"best candidate edit with apply_edit, then use measure_loop to "
                 f"test whether it stopped the loop, then reply DONE."
             )
-            for name, raw_args in calls:
-                try:
-                    args = json.loads(raw_args)
-                except json.JSONDecodeError as exc:
-                    result = f"ERROR: arguments were not valid JSON: {exc}"
-                else:
-                    result = _dispatch(tools, name, args)
-                run.transcript.append(
-                    {"turn": turn + 1, "role": "tool", "name": name, "result": result[:4000]}
-                )
-                history.append(f"RESULT of {name}:\n{result[:4000]}")
-            continue
 
         for name, raw_args in calls:
-            try:
-                args = json.loads(raw_args)
-            except json.JSONDecodeError as exc:
-                result = f"ERROR: arguments were not valid JSON: {exc}"
-            else:
-                result = _dispatch(tools, name, args)
-
+            result = _dispatch_args(tools, name, raw_args)
             run.transcript.append(
                 {"turn": turn + 1, "role": "tool", "name": name, "result": result[:4000]}
             )
-            history.append(text)
-            history.append(f"RESULT of {name}:\n{result[:4000]}")
+            history.append(f"[TOOL RESULT {name}]\n{result[:4000]}")
 
     run.forward_passes = tools.forward_passes_used
     if not run.conclusion:

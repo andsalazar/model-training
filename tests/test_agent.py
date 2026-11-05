@@ -85,8 +85,9 @@ async def test_agent_feeds_tool_result_back() -> None:
     )
     await run_agent(editor, _tools(), "fix the loop")
 
-    # The second prompt must contain the tool's output.
-    assert "RESULT of run_model" in editor.prompts[1]
+    # The second prompt must contain the tool's output, framed so the editor
+    # cannot mistake its own prose for a result.
+    assert "[TOOL RESULT run_model]" in editor.prompts[1]
     assert "generated" in editor.prompts[1]
 
 
@@ -169,7 +170,6 @@ async def test_agent_ignores_done_quoted_mid_line() -> None:
     assert run.conclusion == "real conclusion"
     assert run.turns == 2
 
-
 @pytest.mark.asyncio
 async def test_agent_reports_turn_budget_in_prompt() -> None:
     editor = ScriptedEditor(["DONE\nconcluded"])
@@ -205,3 +205,67 @@ async def test_agent_serializes_to_dict() -> None:
     assert d["editor"] == "test/scripted"
     assert d["conclusion"] == "concluded"
     assert isinstance(d["tool_calls"], list)
+
+
+@pytest.mark.asyncio
+async def test_agent_runs_a_call_written_mid_line() -> None:
+    # Regression: the fifth live run's editor wrote "CALL tensor_stats" inline,
+    # immediately after preceding prose with no newline. A line-anchored regex
+    # dropped every one of those calls, and the editor then invented the
+    # results. The call must actually execute.
+    editor = ScriptedEditor(
+        [
+            'Let me check layer 23 and 12CALL tensor_stats\n{"tensor": "w"}',
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    names = [c["name"] for c in run.tool_log.summary()]
+    assert names == ["tensor_stats"]
+
+
+@pytest.mark.asyncio
+async def test_agent_runs_several_calls_in_one_turn() -> None:
+    editor = ScriptedEditor(
+        [
+            'CALL list_tensors\n{"pattern": ""}\n\nCALL run_model\n{"prompt": "x"}',
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    names = [c["name"] for c in run.tool_log.summary()]
+    assert names == ["list_tensors", "run_model"]
+    assert run.forward_passes == 1
+
+
+@pytest.mark.asyncio
+async def test_agent_parses_arguments_with_nested_braces() -> None:
+    # A non-greedy .*? would stop at the first inner closing brace.
+    editor = ScriptedEditor(
+        [
+            'CALL run_model\n{"prompt": "value is {a: 1} ok"}',
+            "DONE\nconcluded",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    call = run.tool_log.summary()[0]
+    assert call["name"] == "run_model"
+    assert call["args"]["prompt"] == "value is {a: 1} ok"
+
+
+@pytest.mark.asyncio
+async def test_agent_flags_an_editor_that_writes_its_own_tool_output() -> None:
+    editor = ScriptedEditor(
+        [
+            'CALL list_tensors\n{"pattern": ""}\n\n'
+            "RESULT of tensor_stats:\n" '{"top_norms": [{"col": 1180, "norm": 12.4}]}',
+            "DONE\ncolumns 1180 and 1204 have norm 12.4",
+        ]
+    )
+    run = await run_agent(editor, _tools(), "fix the loop")
+
+    assert run.fabricated
+    assert any("tensor_stats" in f for f in run.fabricated)

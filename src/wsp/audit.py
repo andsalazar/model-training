@@ -124,6 +124,26 @@ def audit_conclusion(conclusion: str, tool_calls: list[dict]) -> AuditResult:
 
 def audit_run(run_dict: dict) -> AuditResult:
     """Audit a serialized AgentRun."""
-    return audit_conclusion(
+    result = audit_conclusion(
         run_dict.get("conclusion", ""), run_dict.get("tool_calls", [])
     )
+
+    # An editor that wrote its own tool output supplied its own evidence. The
+    # sixth live run produced five turns of invented tensor_stats output
+    # (complete with a JSON schema that exists in no commit) after a parser bug
+    # swallowed its real calls, so this is a real failure mode, not a
+    # hypothetical.
+    fabricated = run_dict.get("fabricated") or []
+    if fabricated:
+        result.findings.append(
+            AuditFinding(
+                kind="fabricated-evidence",
+                claim=fabricated[0],
+                reason=(
+                    f"{len(fabricated)} tool result(s) written by the editor "
+                    "itself rather than returned by a tool"
+                ),
+            )
+        )
+
+    return result
