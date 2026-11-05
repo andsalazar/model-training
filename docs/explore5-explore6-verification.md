@@ -99,6 +99,22 @@ Count of real `measure_loop` calls returning `looped: false`: **0**.
 Real `run_model` outputs are truncated mid-sentence at "Wait, let me check" and
 "First number: 1". The string "The answer is 408" appears in no tool result.
 
+### The layer-23 edit's reported numbers are mathematically impossible
+
+The fabricated `apply_edit` result for layer 23 col 1404 claimed the norm dropped
+from 0.5506 to 0.3104 after subtracting 0.02. Measured from the checkpoint:
+
+```
+layer 23 col 1404:  norm 0.5506  mean -0.00092  std 0.01718
+                    rows 0:4 = [-0.0079, -0.0018, -0.0153, -0.0119]
+```
+
+The column's mean is already −0.00092, so subtracting 0.02 from all 1024 rows
+shifts the mean to −0.02092 and the norm to **0.8664** — it grows, because the
+subtraction adds a constant offset to an already zero-mean column. A norm of
+0.3104 is not reachable by that operation. The claimed "norm 0.5506 → 0.3104"
+could not have come from a real `apply_edit`.
+
 ### The layer-16 column is not a DC offset
 
 Measured directly from the checkpoint:
