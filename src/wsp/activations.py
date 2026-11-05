@@ -252,6 +252,137 @@ def top_aligned_columns(
     return [(int(i), float(scores[i])) for i in order]
 
 
+def alignment_spectrum(
+    weight: np.ndarray, direction: np.ndarray, depth: int = 40
+) -> list[tuple[int, float]]:
+    """The top ``depth`` columns with their alignment scores, unclipped.
+
+    Exists so a caller can *see* the shape of the ranking before choosing a cut.
+    Stage 2's failure was caused by taking the top 12 of a distribution that ties
+    to within 0.0012 at that point: the cut was arbitrary and the verdict turned
+    on it. A spectrum makes the plateau visible instead of hiding it behind a k.
+    """
+    scores = column_alignment(weight, direction)
+    order = np.argsort(scores)[::-1][:depth]
+    return [(int(i), float(scores[i])) for i in order]
+
+
+@dataclass(frozen=True)
+class StabilitySelection:
+    """Columns that survive a threshold, and the reason for the cut.
+
+    ``threshold`` is a *fraction of the top score*, not a rank. That is the whole
+    point: a rank is arbitrary inside a tie, while "columns within 90% of the best
+    alignment" is a statement about the score distribution and moves smoothly as
+    the distribution moves.
+    """
+
+    columns: tuple[int, ...]
+    scores: tuple[float, ...]
+    threshold: float
+    ratio: float
+    candidate_depth: int
+
+    @property
+    def k(self) -> int:
+        return len(self.columns)
+
+    def as_dict(self) -> dict:
+        return {
+            "columns": list(self.columns),
+            "scores": list(self.scores),
+            "threshold": self.threshold,
+            "ratio": self.ratio,
+            "candidate_depth": self.candidate_depth,
+            "k": self.k,
+        }
+
+    def describe(self) -> str:
+        return (
+            f"{self.k} columns within {self.ratio:.0%} of the top score "
+            f"({self.threshold:.6f}) out of the best {self.candidate_depth}"
+        )
+
+
+def select_stable_columns(
+    weight: np.ndarray,
+    direction: np.ndarray,
+    *,
+    ratio: float = 0.9,
+    candidate_depth: int = 200,
+    min_columns: int = 4,
+) -> StabilitySelection:
+    """Select columns by score threshold rather than by rank.
+
+    The rule: take every column among the best ``candidate_depth`` whose alignment
+    score is at least ``ratio`` times the best score. This is *stable* in the sense
+    Stage 2 needs — a column's membership depends on its own score relative to the
+    maximum, not on how many other columns happen to be slightly above it, so
+    small numerical differences cannot swap columns across a boundary.
+
+    It is also honest about magnitude: when the ranking is a plateau the threshold
+    admits many columns and the selection says so, instead of silently taking an
+    arbitrary 12.
+
+    ``min_columns`` guards the degenerate case where the top score is far ahead of
+    everything else and the rule would select one or two columns, which is too
+    small an edit to move behaviour reliably.
+    """
+    if not 0.0 < ratio <= 1.0:
+        raise ValueError(f"ratio must be in (0, 1], got {ratio}")
+    if candidate_depth < 1:
+        raise ValueError(f"candidate_depth must be positive, got {candidate_depth}")
+    if min_columns < 1:
+        raise ValueError(f"min_columns must be positive, got {min_columns}")
+
+    spectrum = alignment_spectrum(weight, direction, depth=candidate_depth)
+    if not spectrum:
+        raise ValueError("no columns to select from")
+
+    best = spectrum[0][1]
+    if best <= 0.0:
+        # Every cosine is non-positive: the direction is unrelated to every column
+        # in the candidate set, so there is nothing to align with.
+        return StabilitySelection(
+            columns=(),
+            scores=(),
+            threshold=0.0,
+            ratio=ratio,
+            candidate_depth=candidate_depth,
+        )
+
+    threshold = best * ratio
+    chosen = [(col, score) for col, score in spectrum if score >= threshold]
+
+    # Backfill from the spectrum when the threshold is too strict to yield an edit
+    # of a usable size. Deterministic: the spectrum is already score-ordered.
+    if len(chosen) < min_columns:
+        chosen = spectrum[:min_columns]
+
+    return StabilitySelection(
+        columns=tuple(col for col, _ in chosen),
+        scores=tuple(score for _, score in chosen),
+        threshold=threshold,
+        ratio=ratio,
+        candidate_depth=candidate_depth,
+    )
+
+
+def selection_overlap(a: StabilitySelection, b: StabilitySelection) -> float:
+    """Jaccard overlap of two selections, for reporting stability directly.
+
+    Two runs that select the same columns by threshold should overlap almost
+    completely even when the *ranks* inside the selection differ. This is the
+    number to quote when claiming a selection is reproducible.
+    """
+    sa, sb = set(a.columns), set(b.columns)
+    if not sa and not sb:
+        return 1.0
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / len(sa | sb)
+
+
 def summarize_direction(
     name: str,
     layer: int,
