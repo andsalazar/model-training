@@ -296,7 +296,86 @@ and a clean stop. But the run's control measurement returned 471 tokens, so the
 claim contradicts its own tool output. The editor was reasoning about a fabricated
 number and reached a conclusion that happened to be directionally sensible.
 
-## 13. What the next iteration has to settle
+## 13. Verification is now part of the loop, not an afterthought
+
+Every editor conclusion in Stage 1 needed checking by hand, and both runs that
+got far enough to matter fabricated numbers. Auditing the transcript catches some
+of that after the fact, but an audit cannot create evidence — so re-measurement
+is now a tool rather than a manual step.
+
+`src/wsp/verify.py` compares two sets of readings under a fixed rule:
+
+| Condition | Verdict |
+|---|---|
+| expected answer present before, absent after | **broken** |
+| newly hits the token cap, or grows past 1.25× baseline | **regressed** |
+| falls below 0.75× baseline | **improved** |
+| moves less than 25 tokens | **unchanged** |
+
+An edit is **validated** only when every target improved and no held-out or guard
+probe was damaged. **Harmful** is checked first: an edit that helped the target is
+still a failure if it broke something else. That ordering is deliberate — it is
+the mistake easiest to talk yourself out of, and it is exactly what explore13's
+contiguous window did.
+
+Two tools expose it: `baseline` measures the probe set on the current checkpoint
+and remembers the readings; `verify_edit` re-measures the same probes and reports
+the verdict. The editor cannot report post-edit behaviour without having measured
+it, because the comparison lives in the tool rather than in its prose.
+
+Replayed against the real sweep data, the harness gives the right verdict on both
+historical cases:
+
+**Contiguous window `900:1000`, scale 1.0** (explore13's choice):
+
+| probe | role | base | edited | state |
+|---|---|---|---|---|
+| target | target | 2048 | 190 | improved |
+| control | heldout | 470 | 532 | unchanged |
+| heldout_17x23 | heldout | 830 | 2048 | **regressed** |
+| heldout_13x14 | heldout | 827 | 654 | unchanged |
+| heldout_9x8 | heldout | 1309 | 1837 | **regressed** |
+| nonmath | guard | 204 | 147 | improved |
+
+→ **HARMFUL.** The target improved 10× and the edit is still a failure.
+
+**Ranked 12 columns, scale 0.5:**
+
+| probe | role | base | edited | state |
+|---|---|---|---|---|
+| target | target | 2048 | 164 | improved |
+| control | heldout | 470 | 268 | improved |
+| heldout_17x23 | heldout | 830 | 556 | improved |
+| heldout_13x14 | heldout | 827 | 259 | improved |
+| heldout_9x8 | heldout | 1309 | 183 | improved |
+| nonmath | guard | 204 | 204 | unchanged |
+
+→ **VALIDATED.** Every target improved, nothing damaged, guard untouched.
+
+The guard probe earns its place here. An edit that made the model terser
+everywhere would shorten the non-math answer too; it stays at 204 tokens, which
+is what distinguishes a targeted suppressor from a verbosity knob.
+
+## 14. The control prompt was never a truncation
+
+explore14's editor worried that its control prompt hit the token cap, which would
+mean the contrast compared two truncations and the direction meant nothing. The
+measured baseline settles it: the control ran **470 tokens**, well under the 2048
+cap. The worry was unfounded, and the editor raised it without measuring.
+
+The caveat that *is* real sits on the other side. The target ran to the cap at
+2048, so the "over-thinking" mean state is a truncated state. The direction is
+therefore derived partly from where generation was cut off rather than where it
+stopped naturally. That does not invalidate the ranked-column result — the edit
+still cut the target to 164 tokens and improved every held-out probe — but it
+does mean the direction encodes "what a truncated over-thinker looks like" as
+well as "what over-thinking looks like".
+
+The fix is to raise the target's cap for the contrast capture only, so the mean
+state comes from a natural stop. That costs more forward passes per capture and
+is worth doing once, to check whether the ranked columns change.
+
+## 15. What the next iteration has to settle
 
 1. **Make independent re-measurement part of the loop.** Every editor conclusion
    in this stage needed checking. explore13 fabricated three claims (a

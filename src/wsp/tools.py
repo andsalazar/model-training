@@ -399,15 +399,18 @@ class WeightTools:
         compare against them afterwards; an edit is only a result if something
         changed, and something only changed if there is a before.
         """
-        if self._forward_passes + len(_parse_probes(probes)) > self._max_forward_passes:
+        chosen = _parse_probes(probes)
+        if self._forward_passes + len(chosen) > self._max_forward_passes:
             raise ToolError(
                 "forward-pass budget too small for this baseline; "
-                f"{self.forward_passes_left} left"
+                f"{self.forward_passes_left} left, {len(chosen)} needed"
             )
-        chosen = _parse_probes(probes)
         readings = verify.measure_all(self._runner, chosen)
         self._forward_passes += len(readings)
         self._baseline = readings
+        # Keep the exact probe set, not just the readings: verify_edit must
+        # re-measure the same prompts, not whatever the default set happens to be.
+        self._probes = chosen
 
         lines = [f"baseline captured on {len(readings)} probe(s)", ""]
         for r in readings:
@@ -416,6 +419,8 @@ class WeightTools:
             lines.append(
                 f"{r.probe:16s} {r.role.value:8s} {r.tokens:5d} tokens{cap}{flag}"
             )
+        lines.append("")
+        lines.append("Now edit, then call verify_edit to compare against this.")
         out = "\n".join(lines)
         self.log.record(
             ToolCall(
@@ -426,13 +431,16 @@ class WeightTools:
         )
         return out
 
-    def verify_edit(self, max_tokens: int = 2048) -> str:
+    def verify_edit(self) -> str:
         """Re-measure the baseline probes on the current checkpoint and compare.
 
         This is the check that a single improved prompt cannot fake: it measures
         the target, held-out instances of the same behaviour, and a guard that
         must not move. A target that improves while a held-out probe regresses is
         reported as HARMFUL rather than validated.
+
+        The probe set is the one ``baseline`` captured, including each probe's own
+        token cap, so the two measurements are comparable by construction.
         """
         if self._baseline is None:
             raise ToolError(

@@ -79,8 +79,36 @@ network call is made, and that behaviour is pinned by tests.
 
 ## Status
 
-Stage 0 — reproduction harness. The weight-slicing, editor, and guard layers are
-built and tested. Scoring requires a GPU and runs on rented pods.
+Stage 0 (reproduction) is complete and verified: the paper's headline result
+reproduces, and its arithmetic matches exactly. See
+[docs/stage0-findings.md](docs/stage0-findings.md).
+
+Stage 1 (a portable method) has a validated result. Editing the twelve columns
+that `aligned_columns` ranks highest at layer 12's `down_proj` suppresses
+over-thinking in Qwen3.5-0.8B without damaging held-out questions or unrelated
+behaviour:
+
+| probe | baseline | edited |
+|---|---|---|
+| target `12×11` | 2048 (cap) | **164** |
+| held-out `17×23` | 830 | **556** |
+| held-out `13×14` | 827 | **259** |
+| held-out `9×8` | 1309 | **183** |
+| guard "capital of France" | 204 | 204 |
+
+The same edit applied to a contiguous window instead of the ranked columns is
+**harmful** — it cuts the target to 190 tokens while pushing held-out questions
+to the cap. The full account, including both negative results, is in
+[docs/stage1-findings.md](docs/stage1-findings.md).
+
+## Verification
+
+An edit only counts if it survives re-measurement. `wsp.verify` compares a
+baseline reading against an edited one under a fixed rule and returns
+`validated`, `partial`, `no-effect` or `harmful`, with `harmful` checked first so
+a helped target cannot mask a broken held-out probe. The `baseline` and
+`verify_edit` tools expose it to the editor, so a run cannot report post-edit
+behaviour it never measured.
 
 ## License
 

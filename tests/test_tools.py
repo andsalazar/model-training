@@ -241,6 +241,28 @@ def test_verify_edit_reports_validated_when_everything_holds() -> None:
     assert "VALIDATED" in out
 
 
+def test_verify_edit_remeasures_the_baselined_probes_not_the_default_set() -> None:
+    """A custom baseline must be compared against itself, not the default set.
+
+    baseline(probes="target_12x11") stores one reading. If verify_edit re-measured
+    the four default probes instead, three verdicts would appear with no baseline
+    behind them and the one that mattered would still line up — a silent mismatch
+    that costs three extra forward passes and reports results for probes the
+    editor never asked about.
+    """
+    runner = ScriptedRunner({})
+    tools = WeightTools(FakeStore({}), runner)
+    runner.script = {p.prompt: p.expected for p in tools._probes}
+
+    tools.baseline(probes="target_12x11")
+    assert len(tools._baseline) == 1
+    assert [p.name for p in tools._probes] == ["target_12x11"]
+
+    before = len(runner.calls)
+    tools.verify_edit()
+    assert len(runner.calls) - before == 1, "re-measured more than the baseline set"
+
+
 def test_baseline_rejects_an_unknown_probe_name() -> None:
     tools = WeightTools(FakeStore({}), ScriptedRunner({}))
     with pytest.raises(ToolError, match="unknown probe"):
