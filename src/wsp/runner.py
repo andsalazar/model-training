@@ -52,11 +52,20 @@ def detect_repetition(text: str, window: int = _REPEAT_WINDOW) -> bool:
 
 
 def classify(text: str, n_tokens: int, max_tokens: int) -> LoopSignal:
-    """Turn a generation into a loop verdict."""
+    """Turn a generation into a loop verdict.
+
+    ``looped`` requires evidence of repetition, not merely running to the cap.
+    Hitting the cap alone means the model was verbose or the cap was small: on
+    this checkpoint even "Hello, how are you today?" reaches a 64-token cap while
+    producing a coherent greeting. Treating that as a loop made explore10's
+    editor conclude that no non-looping math control existed, when in fact the
+    model simply thinks at length. ``hit_cap`` is still reported so a caller can
+    see the generation was truncated, but it is not by itself a loop.
+    """
     hit_cap = n_tokens >= max_tokens
     repeated = detect_repetition(text)
     return LoopSignal(
-        looped=hit_cap or repeated,
+        looped=repeated,
         hit_cap=hit_cap,
         repeated=repeated,
         tokens=n_tokens,

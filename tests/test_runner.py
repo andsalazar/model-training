@@ -22,10 +22,26 @@ def test_detect_repetition_ignores_varied_text() -> None:
     assert not detect_repetition(text)
 
 
-def test_classify_hit_cap_is_looping() -> None:
+def test_classify_hit_cap_alone_is_not_looping() -> None:
+    """Running to the cap is truncation, not evidence of a loop.
+
+    This checkpoint reaches a 64-token cap even on "Hello, how are you today?"
+    while producing a coherent greeting. Counting that as a loop made explore10's
+    editor conclude no non-looping math control existed. ``hit_cap`` is still
+    reported so truncation stays visible, but it does not imply looping.
+    """
     signal = classify("some text", n_tokens=2048, max_tokens=2048)
-    assert signal.looped
     assert signal.hit_cap
+    assert not signal.looped
+    assert not signal.repeated
+
+
+def test_classify_hit_cap_with_repetition_is_looping() -> None:
+    block = "the same reasoning step over and over again " * 8
+    signal = classify(block * 3, n_tokens=2048, max_tokens=2048)
+    assert signal.hit_cap
+    assert signal.repeated
+    assert signal.looped
 
 
 def test_classify_clean_stop_is_not_looping() -> None:
