@@ -283,8 +283,82 @@ Remaining before Stage 1 can close:
 2. Get one edit that `apply_edit` actually applies and `measure_loop` actually
    shows stopping the loop — verified from `tool_calls`, not from prose.
    **Still open.** explore7 applied three real edits; none stopped the loop.
-3. Move to activation-level tools. **Now the active next step.** explore7's own
-   conclusion argues for it: "a way to identify the loop-inducing direction from
-   activations rather than weight magnitude alone ... the down-projection columns
-   that drive it need not be norm outliers." The planned trigger has fired.
+3. Move to activation-level tools. **Built and verified on CPU; needs a pod run.**
+   explore7's own conclusion argues for it: "a way to identify the loop-inducing
+   direction from activations rather than weight magnitude alone ... the
+   down-projection columns that drive it need not be norm outliers." The planned
+   trigger has fired.
+
+---
+
+## 8. Activation-level tools (Stage 1, step 3)
+
+The diagnosis in section 7 is that weight statistics cannot localise the cause.
+A column's norm says how large it is, not what it does. explore7 measured layer 23
+column 1404 as a high-variance column and correctly concluded that subtracting a
+scalar shifts the mean and therefore cannot address a spread anomaly. That is the
+right conclusion from the evidence it had; the evidence was the problem.
+
+The direction driving a repetition loop has to come from the activations the loop
+produces. That path is now implemented:
+
+| Tool | What it does |
+|---|---|
+| `capture_activations` | Runs one forward pass and reports the hooked module's output statistics (`tokens x hidden`). |
+| `capture_direction` | Derives a unit direction from a looping prompt vs a control prompt, stored under a name. Reports `contrast_cosine` so a weak contrast is visible. |
+| `list_directions` | Names of captured directions with their norms. |
+| `aligned_columns` | Ranks weight columns by cosine alignment with a captured direction. |
+| `apply_directional_edit` | Subtracts the direction from selected columns and reloads the model. |
+
+The key distinction from `apply_edit`: `apply_edit` takes one scalar per column,
+so it shifts every row of a column by the same amount. `apply_directional_edit`
+subtracts a hidden-space vector, so each row changes by a different amount. That
+changes *which direction* a neuron writes along, which is the operation a scalar
+per-column subtraction cannot express.
+
+Capture runs on transformers rather than vLLM. vLLM's forward pass executes inside
+compiled CUDA graphs, so there is nowhere to attach a hook; a single short forward
+pass is cheap on transformers. Generation stays on vLLM.
+
+### Verification performed (CPU, no GPU)
+
+Everything below ran locally against a real tiny Qwen checkpoint, so the same code
+path a pod would use is exercised:
+
+- 204 tests pass, including 24 pure-math tests for the direction algebra, 8
+  end-to-end capturer tests against a real model, and 6 end-to-end tests of the
+  capture -> rank -> edit -> reload path.
+- `scripts/smoke_activation_loop.py` drives the real tool surface through the real
+  agent loop with a scripted editor: capture a direction, rank columns, apply the
+  edit. It changes 128 weights on disk and reloads the runner. Exit code 0.
+- The capturer returns different activations for different layers and different
+  prompts. This is the check explore5's claim failed: it reported byte-identical
+  values across layers 0, 6, 12 and 23, which a real hook cannot produce.
+
+### Two audit gaps the smoke test found
+
+Both were real, and both are now covered:
+
+1. A conclusion reporting an edit as applied while the edit call had errored on
+   bad JSON. The audit had no check for edit claims at all. `EDIT_TOOLS` and an
+   `edit-claim` finding now cover it.
+2. A conclusion quoting activation statistics without ever capturing them. A
+   `tensor_stats` call describes the weights and says nothing about what the
+   module produced, so it must not license an activation claim. Activation claims
+   now require a capture call.
+
+The activation regex is deliberately narrow. A bare mention of "activations" is
+not a claim: explore2 correctly reported that its tools "exposed no activations",
+explore3 proposed a "residual-space direction" as a future edit, and explore7
+noted a direction would need "activations rather than weight magnitude". None
+asserts a measured value. Re-auditing all 17 historical runs preserves every prior
+verdict and adds no false positives across the 8 ablation runs.
+
+### Still open
+
+The tools are verified on CPU but have not yet been run against the real
+Qwen3.5-0.8B checkpoint on a pod. The open question is whether a direction
+captured from a real looping prompt, applied to the real `down_proj`, actually
+stops the loop. That needs a pod with GPU capacity, which was unavailable at the
+end of the previous session.
 
