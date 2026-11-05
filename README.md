@@ -83,28 +83,52 @@ Stage 0 (reproduction) is complete and verified: the paper's headline result
 reproduces, and its arithmetic matches exactly. See
 [docs/stage0-findings.md](docs/stage0-findings.md).
 
-Stage 1 produced a working edit, but **Stage 2 showed it does not reproduce**, so
-it is not yet a method. The honest current status:
+Everything after that is a negative result, and an instructive one. The current
+claim-by-claim status:
 
 | claim | status |
 |---|---|
 | An edit can be derived from activation measurement | **yes** |
-| That edit cut over-thinking, on one checkpoint and one GPU | **yes** — 2048 → 164 tokens, 1869 → 210 |
-| It reproduces on the same procedure, different hardware | **no** — verdict inverted |
-| It transfers to other behaviours | **no** — pushed a factual probe and a long-form task to the cap |
-| Measurement is deterministic on fixed hardware | **yes** — 7 repeats, stdev 0.0 |
+| That edit cut over-thinking on one checkpoint, one GPU | **yes** — 2048 → 164, 1869 → 210 |
+| It reproduces across hardware | **no** — the top-12 cut sat in a 0.0012 tie |
+| Threshold selection fixes the reproducibility | **yes** — overlap 1.000 at every ratio |
+| A stable selection makes the edit safe | **no** — harmful at 4 and 12 columns |
+| It transfers to other behaviours | **no** — pushes long-form tasks to the cap |
 | The over-thinking direction is global | **no** — layer-local (+0.006 across layers) |
 
-The reproducibility failure has a specific cause: the "top 12 columns" cut falls
-inside a plateau where alignment scores tie to within 0.0012, so a selection that
-changes with the last digit of a float decides the verdict. Two runs with 10 of 12
-columns in common got opposite results.
+The sequence:
 
-What survives is worth keeping: the activation tooling, the verifier that caught
-this, and a set of negative results (contiguous windows are harmful, `hit_cap` is
-not looping, a high `contrast_cosine` is not noise). Full analysis in
-[docs/stage2-findings.md](docs/stage2-findings.md); Stage 1's evidence, with
-corrections, in [docs/stage1-findings.md](docs/stage1-findings.md).
+1. **Stage 1** derived a working edit from measurement, twice, and validated it on
+   a near-pure-arithmetic probe set.
+2. **Stage 2** re-ran the same procedure on different hardware, got the opposite
+   verdict, and found why: alignment scores tie to within 0.0012 at the cut, so
+   the "top 12 columns" was an arbitrary point inside a plateau. It also found
+   the edit damages behaviour Stage 1 never tested — including two of its own
+   arithmetic held-outs.
+3. **Stage 3** replaced the rank cut with a score threshold. The selection became
+   perfectly reproducible (overlap 1.000). The edit remained harmful anyway: a
+   4-column edit (0.11% of the matrix) improved the target by 83% while pushing
+   two unrelated long-form tasks to the token cap.
+
+The conclusion is that the problem is the **direction**, not the column choice. It
+encodes a shared "keep checking" state that arithmetic, logic and long-form
+writing all use, so suppressing it makes short answers shorter and long answers
+fall apart. A behaviour-selective mechanism is needed — which points at a trained
+adapter rather than a single subtracted vector.
+
+What is reusable: the activation tooling, the verifier that caught the whole
+thing, and a set of negative results worth having (`hit_cap` is not looping, a
+high `contrast_cosine` is not noise, contiguous windows are harmful, direction is
+layer-local).
+
+- [docs/stage1-findings.md](docs/stage1-findings.md) — the derived edit, with
+  corrections applied after Stage 2
+- [docs/stage2-findings.md](docs/stage2-findings.md) — the reproducibility failure
+- [docs/stability-selection.md](docs/stability-selection.md) — the fix
+- [docs/stability-retest.md](docs/stability-retest.md) — the re-test, and why a
+  stable selection still fails
+- [docs/reproducibility-failure.md](docs/reproducibility-failure.md) — standalone
+  write-up of the failure
 
 ## Verification
 
