@@ -83,23 +83,25 @@ Stage 0 (reproduction) is complete and verified: the paper's headline result
 reproduces, and its arithmetic matches exactly. See
 [docs/stage0-findings.md](docs/stage0-findings.md).
 
-Stage 1 (a portable method) has a validated result. Editing the twelve columns
-that `aligned_columns` ranks highest at layer 12's `down_proj` suppresses
-over-thinking in Qwen3.5-0.8B without damaging held-out questions or unrelated
-behaviour:
+Stage 1 (a portable method) is complete. The edit can be derived from measurement
+alone, and two independent runs validated it — at layer 12 and layer 6, on
+different GPUs:
 
-| probe | baseline | edited |
-|---|---|---|
-| target `12×11` | 2048 (cap) | **164** |
-| held-out `17×23` | 830 | **556** |
-| held-out `13×14` | 827 | **259** |
-| held-out `9×8` | 1309 | **183** |
-| guard "capital of France" | 204 | 204 |
+| run | layer | target | held-out | guard | verdict |
+|---|---|---|---|---|---|
+| ranked sweep, scale 0.5 | 12 | 2048 → **164** | 830→556, 827→259, 1309→183 | 204→204 | validated |
+| explore15, scale 1.0 | 6 | 1869 → **210** | 676→381, 181→166 | 232→265 | validated |
 
-The same edit applied to a contiguous window instead of the ranked columns is
-**harmful** — it cuts the target to 190 tokens while pushing held-out questions
-to the cap. The full account, including both negative results, is in
-[docs/stage1-findings.md](docs/stage1-findings.md).
+Both cut the target by about 90% with every held-out probe better or unchanged.
+
+What the method depends on is narrow, and Stage 1 found it the hard way. Editing
+the **ranked** columns works; editing a contiguous window around them is
+**harmful** — target 2048 → 190 but held-out `17×23` 830 → 2048 (cap) and `9×8`
+1309 → 1837. A range that contains a few ranked columns also edits dozens the
+measurement did not select.
+
+See [docs/stage1-findings.md](docs/stage1-findings.md) for the method as seven
+reproducible steps, the evidence, and both negative results.
 
 ## Verification
 
