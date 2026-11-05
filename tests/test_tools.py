@@ -21,11 +21,21 @@ class FakeStore:
         self._tensors = tensors
         self.keys = list(tensors)
 
+    def resolve(self, name: str) -> str:
+        """Mirror WeightStore.resolve: exact match, else a unique suffix match."""
+        if name in self._tensors:
+            return name
+        suffix = "." + name.lstrip(".")
+        matches = [k for k in self._tensors if k.endswith(suffix)]
+        if len(matches) == 1:
+            return matches[0]
+        raise KeyError(f"{name!r} not in checkpoint")
+
     def get(self, name: str) -> np.ndarray:
-        return self._tensors[name]
+        return self._tensors[self.resolve(name)]
 
     def info(self, name: str) -> FakeInfo:
-        return FakeInfo(self._tensors[name].shape)
+        return FakeInfo(self._tensors[self.resolve(name)].shape)
 
 
 class FakeRunner:

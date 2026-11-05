@@ -399,6 +399,9 @@ class WeightTools:
         except KeyError as exc:
             raise ToolError(str(exc)) from exc
 
+        # Resolve once: the editor may address the tensor by a shorter name than
+        # the checkpoint key, and the write path needs the real key.
+        tensor = self._store.resolve(tensor)
         array = self._store.get(tensor)
         if array.ndim != 2:
             raise ToolError(f"{tensor} is not 2-D (shape {array.shape})")
@@ -475,6 +478,9 @@ class WeightTools:
         except ValueError as exc:
             raise ToolError(f"direction must be comma-separated numbers: {exc}") from exc
 
+        # Resolve once: the editor may address the tensor by a shorter name than
+        # the checkpoint key, and the write path needs the real key.
+        tensor = self._store.resolve(tensor)
         array = self._store.get(tensor)
         target = TensorSlice(name=tensor, cols=_parse_range(cols))
         region = target.apply(array)

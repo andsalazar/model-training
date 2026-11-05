@@ -28,6 +28,9 @@ class ScriptedEditor(Editor):
 class FakeStore:
     keys = ["w"]
 
+    def resolve(self, name):
+        return name
+
     def get(self, name):
         return np.ones((4, 8), dtype=np.float32)
 

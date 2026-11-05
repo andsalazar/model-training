@@ -70,9 +70,43 @@ class WeightStore:
     def keys(self) -> list[str]:
         return list(self._keys)
 
+    def resolve(self, name: str) -> str:
+        """Map a name onto the checkpoint's actual key.
+
+        Checkpoint keys carry the full save-time prefix, which is not always the
+        name an editor reaches for. Qwen3.5 saves layer weights as
+        ``model.language_model.layers.N...`` while the loaded model exposes them
+        at ``model.layers.N...``. An editor that reads a module path from the
+        model and then addresses a tensor with it gets a KeyError on a name that
+        is otherwise correct. Resolving here means every tool accepts either
+        form rather than each one re-implementing the mapping.
+
+        An exact match always wins. Otherwise the name is matched from its layer
+        index onward, so the layer number stays part of the match and a wrong
+        layer cannot silently resolve to a different one. An ambiguous or absent
+        match raises KeyError.
+        """
+        if name in self._keys:
+            return name
+
+        # A plain suffix match is not enough: the extra component can sit in the
+        # middle (``model.language_model.layers.N...`` vs ``model.layers.N...``),
+        # so anchor on the layer index and keep everything from there.
+        parts = name.lstrip(".").split(".")
+        layer_at = next((i for i, p in enumerate(parts) if p == "layers"), None)
+        suffix = ".".join(parts[layer_at:]) if layer_at is not None else ".".join(parts)
+        matches = [k for k in self._keys if k == suffix or k.endswith("." + suffix)]
+        if len(matches) == 1:
+            return matches[0]
+        if len(matches) > 1:
+            raise KeyError(
+                f"{name!r} is ambiguous in the checkpoint: {sorted(matches)[:4]}"
+            )
+
+        raise KeyError(f"{name!r} not in checkpoint ({len(self._keys)} tensors)")
+
     def info(self, name: str) -> TensorInfo:
-        if name not in self._keys:
-            raise KeyError(f"{name!r} not in checkpoint ({len(self._keys)} tensors)")
+        name = self.resolve(name)
         # Read the header only; get_slice avoids materialising the tensor.
         shape = tuple(self._handle.get_slice(name).get_shape())
         dtype = self._handle.get_slice(name).get_dtype()
@@ -80,8 +114,7 @@ class WeightStore:
 
     def get(self, name: str) -> np.ndarray:
         """Load one tensor as a float32 array."""
-        if name not in self._keys:
-            raise KeyError(f"{name!r} not in checkpoint")
+        name = self.resolve(name)
         tensor = self._handle.get_tensor(name)
         return tensor.to("cpu", dtype=None).float().numpy()
 
