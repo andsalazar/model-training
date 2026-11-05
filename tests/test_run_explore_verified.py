@@ -98,5 +98,25 @@ def test_keeps_each_edit_once_in_order(module) -> None:
     assert module._edited_checkpoints(calls) == ["/tmp/a", "/tmp/b"]
 
 
+def test_extracts_a_relative_checkpoint_path(module) -> None:
+    """explore15's editor passed a bare out_path, so the tool reported a
+    relative directory. Requiring an absolute path silently found no edits for a
+    run that did edit, and the script then reported "the editor applied no
+    edits" for a real result.
+    """
+    calls = [
+        {
+            "name": "apply_directional_edit",
+            "ok": True,
+            "result": (
+                "subtracted 1.0 x direction 'loop_L6' from (1024, 12) region "
+                "(12288 weights changed) and reloaded the model from "
+                "ckpt_edit_L6_s1. Call measure_loop to test it."
+            ),
+        }
+    ]
+    assert module._edited_checkpoints(calls) == ["ckpt_edit_L6_s1"]
+
+
 def test_returns_empty_when_no_edit_was_applied(module) -> None:
     assert module._edited_checkpoints([]) == []

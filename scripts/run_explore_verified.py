@@ -60,7 +60,13 @@ def _edited_checkpoints(tool_calls: list[dict]) -> list[str]:
         result = str(call.get("result", ""))
         for token in result.replace("\n", " ").split():
             token = token.rstrip(".,;")
-            if token.startswith("/") and "reloaded" not in token:
+            # The path may be relative: explore15's editor passed a bare
+            # out_path, so the tool reported "ckpt_edit_L6_s1" rather than an
+            # absolute path. Requiring a leading "/" silently found no edits and
+            # reported "the editor applied no edits" for a run that did edit.
+            if token in {"from", "reloaded"}:
+                continue
+            if "ckpt" in token or token.startswith("/"):
                 if token not in seen:
                     seen.append(token)
                 break

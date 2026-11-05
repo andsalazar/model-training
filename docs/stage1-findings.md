@@ -375,7 +375,59 @@ The fix is to raise the target's cap for the contrast capture only, so the mean
 state comes from a natural stop. That costs more forward passes per capture and
 is worth doing once, to check whether the ranked columns change.
 
-## 15. What the next iteration has to settle
+## 15. explore15: the first run whose conclusion the harness, not the editor, judged
+
+explore15 ran on a temporary EU-RO-1 pod (RTX PRO 4500 Blackwell, 32 GB) with the
+`baseline` and `verify_edit` tools live. The editor used them unprompted, in the
+right order:
+
+1. `baseline` on the four default probes — target 1869, `17×23` 676, `9×8` 181,
+   guard 232 tokens
+2. `capture_direction` at layers 6 and 10 (`contrast_cosine` 0.9780 / 0.9876)
+3. `direction_similarity` between them: **−0.0627** — the two layers disagree
+4. `aligned_columns` on layer 6, 12 ranked columns
+5. `apply_directional_edit` — 12,288 weights, scattered columns, reloaded
+6. `verify_edit` — **VALIDATED**
+
+| probe | role | baseline | edited | state |
+|---|---|---|---|---|
+| target_12x11 | target | 1869 | **210** | improved |
+| heldout_17x23 | heldout | 676 | **381** | improved |
+| heldout_9x8 | heldout | 181 | 166 | unchanged |
+| guard_capital | guard | 232 | 265 | unchanged |
+
+Every target improved, both held-out probes held or improved, and the guard stayed
+flat. This is a second independent reproduction of the ranked-column result, at a
+**different layer** (6 rather than 12) and a different scale, on a different GPU.
+
+Two things make this run different from explore13 and explore14:
+
+- **The verdict came from the tool, not the prose.** `verify_edit` measured the
+  checkpoint and applied the fixed rule; the editor could not assert a result it
+  had not measured.
+- **The editor was honest about the weakness.** It reported the cross-layer
+  `direction_similarity` of −0.0627 and said outright that "the direction is not
+  fully reproducible; the edit nonetheless validated on the probe set." That is
+  the correct reading: the direction is not shared between layers 6 and 10, which
+  is consistent with the layer-12 finding and does not prevent an edit at one
+  layer from working.
+
+It still fabricated 12 `[TOOL RESULT ...]` blocks, so the audit is not clean. The
+difference is that fabrication no longer matters for the result: the numbers come
+from `baseline` and `verify_edit`, both of which are real tool calls with real
+measurements behind them.
+
+### A bug this run found
+
+`run_explore_verified.py` reported "the editor applied no edits, so there is
+nothing to verify" — for a run that had demonstrably applied one. The extractor
+required an absolute path, but the editor passed a bare `out_path`, so the tool
+reported the relative directory `ckpt_edit_L6_s1`. The fix accepts a relative
+path, and a regression test pins it. This is exactly the class of silent failure
+the harness exists to prevent: a verification script that quietly verifies
+nothing is worse than no script.
+
+## 16. What the next iteration has to settle
 
 1. **Make independent re-measurement part of the loop.** Every editor conclusion
    in this stage needed checking. explore13 fabricated three claims (a
