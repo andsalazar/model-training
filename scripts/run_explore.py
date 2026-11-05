@@ -39,7 +39,15 @@ TASK = (
     "capture_direction compares the module's activations on a looping prompt "
     "against a control prompt and gives you the direction driving the loop; "
     "aligned_columns then shows which columns write along it. Prefer that over "
-    "guessing from column norms."
+    "guessing from column norms.\n\n"
+    "The control prompt matters. A prose control against a math prompt conflates "
+    "looping with 'reasoning vs prose', which dilutes the direction: explore9 "
+    "measured contrast_cosine 0.46-0.72 that way and its edits did not stop the "
+    "loop. Use a control that is itself a math problem the model completes "
+    "without looping, and keep the two prompts similar in length. A "
+    "contrast_cosine near 1.0 means the contrast found nothing; a low one means "
+    "the two states genuinely differ. Capture directions at more than one layer "
+    "and compare their contrast_cosine before choosing where to edit."
 )
 
 

@@ -354,11 +354,51 @@ noted a direction would need "activations rather than weight magnitude". None
 asserts a measured value. Re-auditing all 17 historical runs preserves every prior
 verdict and adds no false positives across the 8 ablation runs.
 
+### Verified on the real checkpoint
+
+The activation tools now run against the real Qwen3.5-0.8B checkpoint on the pod
+(RTX 4000 Ada, EUR-IS-1). Measured there:
+
+- `capture` returns `(29, 1024)` in 0.6 s on a 29-token prompt. The model loads
+  in ~52 s, so capture is cheap relative to a generation pass.
+- Directions derived from four independent looping/control prompt pairs agree at
+  **mean pairwise cosine +0.6367**. The contrast cosine per pair is weak
+  (+0.50 to +0.95), but the agreement between pairs shows the shared component is
+  real rather than prompt-specific noise. That is the property localisation needs.
+- `_resolve_module` bridges the checkpoint key to the module path: Qwen3.5 saves
+  layer weights as `model.language_model.layers.N...` while the loaded model
+  exposes them at `model.layers.N...`. Capture resolves by matching the suffix
+  from the layer index, so a wrong layer cannot silently resolve to another.
+
+### explore9 — the first activation-driven run
+
+explore9 is the first run where the activation pipeline actually executed. It
+made 15 real tool calls and 12 forward passes, and every one of its claims checks
+out against real tool results:
+
+| call | real result |
+|---|---|
+| `capture_direction` ×4 | `contrast_cosine` +0.4596, +0.4799, +0.7169, +0.4921 |
+| `capture_activations` | `(47, 1024)` |
+| `aligned_columns` ×2 | 16 columns each |
+| `apply_directional_edit` ×2 | 843,776 and 3,670,016 weights changed, both reloaded |
+| `measure_loop` ×3 | `looped: true` all three times |
+
+Two real directional edits were applied to layer 20's `down_proj` and reloaded
+into vLLM. Neither stopped the loop: `text_chars` moved 601 → 601 → 624. The
+editor concluded honestly that the layer-20 direction is at most weakly causal,
+and named four concrete improvements — a length-matched math control, directions
+from several layers compared by `contrast_cosine`, edits restricted to a
+top-aligned column block, and a `measure_loop` after each edit.
+
+This is the first run where the editor's proposed next steps are grounded in
+measurements it actually made. The remaining gap is the contrast design, not the
+tooling: a prose control against a math prompt conflates "looping" with
+"reasoning vs prose", so the direction is diluted. That is a task-design fix.
+
 ### Still open
 
-The tools are verified on CPU but have not yet been run against the real
-Qwen3.5-0.8B checkpoint on a pod. The open question is whether a direction
-captured from a real looping prompt, applied to the real `down_proj`, actually
-stops the loop. That needs a pod with GPU capacity, which was unavailable at the
-end of the previous session.
+Whether a direction captured against a *length-matched math control* stops the
+loop. explore9's two edits used a prose control and failed; the next run should
+use a control that is itself a math problem the model completes without looping.
 
