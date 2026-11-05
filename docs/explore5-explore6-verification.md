@@ -246,6 +246,14 @@ Suite: **140 passed** (was 134).
 `desiredStatus: EXITED`, "Exited by user". The network volume `a9739uqc2p`
 mounted at `/workspace` persists, so the venv and checkpoint survive a restart.
 
+It was restarted once to run explore7 and stopped again afterwards. The restart
+initially failed six times with "There are not enough free GPUs on the host
+machine to start this pod" — the host had no free RTX 4000 Ada — and succeeded
+on the seventh attempt about eight minutes later. Worth knowing for planning:
+this pod cannot be relied on to restart on demand, and EUR-IS-1's only secure
+alternatives are A100 SXM ($1.79/hr), RTX 5090 ($1.19/hr) and RTX PRO 6000
+($2.49/hr).
+
 Stopped via the Runpod REST API using the `RUNPOD_MODEL_TRAINING_API_KEY` secret
 from Doppler (`model-training` / `dev`). The pod's own pod-scoped key returns
 403 on its own stop endpoint, and the bundled `runpodctl` is 1.14.15, which has
@@ -269,10 +277,14 @@ should be judged by it rather than by the editor's own narrative.
 
 Remaining before Stage 1 can close:
 
-1. Re-run the loop with the fixed auditor and confirm the run is either genuinely
-   clean or correctly rejected.
+1. ~~Re-run the loop with the fixed auditor and confirm the run is either
+   genuinely clean or correctly rejected.~~ **Done** — explore7 audits as not
+   clean with 20 fabricated blocks, and its real edits are genuine.
 2. Get one edit that `apply_edit` actually applies and `measure_loop` actually
    shows stopping the loop — verified from `tool_calls`, not from prose.
-3. If static-slice and column-norm tools still cannot localise the driver, move
-   to activation-level tools as planned.
+   **Still open.** explore7 applied three real edits; none stopped the loop.
+3. Move to activation-level tools. **Now the active next step.** explore7's own
+   conclusion argues for it: "a way to identify the loop-inducing direction from
+   activations rather than weight magnitude alone ... the down-projection columns
+   that drive it need not be norm outliers." The planned trigger has fired.
 
