@@ -207,7 +207,14 @@ def main() -> None:
     parser.add_argument("--out", default="/workspace/speed.json")
     parser.add_argument("--work", default="/workspace/ovi_speed")
     parser.add_argument("--prompt", default=DEFAULT_PROMPT)
-    parser.add_argument("--seed", type=int, default=100)
+    parser.add_argument(
+        "--seeds",
+        type=int,
+        nargs="+",
+        default=[100],
+        help="seeds to average over; more than one turns a single-sample verdict "
+        "into a distribution",
+    )
     parser.add_argument("--timeout", type=int, default=3600)
     parser.add_argument(
         "--steps",
@@ -245,54 +252,64 @@ def main() -> None:
     results: list[dict] = []
     for horizon in args.horizons:
         for steps in args.steps:
-            tag = f"{horizon}_{steps}steps"
-            out_dir = work / tag
-            out_dir.mkdir(parents=True, exist_ok=True)
-            cfg = work / f"cfg_{tag}.yaml"
-            _write_config(
-                cfg,
-                model_name=horizon,
-                steps=steps,
-                prompt=args.prompt,
-                output_dir=out_dir,
-                seed=args.seed,
-            )
-            print(f"=== {tag} ===", flush=True)
-            entry: dict = {"horizon": horizon, "steps": steps}
+            for seed in args.seeds:
+                # The seed is part of the directory name so a multi-seed sweep keeps
+                # every rollout instead of overwriting the previous one.
+                suffix = "" if len(args.seeds) == 1 else f"_s{seed}"
+                tag = f"{horizon}_{steps}steps{suffix}"
+                out_dir = work / tag
+                out_dir.mkdir(parents=True, exist_ok=True)
+                cfg = work / f"cfg_{tag}.yaml"
+                _write_config(
+                    cfg,
+                    model_name=horizon,
+                    steps=steps,
+                    prompt=args.prompt,
+                    output_dir=out_dir,
+                    seed=seed,
+                )
+                print(f"=== {tag} ===", flush=True)
+                entry: dict = {"horizon": horizon, "steps": steps, "seed": seed}
 
-            if args.measure_only:
-                # Reuse whatever was already generated. Lets a sweep whose measurement
-                # step failed be completed without paying for the generation again.
-                run = {"seconds": None, "returncode": None, "reused": True}
-                print("  measuring existing output", flush=True)
-            else:
-                run = _run_generation(cfg, work / f"gen_{tag}.log", args.timeout)
-                print(f"  {run['seconds']}s rc={run['returncode']}", flush=True)
-            entry["run"] = run
-            video = _find_video(out_dir)
-            if video is None:
-                entry["error"] = "no mp4 produced"
-                print("  NO VIDEO", flush=True)
+                if args.measure_only:
+                    # Reuse whatever was already generated. Lets a sweep whose
+                    # measurement step failed be completed without paying for the
+                    # generation again.
+                    run = {"seconds": None, "returncode": None, "reused": True}
+                    print("  measuring existing output", flush=True)
+                else:
+                    run = _run_generation(cfg, work / f"gen_{tag}.log", args.timeout)
+                    print(f"  {run['seconds']}s rc={run['returncode']}", flush=True)
+                entry["run"] = run
+                video = _find_video(out_dir)
+                if video is None:
+                    entry["error"] = "no mp4 produced"
+                    print("  NO VIDEO", flush=True)
+                    results.append(entry)
+                    continue
+
+                measured = _measure_existing(video, args.max_frames)
+                if measured is None or "error" in measured:
+                    entry["error"] = (measured or {}).get("error", "measurement failed")
+                    print(f"  MEASURE FAILED: {entry['error']}", flush=True)
+                else:
+                    entry.update(measured)
+                    print(f"  quality {measured['quality']}", flush=True)
                 results.append(entry)
-                continue
-
-            measured = _measure_existing(video, args.max_frames)
-            if measured is None or "error" in measured:
-                entry["error"] = (measured or {}).get("error", "measurement failed")
-                print(f"  MEASURE FAILED: {entry['error']}", flush=True)
-            else:
-                entry.update(measured)
-                print(f"  quality {measured['quality']}", flush=True)
-            results.append(entry)
 
     # Compare every condition against the same horizon at the default step count.
+    # With more than one seed each condition has several rollouts, so the comparison is
+    # made per seed and then summarised: a metric that is "outside tolerance" on one
+    # seed and not another is a different claim from one that is outside on all of them.
     default_steps = max(args.steps)
-    by_key = {(r["horizon"], r["steps"]): r for r in results}
+    by_key: dict[tuple[str, int, int], dict] = {
+        (r["horizon"], r["steps"], r.get("seed", 0)): r for r in results
+    }
     comparisons: list[dict] = []
     for r in results:
         if "quality" not in r:
             continue
-        base_entry = by_key.get((r["horizon"], default_steps))
+        base_entry = by_key.get((r["horizon"], default_steps, r.get("seed", 0)))
         if base_entry is None or "quality" not in base_entry:
             continue
         from wsp.quality import QualityReading  # noqa: PLC0415
@@ -312,6 +329,7 @@ def main() -> None:
         row = {
             "horizon": r["horizon"],
             "steps": r["steps"],
+            "seed": r.get("seed", 0),
             "seconds": cand_seconds,
             "speedup_vs_default": speedup,
             "acceptable": cmp.acceptable,
@@ -322,11 +340,38 @@ def main() -> None:
         comparisons.append(row)
         print(f"  -> {row['speedup_vs_default']}x  acceptable={cmp.acceptable}", flush=True)
 
+    # Per-condition summary across seeds: how often each metric left tolerance.
+    summary: list[dict] = []
+    conditions: dict[tuple[str, int], list[dict]] = {}
+    for row in comparisons:
+        conditions.setdefault((row["horizon"], row["steps"]), []).append(row)
+    for (horizon, steps), rows in sorted(conditions.items()):
+        n = len(rows)
+        counts: dict[str, int] = {}
+        for row in rows:
+            for name in row["outside"]:
+                counts[name] = counts.get(name, 0) + 1
+        speedups = [r["speedup_vs_default"] for r in rows if r["speedup_vs_default"]]
+        summary.append(
+            {
+                "horizon": horizon,
+                "steps": steps,
+                "n_seeds": n,
+                "acceptable_all_seeds": all(r["acceptable"] for r in rows),
+                "acceptable_any_seed": any(r["acceptable"] for r in rows),
+                "outside_counts": counts,
+                "speedup_median": (
+                    round(float(np.median(speedups)), 3) if speedups else None
+                ),
+            }
+        )
+
     report = {
         "prompt": args.prompt,
         "default_steps": default_steps,
         "results": results,
         "comparisons": comparisons,
+        "summary": summary,
     }
     Path(args.out).write_text(json.dumps(report, indent=2))
     print(f"wrote {args.out}")

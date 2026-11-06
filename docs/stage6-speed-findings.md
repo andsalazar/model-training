@@ -126,6 +126,37 @@ So the honest reading of the 10s result is: **20 steps is 2.09× faster and the 
 drifts.** 30 steps is 1.53× faster with no monotone drift (R² 0.274) and is the
 defensible choice on this evidence.
 
+### But the drift signal is not reliable at one seed — and this weakens the conclusion
+
+Running the same colour check on the 5-second sweep, where the trend should be at least
+as clear, gives a **non-monotonic** result:
+
+| Steps | Colour stability | Trend R² | Verdict |
+|---|---|---|---|
+| 50 | 1.92 | 0.463 | oscillation |
+| 30 | 2.53 | **0.521** | **drift** |
+| 12 | 1.58 | 0.412 | oscillation |
+
+30 steps shows drift while 12 steps does not. If fewer steps caused colour drift, the
+effect should get *worse* as steps fall, not better. It doesn't.
+
+The R² values sit at 0.41–0.59, straddling the 0.5 threshold, so the verdict flips on
+variation that is not attributable to step count. **The most likely explanation is that
+this is seed noise, not a step-count effect.**
+
+That means the "20 steps drifts colour" conclusion above is **not established**. It is
+one generation at one seed, and the same test on the other horizon contradicts the
+direction. The honest statement is:
+
+> Colour stability rises as steps fall at both horizons. Whether that rise is drift or
+> seed noise is unresolved, because the trend test gives opposite verdicts at the two
+> horizons for the same step reduction.
+
+Resolving it needs **seed replication** — the same step counts at 3–5 seeds each — which
+was not run. Until then, 30 steps is recommended for a different reason: it is the
+setting where *both* horizons show a speedup with no metric moving in a direction that
+is clearly bad. That is a weaker justification than the table above implies.
+
 ### The two horizons behave differently, which was the open question
 
 | | 5s | 10s |
@@ -160,15 +191,16 @@ is **met by step reduction alone**, with one caveat that decides the setting.
 
 | Horizon | Recommended steps | Speedup | Why |
 |---|---|---|---|
-| 10s (the goal) | **30** | **1.53×** | 20 steps drifts colour (R² 0.589); 30 does not (R² 0.274) |
+| 10s (the goal) | **30** | **1.53×** | 20 steps is faster but its colour verdict is unreliable |
 | 5s | **30** | **1.42×** | same setting works; 12 steps is faster but untested on adherence |
 
 **30 steps for both horizons** is the defensible configuration on this evidence: 1.42×
-at 5s and 1.53× at 10s, sharper output at both, no monotone colour drift at either.
+at 5s and 1.53× at 10s, sharper output at both, and no metric moving in a direction
+that is clearly bad.
 
-20 steps at 10s is available if 2.09× is worth a visible colour drift. That is a
-judgement call for whoever ships it, not something the metrics can settle — the drift
-is real and the tolerance for it is a product decision.
+20 steps at 10s gives 2.09× and may be fine — the colour signal that argued against it
+is not reliable at one seed. Treat 20 as *promising but unverified* rather than as
+rejected.
 
 ### What this means for the WSP work
 
