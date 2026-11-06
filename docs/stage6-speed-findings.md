@@ -1,13 +1,17 @@
-# Speed findings: cutting denoising steps gives 2.3× and does not cost quality
+# Speed findings: step reduction gives 1.5–2.1× with one unresolved quality question
 
 *Measured results from the step sweep on Ovi at 960×960, one A100 80GB, one prompt,
-one seed.*
+seed 100.*
 
 ## The headline
 
-At the 5-second horizon, going from Ovi's default **50 steps to 12 steps** is
-**2.34× faster** and every quality metric I can measure either improves or stays
-within tolerance.
+Cutting Ovi's denoising steps is the whole speed story, and it works: **30 steps is
+1.42× faster at 5s and 1.53× at 10s**, with sharper output at both horizons and no
+measurable audio change. **20 steps reaches 2.09× at 10s** — the goal — but a colour
+drift signal argues against it, and that signal is not reliable at one seed.
+
+That last caveat is the difference between "the goal is met" and "the goal is probably
+met". Both readings are below, with the evidence for each.
 
 | Steps | Wall clock | Speedup | Sharpness | Flicker | Coherence | Colour |
 |---|---|---|---|---|---|---|
@@ -91,7 +95,7 @@ whether the output got better or worse.
 Three of four are neutral-to-better. Flicker rising is the one genuine concern and is
 consistent with more per-frame texture rather than with instability.
 
-## The 10-second horizon: the goal is met at 20 steps
+## The 10-second horizon: 2.09× at 20 steps, 1.53× at 30
 
 This is the horizon the goal is actually about. Measured on the same A100, same
 prompt, same seed:
