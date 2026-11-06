@@ -199,18 +199,29 @@ though it has more time to gain.
 
 Ovi is a joint video+audio model, so "quality" includes audio. Every metric above
 reads pixels only, which meant the sweep had said nothing about half of what Ovi
-produces. Measured separately:
+produces. Measured separately, at three seeds per condition:
 
-| Horizon / steps | RMS | Spectral centroid | Centroid trend R² |
-|---|---|---|---|
-| 5s / 50 | 0.00547 | 2460.6 Hz | 0.001 |
-| 5s / 30 | 0.00515 | 2473.8 Hz | 0.003 |
-| 10s / 50 | 0.01214 | 2475.0 Hz | 0.000 |
-| 10s / 30 | 0.01066 | 2492.0 Hz | 0.002 |
+| Steps | Seed | RMS | Spectral centroid | Centroid trend R² |
+|---|---|---|---|---|
+| 50 | 100 | 0.01214 | 2475.0 Hz | 0.000 |
+| 50 | 200 | 0.00448 | 2663.2 Hz | 0.001 |
+| 50 | 300 | 0.02298 | 2319.7 Hz | 0.001 |
+| 30 | 100 | 0.01066 | 2492.0 Hz | 0.002 |
+| 30 | 200 | 0.00440 | 2685.7 Hz | 0.003 |
+| 30 | 300 | 0.02462 | 2305.3 Hz | 0.001 |
+| 20 | 100 | 0.00981 | 2522.5 Hz | 0.002 |
+| 20 | 200 | 0.00425 | 2687.8 Hz | 0.004 |
+| 20 | 300 | 0.02334 | 2311.6 Hz | 0.001 |
 
-RMS within 6% and spectral centroid within 1% at both horizons across a 40% step cut,
-with no timbre trend (R² ≤ 0.003). The step cut does not cost audio quality on this
-evidence.
+**Audio is stable across step counts and varies by seed.** Seed 300 is loud
+(RMS 0.023–0.025) at every step count; seed 200 is quiet (0.0044) at every step count.
+Within a seed, RMS moves by under 20% across a 60% step cut. No timbre trend anywhere
+(R² ≤ 0.004).
+
+An earlier version of this section claimed "RMS within 6%" — that compared *different
+seeds* at different step counts and read seed variation as step stability. The correct
+claim is the one above: the step cut does not change audio, and seed choice changes it
+by 5×.
 
 ### The first audio check reported a false negative
 
