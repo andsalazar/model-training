@@ -7,11 +7,12 @@ seed 100.*
 
 Cutting Ovi's denoising steps is the whole speed story, and it works: **30 steps is
 1.42× faster at 5s and 1.53× at 10s**, with sharper output at both horizons and no
-measurable audio change. **20 steps reaches 2.09× at 10s** — the goal — but a colour
-drift signal argues against it, and that signal is not reliable at one seed.
+measurable audio change. **20 steps reaches 1.76× at 10s** — but its colour drifts in
+2 of 3 seeds, so 30 is the setting to ship.
 
-That last caveat is the difference between "the goal is met" and "the goal is probably
-met". Both readings are below, with the evidence for each.
+The seed replication is what makes this answerable. At one seed the colour signal was
+ambiguous; at three seeds the ranges are disjoint from baseline and the trend test
+separates drift from oscillation. The recommendation changed as a result.
 
 | Steps | Wall clock | Speedup | Sharpness | Flicker | Coherence | Colour |
 |---|---|---|---|---|---|---|
@@ -95,10 +96,9 @@ whether the output got better or worse.
 Three of four are neutral-to-better. Flicker rising is the one genuine concern and is
 consistent with more per-frame texture rather than with instability.
 
-## The 10-second horizon: 2.09× at 20 steps, 1.53× at 30
+## The 10-second horizon: 1.76× at 20 steps, 1.53× at 30
 
-This is the horizon the goal is actually about. Measured on the same A100, same
-prompt, same seed:
+This is the horizon the goal is actually about. First measured at seed 100 only:
 
 | Steps | Wall clock | Speedup | Sharpness | Flicker | Coherence | Colour |
 |---|---|---|---|---|---|---|
@@ -106,9 +106,9 @@ prompt, same seed:
 | 30 | 819.7s | **1.53×** | 20.83 | 0.3191 | 0.6824 | 5.324 |
 | 20 | 598.1s | **2.09×** | 23.29 | 0.3444 | 0.6698 | 6.768 |
 
-**2.09× faster at 20 steps**, with sharpness up 58% and motion coherence up 9%. That
-is the goal — a 10-second rollout in 598s instead of 1251s — and it needs no model
-edit at all.
+Sharpness up 58% and motion coherence up 9% at 20 steps. But the 20-step run was faster
+than the seed mean (598s vs 707s), so **2.09× is not the number to quote** — the
+three-seed replication below gives 1.76×. The quality direction is the same either way.
 
 ### But colour stability is a real regression, not an artefact
 
@@ -126,53 +126,74 @@ R² crosses 0.5 and the drift reaches 12.28 units, meaning the rollout's colour 
 **trends in one direction across the ten seconds**. That is a visible defect: the scene
 changes tone for no reason. It is the first genuine quality cost found.
 
-So the honest reading of the 10s result is: **20 steps is 2.09× faster and the colour
-drifts.** 30 steps is 1.53× faster with no monotone drift (R² 0.274) and is the
-defensible choice on this evidence.
+So the single-seed reading was: **20 steps is faster and the colour drifts.** 30 steps
+is 1.53× faster with no monotone drift (R² 0.274). The next section tests whether that
+holds across seeds — it does, with one correction to the speedup.
 
-### But the drift signal is not reliable at one seed — and this weakens the conclusion
+### Seed replication: the colour rise is real, and it is drift
 
-Running the same colour check on the 5-second sweep, where the trend should be at least
-as clear, gives a **non-monotonic** result:
+The single-seed result above was not trustworthy, because the same trend test on the
+5-second sweep gave opposite verdicts for the same step reduction. So the 10s sweep was
+re-run at **three seeds** (100/200/300) for 50/30/20 steps — nine generations.
 
-| Steps | Colour stability | Trend R² | Verdict |
+Wall clock is highly reproducible across seeds (50 steps: 1242.9/1245.6/1242.2s), so the
+speedup is solid:
+
+| Steps | Mean wall clock | Speedup per seed | Median |
 |---|---|---|---|
-| 50 | 1.92 | 0.463 | oscillation |
-| 30 | 2.53 | **0.521** | **drift** |
-| 12 | 1.58 | 0.412 | oscillation |
+| 50 (default) | 1243.6s | 1.00× | 1.00× |
+| 30 | 843.1s | 1.53× / 1.53× / 1.37× | **1.53×** |
+| 20 | 707.4s | 1.78× / 1.75× / 1.74× | **1.76×** |
 
-30 steps shows drift while 12 steps does not. If fewer steps caused colour drift, the
-effect should get *worse* as steps fall, not better. It doesn't.
+Colour stability, per seed:
 
-The R² values sit at 0.41–0.59, straddling the 0.5 threshold, so the verdict flips on
-variation that is not attributable to step count. **The most likely explanation is that
-this is seed noise, not a step-count effect.**
+| Steps | Values (seeds 100/200/300) | Range | Mean |
+|---|---|---|---|
+| 50 | 2.83, 2.91, 3.70 | 0.86 | 3.15 |
+| 30 | 3.79, 4.97, 5.32 | 1.53 | 4.69 |
+| 20 | 4.40, 4.45, 6.77 | 2.37 | 5.20 |
 
-That means the "20 steps drifts colour" conclusion above is **not established**. It is
-one generation at one seed, and the same test on the other horizon contradicts the
-direction. The honest statement is:
+**The ranges are disjoint from the baseline at both 30 and 20 steps.** Seed noise is
+±30% within a condition, but the shift between conditions is larger than that spread —
+so the rise is a step-count effect, not seed variation. The earlier "it's probably seed
+noise" reading was wrong.
 
-> Colour stability rises as steps fall at both horizons. Whether that rise is drift or
-> seed noise is unresolved, because the trend test gives opposite verdicts at the two
-> horizons for the same step reduction.
+The trend test then says *what kind* of change it is:
 
-Resolving it needs **seed replication** — the same step counts at 3–5 seeds each — which
-was not run. Until then, 30 steps is recommended for a different reason: it is the
-setting where *both* horizons show a speedup with no metric moving in a direction that
-is clearly bad. That is a weaker justification than the table above implies.
+| Steps | Seed | Colour | Trend R² | Mean abs drift | Verdict |
+|---|---|---|---|---|---|
+| 50 | 100 | 2.56 | 0.130 | 1.81 | oscillation |
+| 50 | 200 | 3.67 | 0.119 | 2.17 | oscillation |
+| 50 | 300 | 2.85 | 0.146 | 1.52 | oscillation |
+| 30 | 100 | 5.00 | 0.274 | 7.24 | oscillation |
+| 30 | 200 | 3.78 | 0.383 | 5.23 | oscillation |
+| 30 | 300 | 4.87 | 0.090 | 1.95 | oscillation |
+| 20 | 100 | 6.42 | **0.589** | **12.28** | **drift** |
+| 20 | 200 | 4.31 | **0.677** | **7.87** | **drift** |
+| 20 | 300 | 4.41 | 0.353 | 5.40 | oscillation |
+
+**All three 50-step seeds oscillate** (R² 0.12–0.15) — the baseline is clean. **Two of
+three 20-step seeds drift** (R² 0.59, 0.68). At 30 steps all three oscillate, though the
+drift magnitude rises (1.5–7.2 vs 1.5–2.2 at baseline).
+
+So the defensible reading is:
+
+> **20 steps is 1.76× faster and its colour drifts in 2 of 3 seeds.** 30 steps is 1.53×
+> faster and its colour oscillates in all 3 seeds, with larger wobble than baseline but
+> no monotone trend.
 
 ### The two horizons behave differently, which was the open question
 
 | | 5s | 10s |
 |---|---|---|
 | Speedup at 30 steps | 1.42× | 1.53× |
-| Speedup at 20 steps | 1.84× | 2.09× |
-| Colour drift at 20 steps | none detected | **R² 0.589, drift 12.28** |
+| Speedup at 20 steps | 1.84× | 1.76× |
+| Colour verdict at 20 steps | oscillation (R² 0.412) | **drift in 2 of 3 seeds** |
 
-The long horizon tolerates the step cut *better* on speed (more denoise to cut) but
-*worse* on colour. That is exactly the asymmetry the plan said to look for, and it
-means a single step setting for both horizons is the wrong design — the long one needs
-more steps for colour stability even though it has more time to gain.
+The long horizon tolerates the step cut *better* on speed but *worse* on colour. That is
+the asymmetry the plan said to look for, and it means a single step setting for both
+horizons is the wrong design — the long one needs more steps for colour stability even
+though it has more time to gain.
 
 ## Audio survives the step cut
 
@@ -220,8 +241,11 @@ compliance tests, and now this. The pattern is consistent enough to be a standin
 4. **One prompt.** All seven videos are the same river prompt. A static or
    low-texture prompt may behave differently — the previous stage's entropy work found
    that two prompts out of four behaved differently from the rest.
-5. **The colour verdict is unreliable**, as the 5s cross-check showed. Do not act on
-   the "20 steps drifts" reading without the seed sweep.
+5. **The 5s colour verdict is still single-seed.** The 10s colour question was settled
+   with three seeds; the 5s one was not. Its "30 steps drifts" reading is as unreliable
+   as the 10s one was before replication.
+6. **The 20-step speedup is 1.76×, not 2.09×.** The single-seed 20-step run happened to
+   be faster than the seed mean. Quote the seed-verified number.
 
 ## The recommendation
 
@@ -230,16 +254,16 @@ is **met by step reduction alone**, with one caveat that decides the setting.
 
 | Horizon | Recommended steps | Speedup | Why |
 |---|---|---|---|
-| 10s (the goal) | **30** | **1.53×** | 20 steps is faster but its colour verdict is unreliable |
+| 10s (the goal) | **30** | **1.53×** | 20 steps is faster but its colour drifts in 2 of 3 seeds |
 | 5s | **30** | **1.42×** | same setting works; 12 steps is faster but untested on adherence |
 
 **30 steps for both horizons** is the defensible configuration on this evidence: 1.42×
-at 5s and 1.53× at 10s, sharper output at both, and no metric moving in a direction
-that is clearly bad.
+at 5s and 1.53× at 10s, sharper output at both, audio unchanged, and colour oscillating
+rather than drifting in all three seeds.
 
-20 steps at 10s gives 2.09× and may be fine — the colour signal that argued against it
-is not reliable at one seed. Treat 20 as *promising but unverified* rather than as
-rejected.
+20 steps at 10s gives 1.76× and its colour drifts in 2 of 3 seeds. That is a real cost,
+not seed noise — the ranges are disjoint from baseline. It is available if 1.76× is
+worth a visible tone shift over ten seconds, but it is not the setting to default to.
 
 ### What this means for the WSP work
 
@@ -247,7 +271,7 @@ The original plan assumed a model edit would be needed to buy speed. It is not: 
 step cut already delivers the goal.** That changes what WSP is for.
 
 WSP is now about *raising the floor* rather than achieving the first win — specifically,
-whether a targeted edit can make 20 steps colour-stable, which would recover the 2.09×
+whether a targeted edit can make 20 steps colour-stable, which would recover 1.76×
 without the drift. That is a much narrower and better-posed question than "make Ovi
 faster", and it is the one worth spending GPU time on next.
 

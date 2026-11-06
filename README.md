@@ -211,6 +211,13 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
 - [docs/stage6-pod-setup.md](docs/stage6-pod-setup.md) — getting Ovi running on a
   Blackwell pod: four blockers, three of which produced error messages pointing at the
   wrong thing.
+- [docs/stage6-speed-plan.md](docs/stage6-speed-plan.md) — the plan for the speed
+  objective, and why it needs a different metric from the stability work.
+- [docs/stage6-speed-findings.md](docs/stage6-speed-findings.md) — **the speed result.**
+  Denoising steps are 92% of wall clock, so cutting them is the lever: **30 steps is
+  1.42× faster at 5s and 1.53× at 10s** with sharper output and unchanged audio. 20
+  steps reaches 1.76× at 10s but its colour drifts in 2 of 3 seeds. The goal is met by
+  configuration alone, with no model edit.
 
 Three premises in the brief did not survive contact with the primary source: TBC used
 **Oasis**, not Wan 2.2; the adapter is **not a LoRA**; and the goal was **rollout
