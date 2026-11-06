@@ -94,9 +94,11 @@ the problem, ending in one mechanism that works. Claim-by-claim:
 | Threshold selection fixes the reproducibility | **yes** — overlap 1.000 at every ratio |
 | A stable selection makes the edit safe | **no** — harmful at 4 and 12 columns |
 | The over-thinking direction is global | **no** — layer-local (+0.006 across layers) |
-| A trained adapter is behaviour-selective | **yes** — guards keep real content |
-| The adapter reduces over-thinking | **yes at T 0.6**, with or without presence penalty; **no under greedy** |
-| The adapter improves every guard | **no** — one guard regresses at every setting |
+| A trained adapter is behaviour-selective | **yes** — targets only, guards keep real content |
+| The adapter delivers finished answers | **yes** — 6/6 targets, after targets include the closing marker |
+| The adapter generalises to a held-out behaviour | **yes** — `Tokyo`, `Au` never trained on |
+| The adapter recipe generalises to format compliance | **no** — 0/8 compliant; the base trace never contains the answer |
+| Including guards in training protects them | **no** — it damages them; targets-only is better |
 
 The sequence:
 
@@ -118,6 +120,17 @@ The sequence:
    prompt whose answer was `nail`. Training on the model's **own truncated
    reasoning** fixed it: targets fell 60–90%, both held-out probes improved, and
    guards kept producing genuine poems and explanations.
+5. **Stage 4b–4d** corrected two measurement bugs and one data-design error.
+   Re-judged with the generated text preserved, 4b's targets were *unfinished* —
+   every output ended mid-deliberation inside the thinking block. 4c appended the
+   closing marker and bare answer to each target, which fixed all six targets but
+   pushed two guards to the cap. 4d trained on **targets only**, which fixed the
+   targets *and* the guards. The mixed set was the problem: including guards
+   taught the adapter to shorten everything.
+6. **Stage 5** tested whether the recipe generalises to format compliance. It does
+   not — 0 of 8 targets compliant. The base model's trace never contains a
+   compliant answer, so truncating it teaches "stop mid-sentence". The recipe has
+   a precondition: the base trace must contain the desired output.
 
 The honest headline is that four stages produced three negatives and one partial
 positive, and every negative narrowed the next attempt. What is reusable: the
