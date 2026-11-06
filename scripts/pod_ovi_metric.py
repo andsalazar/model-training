@@ -10,26 +10,26 @@ long training run.
 The lesson from Stages 1-5 is that every failure came from measuring the wrong thing
 or measuring it badly. So this script measures first and trains nothing.
 
-What "degrading" means here
----------------------------
-Ovi generates 5 or 10 seconds. A 5-second rollout is short enough that collapse is
-unlikely to appear on its own. So the script induces degradation deliberately, in two
-ways, and asks whether the metric catches each:
+Two modes, deliberately separate
+--------------------------------
+``synthetic``  take saved frames and construct a degrading variant by converging each
+               frame progressively toward frame 0. This tests the *metric*, not the
+               model: it asks whether entropy falls when frames genuinely converge.
+               Runs anywhere, no GPU. This is the primary check.
 
-  ``truncate``   generate at the model's normal settings, then keep only the first N
-                 frames and re-run the *remaining* frames conditioned on a progressively
-                 degraded context. This is the honest analogue of long-horizon rollout
-                 failure, but it needs model access we may not have.
+``real``       generate with Ovi's own CLI and measure the videos it produced. This
+               tests the *model*: whether real rollouts collapse in a way the metric
+               catches. Needs a GPU with the model installed.
 
-  ``synthetic``  take one real generation and construct a degrading variant by blending
-                 each frame toward the previous one. This tests the *metric*, not the
-                 model: it asks whether entropy falls when frames genuinely converge.
-                 It is cheap, needs no extra generation, and is the primary check.
+The synthetic path runs first because it isolates the metric from the model. If the
+metric cannot separate a synthetic collapse it certainly cannot separate a real one.
+Results are reported separately so a synthetic pass is never mistaken for evidence
+about the model.
 
-The synthetic path is the one that runs first, because it isolates the metric from the
-model. If the metric cannot separate a synthetic collapse it certainly cannot separate a
-real one. The real-generation path is the follow-up, and its results are reported
-separately so a synthetic pass is never mistaken for a real one.
+An earlier version of the synthetic construction blended each frame toward its
+immediate predecessor. That reaches a stationary variance rather than converging, so
+per-frame entropy fell once and then flattened — no trend. The metric correctly refused
+to call it a collapse. The failure was in the fixture, not the metric.
 
 Run as a file, not a heredoc: torch and diffusers both re-import main.
 """
@@ -82,15 +82,19 @@ def _load_frames(path: Path) -> np.ndarray:
 def _converge_toward_first(frames: np.ndarray, strength: float) -> np.ndarray:
     """Construct a degrading rollout by converging every frame toward the first.
 
-    ``strength`` 0 leaves the rollout untouched; 1 replaces every frame with the
-    first. Intermediate values make later frames progressively more like frame 0,
-    which is what a collapsing rollout actually looks like: the model stops
+    The convergence is *progressive*: frame ``i`` is blended toward frame 0 by
+    ``strength * i / (n-1)``. So ``strength`` is the blend applied to the *last*
+    frame, and the ramp runs from 0 at frame 0 to ``strength`` at the end. Frame 0
+    is never modified.
+
+    ``strength`` 0 leaves the rollout untouched; 1 makes the final frame identical
+    to the first. Intermediate values make later frames progressively more like
+    frame 0, which is what a collapsing rollout actually looks like: the model stops
     producing new information and keeps re-emitting what it already had.
 
-    The convergence is *progressive* — frame ``i`` is blended by ``strength * i /
-    (n-1)`` — so the rollout degrades along its length rather than being uniformly
-    blurred. A uniform blend would lower entropy without producing a trend, and a
-    trend is the signal being tested.
+    The ramp matters. A *uniform* blend would lower entropy without producing a
+    trend, and a trend is the signal being tested — the metric requires a negative
+    slope with a good fit, so a flat-but-lowered series is correctly rejected.
 
     An earlier version blended each frame toward its immediate predecessor. That
     reaches a stationary variance instead of converging, so per-frame entropy fell
@@ -205,50 +209,133 @@ def run_synthetic(args: argparse.Namespace) -> dict:
     }
 
 
+def _extract_frames(video_path: Path, max_frames: int | None = None) -> np.ndarray:
+    """Decode an mp4 into ``(n_frames, h, w, 3)`` uint8.
+
+    Uses imageio-ffmpeg's bundled binary so no system ffmpeg is required. Frames
+    are returned as-is; the metric flattens spatial patches itself.
+    """
+    import imageio.v3 as iio
+
+    frames = iio.imread(video_path, plugin="pyav")
+    if max_frames is not None:
+        frames = frames[:max_frames]
+    return np.asarray(frames)
+
+
+def _patches_from_pixels(
+    frames: np.ndarray, patch: int = 16, max_patches: int = 400
+) -> np.ndarray:
+    """Cut decoded frames into non-overlapping spatial patches.
+
+    ``(n_frames, h, w, 3)`` -> ``(n_frames, n_patches, patch*patch*3)``. This is the
+    pixel-space analogue of TBC's latent patches: same idea (a frame is a set of
+    local tokens), different representation. The metric does not care which, as long
+    as every frame is cut the same way.
+
+    Patches are subsampled evenly to ``max_patches`` so the k-NN estimator stays
+    tractable — a 960x960 frame at patch 16 is 3600 patches, and the estimator is
+    O(n^2).
+    """
+    n_frames, h, w, channels = frames.shape
+    ph, pw = h // patch, w // patch
+    trimmed = frames[:, : ph * patch, : pw * patch, :]
+    # (n, ph, patch, pw, patch, c) -> (n, ph*pw, patch*patch*c)
+    grid = trimmed.reshape(n_frames, ph, patch, pw, patch, channels)
+    grid = grid.transpose(0, 1, 3, 2, 4, 5)
+    flat = grid.reshape(n_frames, ph * pw, patch * patch * channels)
+    if flat.shape[1] > max_patches:
+        idx = np.linspace(0, flat.shape[1] - 1, max_patches).astype(int)
+        flat = flat[:, idx, :]
+    return flat.astype(np.float64)
+
+
 def run_real(args: argparse.Namespace) -> dict:
-    """Generate real rollouts with Ovi and measure them.
+    """Generate real rollouts with Ovi's own CLI, then measure them.
+
+    Ovi is not a diffusers pipeline — it is a custom repo driven by a YAML config
+    and ``inference.py``. Rather than reimplement its inference here (which would
+    couple this script to Ovi's internals and break on any upstream change), this
+    shells out to Ovi's own entry point and then measures the videos it produced.
+
+    That keeps the metric independent of the model, which is the whole point of
+    building it as pure math first.
 
     Kept separate from the synthetic path so a synthetic pass is never reported as
-    evidence about the model. Requires the model to be installed and loadable.
+    evidence about the model.
     """
-    import torch
-    from diffusers import DiffusionPipeline
-    from diffusers.utils import export_to_video
+    import subprocess
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    if device == "cpu":
-        raise SystemExit("no CUDA device; Ovi needs a GPU")
-
-    print(f"loading {args.model} on {device}")
-    pipe = DiffusionPipeline.from_pretrained(
-        args.model, torch_dtype=torch.bfloat16, trust_remote_code=True
-    )
-    pipe = pipe.to(device)
-    if hasattr(pipe, "enable_model_cpu_offload") and args.offload:
-        pipe.enable_model_cpu_offload()
+    repo = Path(args.ovi_repo)
+    if not (repo / "inference.py").exists():
+        raise SystemExit(
+            f"Ovi repo not found at {repo}. Clone it first:\n"
+            f"  git clone https://github.com/character-ai/Ovi.git {repo}"
+        )
+    config = repo / "ovi/configs/inference/inference_fusion.yaml"
+    if not config.exists():
+        raise SystemExit(f"Ovi config not found at {config}")
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Ovi reads its prompt and output path from the YAML. Rather than editing the
+    # repo's config in place (which would dirty a git checkout), write a copy with
+    # the fields we need overridden.
+    import yaml
+
+    base = yaml.safe_load(config.read_text())
+    base["output_dir"] = str(out_dir)
+    base["ckpt_dir"] = args.ckpt_dir
+    base["model_name"] = args.model_name
+    base["sample_steps"] = args.steps
+    base["cpu_offload"] = bool(args.offload)
+    base["fp8"] = bool(args.fp8)
+    base["seed"] = args.seed
+    base["each_example_n_times"] = 1
+
     rows = []
     for i, prompt in enumerate(PROMPTS[: args.n_prompts]):
         print(f"[{i + 1}/{args.n_prompts}] {prompt}")
-        result = pipe(
-            prompt=prompt,
-            num_frames=args.num_frames,
-            num_inference_steps=args.steps,
-            guidance_scale=args.guidance,
-        )
-        video = result.frames[0] if hasattr(result, "frames") else result[0]
-        # Save the decoded frames so the metric can be recomputed without
-        # regenerating — generation is the expensive part.
-        arr = np.asarray(video, dtype=np.float32)
-        np.save(out_dir / f"frames_{i:02d}.npy", arr)
-        if args.export_mp4:
-            export_to_video(video, str(out_dir / f"video_{i:02d}.mp4"), fps=args.fps)
-        rows.append({"prompt": prompt, "shape": list(arr.shape)})
+        run_config = dict(base)
+        run_config["text_prompt"] = prompt
+        run_config["output_dir"] = str(out_dir / f"run_{i:02d}")
+        cfg_path = out_dir / f"config_{i:02d}.yaml"
+        cfg_path.write_text(yaml.safe_dump(run_config))
 
-    return {"mode": "real", "model": args.model, "generations": rows}
+        proc = subprocess.run(
+            [sys.executable, "inference.py", "--config-file", str(cfg_path)],
+            cwd=str(repo),
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0:
+            print(f"  generation failed (exit {proc.returncode})")
+            print(proc.stderr[-2000:])
+            rows.append({"prompt": prompt, "error": proc.stderr[-500:]})
+            continue
+
+        videos = sorted((out_dir / f"run_{i:02d}").rglob("*.mp4"))
+        if not videos:
+            print("  no mp4 produced")
+            rows.append({"prompt": prompt, "error": "no mp4 produced"})
+            continue
+
+        frames = _extract_frames(videos[0])
+        patches = _patches_from_pixels(frames, patch=args.patch, max_patches=args.max_patches)
+        np.save(out_dir / f"patches_{i:02d}.npy", patches)
+        print(f"  {frames.shape[0]} frames -> {patches.shape[1]} patches x {patches.shape[2]} dims")
+        rows.append(
+            {
+                "prompt": prompt,
+                "video": str(videos[0]),
+                "frames": int(frames.shape[0]),
+                "patches": int(patches.shape[1]),
+                "dims": int(patches.shape[2]),
+            }
+        )
+
+    return {"mode": "real", "model": args.model_name, "generations": rows}
 
 
 def main() -> None:
@@ -262,18 +349,25 @@ def main() -> None:
     parser.add_argument("--frames", default="/workspace/ovi/frames.npy", help="saved frame tensor")
     parser.add_argument("--out", default="/workspace/ovi/metric.json", help="result JSON path")
     parser.add_argument("--out-dir", default="/workspace/ovi", help="generation output directory")
-    parser.add_argument("--model", default="chetwinlow1/Ovi")
     parser.add_argument("--estimator", default="knn", choices=("histogram", "knn", "gaussian"))
     parser.add_argument("--max-patches", type=int, default=400)
     parser.add_argument("--strengths", type=float, nargs="+", default=[0.25, 0.5, 0.75, 0.9])
     parser.add_argument("--min-gap", type=float, default=0.15)
     parser.add_argument("--n-prompts", type=int, default=5)
-    parser.add_argument("--num-frames", type=int, default=121)
-    parser.add_argument("--steps", type=int, default=50)
-    parser.add_argument("--guidance", type=float, default=5.0)
-    parser.add_argument("--fps", type=int, default=24)
-    parser.add_argument("--offload", action="store_true")
-    parser.add_argument("--export-mp4", action="store_true")
+    # -- real-generation options, matching Ovi's own interface ------------------
+    parser.add_argument("--ovi-repo", default="/workspace/Ovi", help="path to the cloned Ovi repo")
+    parser.add_argument("--ckpt-dir", default="/workspace/Ovi/ckpts", help="Ovi checkpoint directory")
+    parser.add_argument(
+        "--model-name",
+        default="960x960_5s",
+        choices=("720x720_5s", "960x960_5s", "960x960_10s"),
+        help="Ovi model variant; 5s is enough to test the metric and is 2x cheaper",
+    )
+    parser.add_argument("--steps", type=int, default=50, help="denoising steps")
+    parser.add_argument("--seed", type=int, default=100)
+    parser.add_argument("--patch", type=int, default=16, help="spatial patch size for pixel patches")
+    parser.add_argument("--offload", action="store_true", help="CPU offload to cut peak VRAM")
+    parser.add_argument("--fp8", action="store_true", help="load the fp8 checkpoint (24GB VRAM)")
     args = parser.parse_args()
 
     payload = run_synthetic(args) if args.mode == "synthetic" else run_real(args)
