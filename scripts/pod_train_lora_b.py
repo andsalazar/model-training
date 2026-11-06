@@ -40,13 +40,25 @@ TARGET_BUDGET = 160
 GUARD_BUDGET = 4096
 
 
-def load_targets(path: str) -> list[dict]:
+def load_targets(path: str, kinds: str = "") -> list[dict]:
+    """Load training rows, optionally filtered to some kinds.
+
+    ``kinds`` is a comma-separated list ("target", "guard"). Filtering matters:
+    a mixed set teaches one adapter to both suppress deliberation (targets) and
+    preserve it (guards), which it cannot do. Training target-only tests whether
+    the guard damage came from the mixed set or from the mechanism.
+    """
+    wanted = {k.strip() for k in kinds.split(",") if k.strip()}
     rows = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
-            if line:
-                rows.append(json.loads(line))
+            if not line:
+                continue
+            row = json.loads(line)
+            if wanted and row.get("kind") not in wanted:
+                continue
+            rows.append(row)
     return rows
 
 
@@ -104,12 +116,17 @@ def main() -> int:
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--length-weight", type=float, default=1.0)
     parser.add_argument("--holdout", default="factual")
+    parser.add_argument(
+        "--kinds",
+        default="",
+        help="comma-separated kinds to train on (target, guard); empty means all",
+    )
     args = parser.parse_args()
 
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer, get_linear_schedule_with_warmup
 
-    examples = load_targets(args.targets)
+    examples = load_targets(args.targets, args.kinds)
     train_set = [e for e in examples if e["behaviour"] != args.holdout]
     held_out = [e for e in examples if e["behaviour"] == args.holdout]
     print(f"train {len(train_set)}  held-out '{args.holdout}' {len(held_out)}", flush=True)

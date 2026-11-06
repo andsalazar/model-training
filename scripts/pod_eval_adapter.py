@@ -31,6 +31,41 @@ from wsp.stage4_data import build_dataset
 MODEL = "/local/models/qwen"
 MAX_TOKENS = 2048
 
+#: A delivered answer must be short. Past this the model is still deliberating.
+DELIVERED_CAP = 120
+
+#: Markers that mean the model is still inside its reasoning block.
+_REASONING_MARKERS = ("thinking", "analyze", "wait", "let me", "constraint", "**")
+
+
+def _delivered(text: str, expected: str, kind: str) -> bool:
+    """Whether the response actually delivers what the prompt asked for.
+
+    Targets and held-outs ask for the answer *only*, so a delivered response has
+    closed its reasoning block and the answer appears after the close. Guards ask
+    for elaboration, so for them "delivered" just means the answer is present.
+
+    This is the check the substring test was missing: "132" appears in a 116-token
+    trace that never closes its thinking block, and the substring test called that
+    correct. The marker test applies only to the text *after* the close, because a
+    completed response still contains its own reasoning before it.
+    """
+    lowered = text.lower()
+    if expected.lower() not in lowered:
+        return False
+    if kind == "guard":
+        return True
+
+    close = lowered.rfind("</think>")
+    if close < 0:
+        # No thinking block at all: the model answered directly, which is the
+        # best case. But if the text reads as deliberation, it never answered.
+        return not any(marker in lowered for marker in _REASONING_MARKERS)
+    answer = lowered[close + len("</think>"):]
+    if expected.lower() not in answer:
+        return False
+    return not any(marker in answer for marker in _REASONING_MARKERS)
+
 #: A broad set, deliberately including the probes that broke Stage 3. The guards
 #: are the specification: `poem` and `hammer` are where the fixed vector failed,
 #: so they are where the adapter has to succeed.
@@ -82,6 +117,14 @@ def measure(runner: VLLMRunner, label: str) -> list[dict]:
             "kind": kind,
             "expected": expected,
             "correct": expected.lower() in text.lower(),
+            # A substring test cannot distinguish "the answer is present" from
+            # "the answer is buried in unfinished deliberation". For targets and
+            # held-outs the prompt asks for the answer *only*, so the response
+            # must have closed the thinking block and be short. Guards are the
+            # opposite: elaboration is the point there.
+            "delivered": _delivered(text, expected, kind),
+            # Keep the text. A saved result without it cannot be re-judged.
+            "text": text,
             **signal.as_dict(),
         }
         rows.append(row)

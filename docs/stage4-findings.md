@@ -1,5 +1,14 @@
 # Stage 4 findings — the adapter works, with a decoding caveat
 
+> **Correction, added after re-judging with the text preserved.** The saved eval
+> kept only `text_chars`, not the generated text, and `correct` was a substring
+> test. Re-running with the text kept shows that **zero targets deliver a finished
+> answer**: every output ends mid-deliberation inside the thinking block. The
+> length reductions and the computed answers are real; "correct" as previously
+> reported conflated "the answer appears in the trace" with "the answer was
+> delivered". See [stage4-correction.md](stage4-correction.md) for the evidence
+> and the retrain that tests whether closing the block is learnable.
+
 ## Summary
 
 The second adapter is the first mechanism in this project to pass the broad

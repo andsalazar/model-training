@@ -78,8 +78,32 @@ def cut_after_answer(text: str, answer: str) -> tuple[str, bool]:
     return text[:end], True
 
 
+def close_and_answer(text: str, answer: str) -> tuple[str, bool]:
+    """Keep the trace to the answer, then close the thinking block and emit it.
+
+    ``cut_after_answer`` stops *inside* the reasoning block, so an adapter trained
+    on it learns "stop right after computing" and never learns to leave the block.
+    Re-judged strictly, most of its outputs are unfinished deliberation.
+
+    This variant appends the closing marker and the bare answer, so the target is
+    a complete response: reason, close, answer. That is what the prompt asked for.
+    """
+    idx = text.lower().find(answer.lower())
+    if idx < 0:
+        return text, False
+    end = idx + len(answer)
+    head = text[:end]
+    # Close the thinking block if the trace is still inside one. Qwen uses
+    # </think>; a trace that already closed needs no marker.
+    if "</think>" not in head:
+        head = head.rstrip() + "\n</think>\n\n"
+    return head + answer, True
+
+
 def main() -> int:
-    out = sys.argv[1] if len(sys.argv) > 1 else "/workspace/stage4b_targets.jsonl"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    close = "--close" in sys.argv
+    out = args[0] if args else "/workspace/stage4b_targets.jsonl"
     from transformers import AutoTokenizer
     from vllm import LLM, SamplingParams
 
@@ -109,7 +133,8 @@ def main() -> int:
             cut = n_full
             ok = True
         else:
-            target, ok = cut_after_answer(text, ex.expected)
+            builder = close_and_answer if close else cut_after_answer
+            target, ok = builder(text, ex.expected)
             cut = len(tok(target, add_special_tokens=False).input_ids)
 
         if not ok:
