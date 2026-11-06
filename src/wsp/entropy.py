@@ -117,6 +117,40 @@ def _digamma(x: float) -> float:
     return result + log(x) - 0.5 * inv - inv2 / 12.0 + inv2 * inv2 / 120.0
 
 
+#: Rows per block in the blocked distance computation. Chosen so a block's distance
+#: matrix stays around 100 MB at typical dimensions.
+_DIST_BLOCK = 512
+
+
+def _kth_neighbour_distances(arr: np.ndarray, k: int) -> np.ndarray:
+    """Distance from each sample to its k-th nearest neighbour, computed in blocks.
+
+    The naive version materialises the full ``n x n x d`` difference tensor, which at
+    2000 patches x 768 dims is 12 GB — it does not finish. Blocking over rows keeps
+    peak memory bounded while computing exactly the same distances.
+
+    Uses the identity ``|a-b|^2 = |a|^2 + |b|^2 - 2a.b`` so the inner loop is a
+    matrix multiply rather than a broadcast subtraction.
+    """
+    n = arr.shape[0]
+    # Squared norms, computed once.
+    sq = np.einsum("ij,ij->i", arr, arr)
+    out = np.empty(n, dtype=np.float64)
+    for start in range(0, n, _DIST_BLOCK):
+        stop = min(start + _DIST_BLOCK, n)
+        block = arr[start:stop]
+        # Squared distances from this block to every sample.
+        d2 = sq[start:stop, None] + sq[None, :] - 2.0 * (block @ arr.T)
+        # Floating point can push a self-distance slightly negative.
+        np.maximum(d2, 0.0, out=d2)
+        # Exclude self: set the diagonal of this block to infinity.
+        rows = np.arange(stop - start)
+        d2[rows, np.arange(start, stop)] = np.inf
+        # k-th smallest per row (0-indexed -> k-1).
+        out[start:stop] = np.sqrt(np.partition(d2, k - 1, axis=1)[:, k - 1])
+    return out
+
+
 def knn_entropy(x: np.ndarray, k: int = 5) -> float:
     """Kozachenko-Leonenko k-nearest-neighbour differential entropy estimate.
 
@@ -142,13 +176,7 @@ def knn_entropy(x: np.ndarray, k: int = 5) -> float:
         return gaussian_entropy(arr)
     k = max(1, min(k, n - 1))
 
-    # Pairwise distances. Fine at the sizes this is used on (a few thousand
-    # patches); a blocked implementation would be needed for full-frame volumes.
-    diff = arr[:, None, :] - arr[None, :, :]
-    dist = np.sqrt(np.sum(diff * diff, axis=-1))
-    np.fill_diagonal(dist, np.inf)
-    # k-th nearest neighbour distance, 0-indexed.
-    kth = np.partition(dist, k - 1, axis=1)[:, k - 1]
+    kth = _kth_neighbour_distances(arr, k)
     kth = np.maximum(kth, np.finfo(np.float64).tiny)
 
     from math import lgamma, log, pi

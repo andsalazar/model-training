@@ -139,6 +139,81 @@ toward frame 0, which produces a real trend.
 This is the third time in this project that a test failure pointed at the test rather than the
 code, and the first time the correct response was to fix the test.
 
+## The estimator that works on real pixels is not the one that worked on synthetic data
+
+The synthetic tests used 32-dimensional Gaussian arrays, where the k-NN estimator is
+comfortable. Real Ovi frames are a different regime, and the first real run exposed it.
+
+**k-NN returns negative entropy on raw pixel patches.** Every configuration tried:
+
+| Patch | Patches | Dims | k-NN per-frame mean | Usable |
+|---|---|---|---|---|
+| 8 | 400 | 192 | −2539.57 | no |
+| 8 | 1000 | 192 | −2738.64 | no |
+| 16 | 400 | 768 | −8113.80 | no |
+| 16 | 1000 | 768 | −8032.35 | no |
+| 32 | 400 | 3072 | −11957.95 | no |
+| 32 | 1000 | 3072 | −15503.76 | no |
+| 16 + PCA 8 | 1000 | 8 | −65.16 | no |
+| 16 + PCA 64 | 1000 | 64 | −589.69 | no |
+
+Negative differential entropy is mathematically legal — it is a relative measure — but
+here it is a symptom, not a measurement. The cause is that pixel patches contain many
+near-duplicate values: flat sky, flat water, flat walls. When a patch has an exact or
+near-exact neighbour, the k-th neighbour distance goes to ~0, `log(ε)` goes to −∞, and
+the estimate is dragged arbitrarily negative. PCA does not help because the duplicates
+survive projection.
+
+**The Gaussian estimator works.** Same video, same patches:
+
+| Configuration | Per-frame mean | Per-frame ratio | Delta ratio | Usable | Separates delta |
+|---|---|---|---|---|---|
+| Gaussian, raw 768d | 956.38 | 0.860 | 0.884 | **yes** | **yes** |
+| Gaussian, PCA 16 | 108.58 | 0.996 | 0.983 | **yes** | **yes** |
+| Gaussian, PCA 32 | 200.70 | 0.994 | 0.984 | **yes** | **yes** |
+
+This inverts the synthetic-data conclusion about *which estimator to use*, while
+preserving the conclusion about *which metric to use*. On synthetic Gaussian arrays the
+k-NN estimator was the principled default and the Gaussian estimator was "blind to
+non-Gaussian structure". On real pixel patches the Gaussian estimator is the only one
+that produces a usable number, and it still separates a constructed collapse.
+
+The reason is that the Gaussian estimator's weakness — blindness to non-Gaussian
+structure — does not matter here. The collapse signal is a change in overall spread
+across frames, which a covariance captures. The k-NN estimator's strength — sensitivity
+to local density structure — is exactly what the near-duplicate patches corrupt.
+
+**This is the fourth time in this project that a metric which looked right on synthetic
+data behaved differently on real data.** The pattern is consistent enough to state as a
+rule: validate the estimator on the real data distribution before trusting any number it
+produces.
+
+## The real-video result
+
+One real Ovi rollout, 121 frames at 960×960, prompt "a river flowing through a forest,
+camera slowly panning", 30 denoising steps, Gaussian estimator, 1000 patches:
+
+| Metric | Ratio | Slope | R² | Collapsing |
+|---|---|---|---|---|
+| Per-frame | 0.8596 | −1.5260 | 0.296 | **no** |
+| Delta | 0.8839 | −1.7212 | 0.470 | **no** |
+
+**The real rollout does not collapse.** Both R² values are below the 0.5 threshold, so
+the entropy series is not monotone — it drifts down and then recovers. That is a healthy
+rollout, and the metric correctly declines to call it a collapse.
+
+Constructed collapses on top of those same real frames:
+
+| Strength | Per-frame separates | Delta separates | Delta gap |
+|---|---|---|---|
+| 0.50 | no | **yes** | +0.3056 |
+| 0.75 | no | **yes** | +0.5945 |
+| 0.90 | no | **yes** | +0.8962 |
+
+So on real frames the pattern from synthetic data holds exactly: **per-frame entropy
+does not separate, delta entropy does**, with a gap that grows monotonically from 0.31
+to 0.90.
+
 ## What the metric does and does not establish
 
 **Established:**
