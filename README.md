@@ -205,8 +205,12 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
   literature that plausibly informed TBC's work, graded by how well each link is
   actually evidenced. TBC's post has **no bibliography**, so every link is inference.
 - [docs/stage6-metric.md](docs/stage6-metric.md) — the collapse metric, built as pure
-  math and tested against constructed collapses. **Per-frame entropy does not separate
-  a collapse; delta entropy does.** Two estimator bugs were caught by tests.
+  math, tested against constructed collapses, then measured on four real Ovi rollouts.
+  **Per-frame entropy does not separate a collapse; delta entropy does.** Three
+  estimator bugs were caught by testing, and no real 5-second rollout collapses.
+- [docs/stage6-pod-setup.md](docs/stage6-pod-setup.md) — getting Ovi running on a
+  Blackwell pod: four blockers, three of which produced error messages pointing at the
+  wrong thing.
 
 Three premises in the brief did not survive contact with the primary source: TBC used
 **Oasis**, not Wan 2.2; the adapter is **not a LoRA**; and the goal was **rollout

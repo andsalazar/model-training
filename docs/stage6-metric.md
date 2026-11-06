@@ -244,6 +244,34 @@ plus the river at 0.75. That is the threshold doing its job: a gap of 0.075–0.
 inside estimator noise, and calling it separation would be the same error as the three
 substring tests that invented successes in Stages 4–5.
 
+### A fourth video breaks the pattern, and the reason matters
+
+A fourth prompt — "a person walking along a beach, waves in the background" — behaves
+differently:
+
+| Metric | Ratio | R² | Collapsing |
+|---|---|---|---|
+| Per-frame | 1.0260 | 0.034 | no |
+| Delta | **1.1990** | 0.297 | no |
+
+Its delta entropy **rises** by 20% over the rollout. And on that video, delta entropy
+separates the constructed collapse in **0 of 3** cases, despite gaps of +0.145, +0.282 and
++0.423 — all above the 0.15 threshold.
+
+The reason is the ordering inside `metric_separates`: it checks whether the *degrading*
+rollout registered as collapsing before it looks at the gap. On this video the constructed
+collapse does not produce a monotone downward trend, because converging toward frame 0
+fights against the healthy rollout's own upward trend. The gap is large but the fit is
+poor, so the verdict is correctly "not separated".
+
+**This is a real limitation, not a bug.** The metric assumes the healthy baseline is
+roughly flat. When a rollout has a strong trend of its own — here, early frames are
+similar and later frames diverge more, which is the model warming up — a constructed
+collapse on top of it does not read as a collapse.
+
+So the honest count is **delta entropy separates in 3 of 4 videos**, not 4 of 4. The
+failure mode is understood and is a property of the baseline, not of the estimator.
+
 ## What the metric does and does not establish
 
 **Established:**
@@ -273,14 +301,38 @@ substring tests that invented successes in Stages 4–5.
   (see [stage6-pod-setup.md](stage6-pod-setup.md)). That is adequate for a measurement
   experiment and not adequate for a final quality claim about Ovi's output.
 
+## The 10-second horizon is out of reach on this GPU
+
+The obvious next question was whether a longer rollout collapses naturally. It could not
+be answered here, for two independent reasons.
+
+**bf16 10s OOMs.** 241 frames at 960×960 needs more than the 31.4 GiB this GPU has. The
+run died in `rope_apply_3d` trying to allocate another 1.26 GiB with 730 MiB free.
+
+**fp8 10s is not supported.** Ovi's fp8 path asserts:
+
+```
+assert model_name == "720x720_5s", "FP8 quantization is only supported for 720x720_5s model currently."
+```
+
+So fp8 — the documented route to running in 24GB — is restricted to the smallest 5-second
+variant. There is no configuration that fits a 10-second rollout in 32GB.
+
+Answering the horizon question needs either a 48GB+ GPU (an A6000 at $0.59/hr or an A40 at
+$0.59/hr would do) or the 720×720_5s fp8 variant, which is shorter, not longer, and so does
+not address the question at all.
+
+This is worth stating plainly rather than leaving as an implied next step: **the natural
+collapse question is unanswered, and answering it costs another pod.**
+
 ## Where this leaves the project
 
 The metric question is answered, and the answer is mixed in a way that matters.
 
 **What works:** delta entropy, on PCA-reduced patches, with the Gaussian estimator. It
-separates a constructed collapse in 6 of 9 cases across three real videos, never fires on a
-healthy rollout, and its gap grows monotonically with collapse strength. Per-frame entropy —
-TBC's stated metric — separates in 0 of 9.
+separates a constructed collapse in 3 of 4 real videos (6 of 9 individual constructions),
+never fires on a healthy rollout, and its gap grows monotonically with collapse strength.
+Per-frame entropy — TBC's stated metric — separates in 0 of 12.
 
 **What does not:** there is no natural collapse to measure. Every real 5-second rollout is
 stable. So the metric is validated against *constructed* degradation, not against the failure
