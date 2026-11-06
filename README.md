@@ -83,8 +83,8 @@ Stage 0 (reproduction) is complete and verified: the paper's headline result
 reproduces, and its arithmetic matches exactly. See
 [docs/stage0-findings.md](docs/stage0-findings.md).
 
-Everything after that is a negative result, and an instructive one. The current
-claim-by-claim status:
+Everything after Stage 0 is best read as a sequence of failures that each narrowed
+the problem, ending in one mechanism that works. Claim-by-claim:
 
 | claim | status |
 |---|---|
@@ -93,8 +93,10 @@ claim-by-claim status:
 | It reproduces across hardware | **no** — the top-12 cut sat in a 0.0012 tie |
 | Threshold selection fixes the reproducibility | **yes** — overlap 1.000 at every ratio |
 | A stable selection makes the edit safe | **no** — harmful at 4 and 12 columns |
-| It transfers to other behaviours | **no** — pushes long-form tasks to the cap |
 | The over-thinking direction is global | **no** — layer-local (+0.006 across layers) |
+| A trained adapter is behaviour-selective | **yes** — guards keep real content |
+| The adapter reduces over-thinking | **yes at T 0.6**, with or without presence penalty; **no under greedy** |
+| The adapter improves every guard | **no** — one guard regresses at every setting |
 
 The sequence:
 
@@ -102,31 +104,34 @@ The sequence:
    a near-pure-arithmetic probe set.
 2. **Stage 2** re-ran the same procedure on different hardware, got the opposite
    verdict, and found why: alignment scores tie to within 0.0012 at the cut, so
-   the "top 12 columns" was an arbitrary point inside a plateau. It also found
-   the edit damages behaviour Stage 1 never tested — including two of its own
-   arithmetic held-outs.
-3. **Stage 3** replaced the rank cut with a score threshold. The selection became
-   perfectly reproducible (overlap 1.000). The edit remained harmful anyway: a
-   4-column edit (0.11% of the matrix) improved the target by 83% while pushing
-   two unrelated long-form tasks to the token cap.
+   "top 12 columns" was an arbitrary point inside a plateau. The edit also damaged
+   behaviour Stage 1 never tested.
+3. **Stage 3** replaced the rank cut with a score threshold. Selection became
+   perfectly reproducible (overlap 1.000). The edit stayed harmful at every size:
+   a 4-column edit (0.11% of the matrix) improved the target 83% while pushing two
+   long-form tasks to the token cap. The problem was the direction, not the column
+   choice — it encodes a shared "keep checking" state that arithmetic, logic and
+   writing all use.
+4. **Stage 4** replaced the fixed direction with a LoRA adapter, which can
+   *condition* on the input. The first attempt failed on a data error of mine — it
+   trained on the answer string and learned to emit `132`, `yes`, and `ail` for a
+   prompt whose answer was `nail`. Training on the model's **own truncated
+   reasoning** fixed it: targets fell 60–90%, both held-out probes improved, and
+   guards kept producing genuine poems and explanations.
 
-The conclusion is that the problem is the **direction**, not the column choice. It
-encodes a shared "keep checking" state that arithmetic, logic and long-form
-writing all use, so suppressing it makes short answers shorter and long answers
-fall apart. A behaviour-selective mechanism is needed — which points at a trained
-adapter rather than a single subtracted vector.
-
-What is reusable: the activation tooling, the verifier that caught the whole
-thing, and a set of negative results worth having (`hit_cap` is not looping, a
-high `contrast_cosine` is not noise, contiguous windows are harmful, direction is
-layer-local).
+The honest headline is that four stages produced three negatives and one partial
+positive, and every negative narrowed the next attempt. What is reusable: the
+activation tooling, the verifier that caught each error, and the negative results
+themselves.
 
 - [docs/stage1-findings.md](docs/stage1-findings.md) — the derived edit, with
-  corrections applied after Stage 2
+  corrections after Stage 2
 - [docs/stage2-findings.md](docs/stage2-findings.md) — the reproducibility failure
-- [docs/stability-selection.md](docs/stability-selection.md) — the fix
-- [docs/stability-retest.md](docs/stability-retest.md) — the re-test, and why a
-  stable selection still fails
+- [docs/stability-selection.md](docs/stability-selection.md) — the selection fix
+- [docs/stability-retest.md](docs/stability-retest.md) — why a stable selection
+  still failed
+- [docs/stage4-findings.md](docs/stage4-findings.md) — the adapter, its first
+  failure, and the sampler experiment
 - [docs/reproducibility-failure.md](docs/reproducibility-failure.md) — standalone
   write-up of the failure
 
