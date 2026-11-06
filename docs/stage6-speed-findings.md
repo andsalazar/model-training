@@ -170,19 +170,54 @@ The long horizon tolerates the step cut *better* on speed (more denoise to cut) 
 means a single step setting for both horizons is the wrong design — the long one needs
 more steps for colour stability even though it has more time to gain.
 
+## Audio survives the step cut
+
+Ovi is a joint video+audio model, so "quality" includes audio. Every metric above
+reads pixels only, which meant the sweep had said nothing about half of what Ovi
+produces. Measured separately:
+
+| Horizon / steps | RMS | Spectral centroid | Centroid trend R² |
+|---|---|---|---|
+| 5s / 50 | 0.00547 | 2460.6 Hz | 0.001 |
+| 5s / 30 | 0.00515 | 2473.8 Hz | 0.003 |
+| 10s / 50 | 0.01214 | 2475.0 Hz | 0.000 |
+| 10s / 30 | 0.01066 | 2492.0 Hz | 0.002 |
+
+RMS within 6% and spectral centroid within 1% at both horizons across a 40% step cut,
+with no timbre trend (R² ≤ 0.003). The step cut does not cost audio quality on this
+evidence.
+
+### The first audio check reported a false negative
+
+The initial run said **zero audio streams in every video**. That reads as "Ovi
+produces no audio" — a much stronger and completely wrong claim. The cause:
+`imageio_ffmpeg` ships ffmpeg **without ffprobe**, so the stream detector returned an
+empty list when nothing had been inspected.
+
+The script now parses ffmpeg's own banner as a fallback and reports *which mechanism
+was used*, so a zero can never be mistaken for a measurement. This is the **fourth
+time in this project that tooling invented a result**: the inverted
+`direction_similarity` sign, the unmeasured post-edit token counts, the substring
+compliance tests, and now this. The pattern is consistent enough to be a standing rule
+— a tool that cannot look must say so, not return zero.
+
 ## What is not established
 
-1. **One prompt, one seed.** Every number above is a single generation. These metrics
-   vary between seeds, and the ±10% tolerance was chosen assuming a few percent of
-   seed noise — not measured here.
+1. **One prompt, one seed.** Every number above is a single generation at seed 100. A
+   multi-seed run (seeds 100/200/300 at 50/30/20 steps, 10s) is in progress
+   specifically to settle the colour question; its results are not in this document.
 2. **Prompt adherence is not measured at all.** A rollout could be sharper, more
    stable, and still show the wrong scene. None of the four metrics captures "did it
-   render what was asked". This is the largest gap and the honest caveat on any
-   "quality held" claim.
-3. **No human comparison.** These are proxies. The only way to know whether 12 steps
-   *looks* as good is to look.
-4. **The 10-second horizon is still running.** The goal is the long sequence; nothing
-   here says the same step cut is safe at 241 frames rather than 121.
+   render what was asked". **This is the largest gap** and the honest caveat on any
+   "quality held" claim. The prompt asks for a river through a forest with panning and
+   birdsong; nothing here checks that any of that appears.
+3. **No human comparison.** These are proxies. The only way to know whether 20 steps
+   *looks* as good is to look at the videos side by side.
+4. **One prompt.** All seven videos are the same river prompt. A static or
+   low-texture prompt may behave differently — the previous stage's entropy work found
+   that two prompts out of four behaved differently from the rest.
+5. **The colour verdict is unreliable**, as the 5s cross-check showed. Do not act on
+   the "20 steps drifts" reading without the seed sweep.
 
 ## The recommendation
 
