@@ -65,14 +65,29 @@ DEFAULT_PROMPT = (
 
 
 def _read_frames(video_path: Path, max_frames: int | None = None) -> np.ndarray:
-    """Decode an mp4 into ``(n_frames, h, w, 3)`` uint8."""
-    try:
-        import imageio.v3 as iio
-    except ImportError:  # pragma: no cover - pod-only dependency
-        import imageio as iio  # type: ignore[no-redef]
+    """Decode an mp4 into ``(n_frames, h, w, 3)`` uint8.
 
-    frames = iio.imread(str(video_path), plugin="pyav")
-    arr = np.asarray(frames)
+    Tries several backends. The Ovi venv ships ``imageio-ffmpeg`` but not ``pyav``,
+    and asking for the wrong plugin raises rather than falling back — which killed a
+    whole sweep after its first condition had already been generated and paid for.
+    """
+    import imageio.v3 as iio
+
+    errors: list[str] = []
+    arr = None
+    for plugin in ("FFMPEG", "pyav", "ffmpeg", None):
+        try:
+            arr = np.asarray(
+                iio.imread(str(video_path), plugin=plugin) if plugin else iio.imread(str(video_path))
+            )
+            break
+        except Exception as exc:  # noqa: BLE001 - report all and raise at the end
+            errors.append(f"{plugin}: {type(exc).__name__}: {exc}")
+    if arr is None:
+        raise RuntimeError(
+            "could not decode video with any backend:\n  " + "\n  ".join(errors)
+        )
+
     if arr.ndim == 4 and arr.shape[-1] == 4:
         arr = arr[..., :3]
     if max_frames is not None and len(arr) > max_frames:
@@ -165,6 +180,28 @@ def _find_video(output_dir: Path) -> Path | None:
     return videos[-1] if videos else None
 
 
+def _measure_existing(video: Path, max_frames: int) -> dict | None:
+    """Measure an already-generated video, returning None if decoding fails.
+
+    Separated so a decode failure is reported per condition rather than aborting the
+    sweep. A generation costs minutes of GPU; losing the whole run to a decoder
+    problem in the last condition is a waste that is easy to avoid.
+    """
+    sys.path.insert(0, "/workspace/src")
+    from wsp.quality import measure_quality  # noqa: PLC0415
+
+    try:
+        frames = _read_frames(video, max_frames)
+    except Exception as exc:  # noqa: BLE001
+        return {"error": f"decode failed: {type(exc).__name__}: {exc}"}
+    reading = measure_quality(frames)
+    return {
+        "video": str(video),
+        "n_frames": int(frames.shape[0]),
+        "quality": reading.as_dict(),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", default="/workspace/speed.json")
@@ -191,6 +228,11 @@ def main() -> None:
         default=48,
         help="frames sampled per video for the quality metrics",
     )
+    parser.add_argument(
+        "--measure-only",
+        action="store_true",
+        help="skip generation; measure videos already present in the work dir",
+    )
     args = parser.parse_args()
 
     work = Path(args.work)
@@ -216,14 +258,17 @@ def main() -> None:
                 seed=args.seed,
             )
             print(f"=== {tag} ===", flush=True)
-            run = _run_generation(cfg, work / f"gen_{tag}.log", args.timeout)
-            print(f"  {run['seconds']}s rc={run['returncode']}", flush=True)
+            entry: dict = {"horizon": horizon, "steps": steps}
 
-            entry: dict = {
-                "horizon": horizon,
-                "steps": steps,
-                "run": run,
-            }
+            if args.measure_only:
+                # Reuse whatever was already generated. Lets a sweep whose measurement
+                # step failed be completed without paying for the generation again.
+                run = {"seconds": None, "returncode": None, "reused": True}
+                print("  measuring existing output", flush=True)
+            else:
+                run = _run_generation(cfg, work / f"gen_{tag}.log", args.timeout)
+                print(f"  {run['seconds']}s rc={run['returncode']}", flush=True)
+            entry["run"] = run
             video = _find_video(out_dir)
             if video is None:
                 entry["error"] = "no mp4 produced"
@@ -231,12 +276,13 @@ def main() -> None:
                 results.append(entry)
                 continue
 
-            frames = _read_frames(video, args.max_frames)
-            reading = measure_quality(frames)
-            entry["video"] = str(video)
-            entry["n_frames"] = int(frames.shape[0])
-            entry["quality"] = reading.as_dict()
-            print(f"  quality {reading.as_dict()}", flush=True)
+            measured = _measure_existing(video, args.max_frames)
+            if measured is None or "error" in measured:
+                entry["error"] = (measured or {}).get("error", "measurement failed")
+                print(f"  MEASURE FAILED: {entry['error']}", flush=True)
+            else:
+                entry.update(measured)
+                print(f"  quality {measured['quality']}", flush=True)
             results.append(entry)
 
     # Compare every condition against the same horizon at the default step count.
@@ -254,13 +300,20 @@ def main() -> None:
         base = QualityReading(**base_entry["quality"])
         cand = QualityReading(**r["quality"])
         cmp = compare_quality(base, cand)
+        base_seconds = base_entry["run"].get("seconds")
+        cand_seconds = r["run"].get("seconds")
+        # Timings are absent in --measure-only mode, so the speedup is reported as None
+        # rather than a number computed from a missing value.
+        speedup = (
+            round(base_seconds / max(cand_seconds, 1e-9), 3)
+            if base_seconds and cand_seconds
+            else None
+        )
         row = {
             "horizon": r["horizon"],
             "steps": r["steps"],
-            "seconds": r["run"]["seconds"],
-            "speedup_vs_default": round(
-                base_entry["run"]["seconds"] / max(r["run"]["seconds"], 1e-9), 3
-            ),
+            "seconds": cand_seconds,
+            "speedup_vs_default": speedup,
             "acceptable": cmp.acceptable,
             "ratios": {k: round(v, 4) for k, v in cmp.ratios.items()},
             "outside": cmp.outside,
