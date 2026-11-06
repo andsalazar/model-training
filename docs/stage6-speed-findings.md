@@ -91,6 +91,54 @@ whether the output got better or worse.
 Three of four are neutral-to-better. Flicker rising is the one genuine concern and is
 consistent with more per-frame texture rather than with instability.
 
+## The 10-second horizon: the goal is met at 20 steps
+
+This is the horizon the goal is actually about. Measured on the same A100, same
+prompt, same seed:
+
+| Steps | Wall clock | Speedup | Sharpness | Flicker | Coherence | Colour |
+|---|---|---|---|---|---|---|
+| 50 (default) | 1250.6s | 1.00× | 14.76 | 0.1976 | 0.6149 | 2.834 |
+| 30 | 819.7s | **1.53×** | 20.83 | 0.3191 | 0.6824 | 5.324 |
+| 20 | 598.1s | **2.09×** | 23.29 | 0.3444 | 0.6698 | 6.768 |
+
+**2.09× faster at 20 steps**, with sharpness up 58% and motion coherence up 9%. That
+is the goal — a 10-second rollout in 598s instead of 1251s — and it needs no model
+edit at all.
+
+### But colour stability is a real regression, not an artefact
+
+Colour stability rises 2.83 → 5.32 → 6.77. Unlike the sharpness trend, this one does
+not survive scrutiny as a benign change. Fitting a line to per-frame mean colour:
+
+| Steps | Colour stability | Trend R² | Mean abs drift | Verdict |
+|---|---|---|---|---|
+| 50 | 2.56 | 0.130 | 1.81 | oscillation — varies around a stable mean |
+| 30 | 5.00 | 0.274 | 7.24 | oscillation — no monotone trend |
+| 20 | 6.42 | **0.589** | **12.28** | **drift — colour trends monotonically** |
+
+At 50 steps the colour wobbles around a stable mean (R² 0.13) — harmless. At 20 steps
+R² crosses 0.5 and the drift reaches 12.28 units, meaning the rollout's colour balance
+**trends in one direction across the ten seconds**. That is a visible defect: the scene
+changes tone for no reason. It is the first genuine quality cost found.
+
+So the honest reading of the 10s result is: **20 steps is 2.09× faster and the colour
+drifts.** 30 steps is 1.53× faster with no monotone drift (R² 0.274) and is the
+defensible choice on this evidence.
+
+### The two horizons behave differently, which was the open question
+
+| | 5s | 10s |
+|---|---|---|
+| Speedup at 30 steps | 1.42× | 1.53× |
+| Speedup at 20 steps | 1.84× | 2.09× |
+| Colour drift at 20 steps | none detected | **R² 0.589, drift 12.28** |
+
+The long horizon tolerates the step cut *better* on speed (more denoise to cut) but
+*worse* on colour. That is exactly the asymmetry the plan said to look for, and it
+means a single step setting for both horizons is the wrong design — the long one needs
+more steps for colour stability even though it has more time to gain.
+
 ## What is not established
 
 1. **One prompt, one seed.** Every number above is a single generation. These metrics
@@ -105,14 +153,33 @@ consistent with more per-frame texture rather than with instability.
 4. **The 10-second horizon is still running.** The goal is the long sequence; nothing
    here says the same step cut is safe at 241 frames rather than 121.
 
-## The recommendation so far
+## The recommendation
 
-For the 5-second horizon, **30 steps is the conservative choice** — 1.42× faster with
-sharper output and only minor metric movement. **12 steps is the aggressive choice** —
-2.34× faster, and the evidence says the extra high-frequency content is real detail
-rather than noise, but prompt adherence is untested.
+The goal — speed up the longest sequence without losing quality on the shorter ones —
+is **met by step reduction alone**, with one caveat that decides the setting.
 
-Do not lower the default to 12 on this evidence alone. Do run the 10-second sweep,
-because if the long horizon tolerates a similar cut then the goal is met without any
-model edit at all — and that makes the WSP work a question of raising the floor
-further, not of achieving the first win.
+| Horizon | Recommended steps | Speedup | Why |
+|---|---|---|---|
+| 10s (the goal) | **30** | **1.53×** | 20 steps drifts colour (R² 0.589); 30 does not (R² 0.274) |
+| 5s | **30** | **1.42×** | same setting works; 12 steps is faster but untested on adherence |
+
+**30 steps for both horizons** is the defensible configuration on this evidence: 1.42×
+at 5s and 1.53× at 10s, sharper output at both, no monotone colour drift at either.
+
+20 steps at 10s is available if 2.09× is worth a visible colour drift. That is a
+judgement call for whoever ships it, not something the metrics can settle — the drift
+is real and the tolerance for it is a product decision.
+
+### What this means for the WSP work
+
+The original plan assumed a model edit would be needed to buy speed. It is not: **the
+step cut already delivers the goal.** That changes what WSP is for.
+
+WSP is now about *raising the floor* rather than achieving the first win — specifically,
+whether a targeted edit can make 20 steps colour-stable, which would recover the 2.09×
+without the drift. That is a much narrower and better-posed question than "make Ovi
+faster", and it is the one worth spending GPU time on next.
+
+It also means the honest answer to the original brief is: **the speed goal did not
+require the neuroscience-inspired adapter.** The adapter's value, if any, is in
+recovering quality at step counts where the base model loses it.
