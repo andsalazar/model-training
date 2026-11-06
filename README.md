@@ -192,6 +192,27 @@ numbers: one inverted a `direction_similarity` sign, the other reported post-edi
 token counts without ever calling `measure_loop` after its edits. The auditor
 catches those after the fact; re-measurement catches them regardless.
 
+## Next: the Ovi + TBC-adapter project
+
+The original brief asked to combine MIT's Weight-Space Programming with TBC's
+neuron-derived adapter on a joint video+audio model. Two documents scope that:
+
+- [docs/stage6-scoping.md](docs/stage6-scoping.md) — what TBC actually built, what
+  is open and what is closed. Mischief 1 is real but **API-only** (no readable
+  weights); Ovi is Apache 2.0 with readable weights. The adapter is a 156k-parameter
+  residual module in early DiT layers, **not a LoRA**.
+- [docs/stage6-literature.md](docs/stage6-literature.md) — the neuroscience and ML
+  literature that plausibly informed TBC's work, graded by how well each link is
+  actually evidenced. TBC's post has **no bibliography**, so every link is inference.
+
+Three premises in the brief did not survive contact with the primary source: TBC used
+**Oasis**, not Wan 2.2; the adapter is **not a LoRA**; and the goal was **rollout
+stability**, not speed. Wan 2.2's "MoE" is also a timestep-split dense two-expert
+ensemble, not per-token routing — so there is no router to exploit. What does survive:
+the mechanism (a small weight-space direction used to *suppress* a behaviour) has real
+precedent, and WSP's residual-stream measurement maps directly onto TBC's unanswered
+placement question.
+
 ## License
 
 Apache 2.0
