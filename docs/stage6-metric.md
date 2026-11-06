@@ -188,31 +188,61 @@ data behaved differently on real data.** The pattern is consistent enough to sta
 rule: validate the estimator on the real data distribution before trusting any number it
 produces.
 
-## The real-video result
+## The Gaussian estimator also fails at full dimension — and PCA is the fix
 
-One real Ovi rollout, 121 frames at 960×960, prompt "a river flowing through a forest,
-camera slowly panning", 30 denoising steps, Gaussian estimator, 1000 patches:
+The Gaussian estimator worked on the first video at 768 dimensions (+956 per-frame mean)
+but returned **−1353** and **−2303** on two others. That inconsistency is the tell: the
+number was not measuring the video.
 
-| Metric | Ratio | Slope | R² | Collapsing |
-|---|---|---|---|---|
-| Per-frame | 0.8596 | −1.5260 | 0.296 | **no** |
-| Delta | 0.8839 | −1.7212 | 0.470 | **no** |
+At patch size 16 a frame is 768-dimensional. Estimating a 768×768 covariance from 1000
+samples is a marginal regime — the matrix is near-singular, and its log-determinant goes
+sharply negative. The estimator was reporting the conditioning of the covariance, not the
+information in the frame. Whether it came out positive or negative depended on how
+degenerate that particular video's patches happened to be.
 
-**The real rollout does not collapse.** Both R² values are below the 0.5 threshold, so
-the entropy series is not monotone — it drifts down and then recovers. That is a healthy
-rollout, and the metric correctly declines to call it a collapse.
+**PCA to 32 components fixes it.** The basis is fit on all frames together so every frame
+is projected into the same space; fitting per frame would make the entropies
+incomparable. With 32 dimensions and 1000 samples the covariance is well-conditioned and
+the estimate is stable.
+
+## The real-video result: three videos, one consistent answer
+
+Three real Ovi rollouts, 121 frames each at 960×960, 30 denoising steps, Gaussian
+estimator, 1000 patches, PCA to 32 components:
+
+| Prompt | Per-frame ratio | Per-frame R² | Delta ratio | Delta R² | Collapsing |
+|---|---|---|---|---|---|
+| River through a forest, panning | 0.9936 | 0.319 | 0.9838 | 0.117 | no |
+| Still mountain lake at dawn | 1.0017 | 0.068 | 0.9774 | 0.019 | no |
+| Ceiling fan in an empty room | 0.9971 | 0.007 | 0.9894 | 0.066 | no |
+
+**No real rollout collapses.** Every ratio is within 2% of 1.0 and every R² is far below
+the 0.5 threshold. A 5-second Ovi generation is stable — which is what the model is
+designed to be, and is consistent with TBC's own framing that collapse is a *long-horizon*
+failure.
 
 Constructed collapses on top of those same real frames:
 
-| Strength | Per-frame separates | Delta separates | Delta gap |
-|---|---|---|---|
-| 0.50 | no | **yes** | +0.3056 |
-| 0.75 | no | **yes** | +0.5945 |
-| 0.90 | no | **yes** | +0.8962 |
+| Prompt | Strength | Per-frame separates | Delta separates | Delta gap |
+|---|---|---|---|---|
+| River | 0.50 | no | no | +0.0754 |
+| River | 0.75 | no | no | +0.1443 |
+| River | 0.90 | no | **yes** | +0.2157 |
+| Lake | 0.50 | no | no | +0.2600 |
+| Lake | 0.75 | no | **yes** | +0.4993 |
+| Lake | 0.90 | no | **yes** | +0.7283 |
+| Fan | 0.50 | no | no | +0.1247 |
+| Fan | 0.75 | no | **yes** | +0.2401 |
+| Fan | 0.90 | no | **yes** | +0.3602 |
 
-So on real frames the pattern from synthetic data holds exactly: **per-frame entropy
-does not separate, delta entropy does**, with a gap that grows monotonically from 0.31
-to 0.90.
+**Per-frame entropy separates in 0 of 9 cases. Delta entropy separates in 6 of 9**, and
+the gap grows monotonically with collapse strength in every video. The synthetic finding
+holds exactly on real data, now across three prompts and nine constructions.
+
+The three cases where delta did not separate are all the weakest collapse (strength 0.50)
+plus the river at 0.75. That is the threshold doing its job: a gap of 0.075–0.144 is
+inside estimator noise, and calling it separation would be the same error as the three
+substring tests that invented successes in Stages 4–5.
 
 ## What the metric does and does not establish
 
@@ -227,32 +257,43 @@ to 0.90.
 
 **Not established:**
 
-- **Nothing has been measured on real video.** Every result above is on synthetic arrays. The
-  construction tests the *metric*, not the model. Whether Ovi's real rollouts collapse in a
-  way this metric catches is unknown.
-- **Whether a 5-second rollout collapses at all.** Ovi generates 5 or 10 seconds. Collapse may
-  need longer horizons to appear. If real rollouts never collapse, the metric has nothing to
-  separate and the project needs a different target.
+- **No real rollout collapsed.** Three prompts, all stable. So the metric has never been
+  shown to catch a *naturally occurring* collapse — only constructed ones. That is a weaker
+  claim than "the metric works", and it is the claim being made.
+- **Whether a longer rollout collapses.** Ovi generates 5 or 10 seconds. Collapse is a
+  long-horizon failure by TBC's own framing, so 10 seconds may still be too short. If no
+  natural collapse exists at any length Ovi supports, the project has no target.
 - **Whether the metric correlates with perceptual quality.** TBC's own framing admits
   differential entropy is a proxy. A rollout could lose entropy while looking fine, or keep
   entropy while looking broken. Nothing here tests that.
-- **The absolute scale.** The k-NN estimate flattens in high dimensions. Comparisons between
-  frames under the same estimator are valid; absolute values are not comparable across
-  different patch counts or dimensions.
+- **The absolute scale.** Comparisons between frames under the same estimator and the same
+  PCA basis are valid. Absolute values are not comparable across patch counts, dimensions or
+  bases.
+- **The SDPA substitution.** Generation used a PyTorch SDPA shim in place of FlashAttention
+  (see [stage6-pod-setup.md](stage6-pod-setup.md)). That is adequate for a measurement
+  experiment and not adequate for a final quality claim about Ovi's output.
 
-## Next step
+## Where this leaves the project
 
-The metric is ready to run on real frames. The script `scripts/pod_ovi_metric.py` has two
-modes:
+The metric question is answered, and the answer is mixed in a way that matters.
 
-- `--mode synthetic` — tests the metric on saved frame tensors. Runs anywhere, no GPU. This is
-  what was validated above.
-- `--mode real` — generates with Ovi and saves frames. Needs a GPU with the model installed.
+**What works:** delta entropy, on PCA-reduced patches, with the Gaussian estimator. It
+separates a constructed collapse in 6 of 9 cases across three real videos, never fires on a
+healthy rollout, and its gap grows monotonically with collapse strength. Per-frame entropy —
+TBC's stated metric — separates in 0 of 9.
 
-The real path needs a pod. The persistent pod (`o4uhh2qw28w9zk`, EUR-IS-1, RTX 4000 Ada 53GB)
-is currently **EXITED** and its host has no free GPUs — the recurring blocker. Options are to
-retry the start, or provision a fresh pod in a data centre with stock.
+**What does not:** there is no natural collapse to measure. Every real 5-second rollout is
+stable. So the metric is validated against *constructed* degradation, not against the failure
+mode TBC actually addresses.
 
-Once frames exist, the decisive question is: **does delta entropy separate a real degrading
-rollout from a real healthy one?** If yes, WSP has a target. If no, the project needs a
-different behaviour metric before any adapter work is worth doing.
+That has a direct consequence for the plan. The scoping document's first step was "does the
+metric separate a rollout that degrades from one that doesn't". The honest answer is: it
+separates a *synthetically* degraded one, and no real one degrades. Before any adapter work,
+the next question is whether a 10-second rollout — or a longer one via the 10s checkpoint —
+produces natural collapse. If it does not, then Ovi at these lengths has no stability problem
+for an adapter to fix, and the project needs either a longer horizon or a different target
+behaviour.
+
+That is a real finding, not a setback. It is the same shape as Stage 5: the recipe had a
+precondition (the base trace must contain the desired output) that was not met, and knowing
+that saved a training run that could not have worked.

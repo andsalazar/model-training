@@ -63,13 +63,44 @@ def converge(frames: np.ndarray, strength: float) -> np.ndarray:
     return out
 
 
+def pca_reduce(patches: np.ndarray, n_components: int) -> np.ndarray:
+    """Project patches onto their top principal components.
+
+    Raw pixel patches are 768-dimensional at patch size 16. Estimating a 768x768
+    covariance from 1000 samples is a marginal regime — the matrix is near-singular
+    and its log-determinant goes sharply negative, which is why the Gaussian
+    estimator returned values like -1353 on real video while returning +956 on a
+    different video. The number was measuring the conditioning of the covariance,
+    not the information in the frame.
+
+    PCA to a modest number of components fixes the conditioning. The basis is fit on
+    all frames together so every frame is projected into the same space — fitting per
+    frame would make the entropies incomparable.
+    """
+    n_frames, n_patches, dim = patches.shape
+    if n_components >= dim:
+        return patches
+    flat = patches.reshape(-1, dim)
+    mean = flat.mean(axis=0)
+    centred = flat - mean
+    _, _, vt = np.linalg.svd(centred, full_matrices=False)
+    basis = vt[:n_components]
+    return (centred @ basis.T).reshape(n_frames, n_patches, n_components)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("videos", nargs="+", help="mp4 paths")
     ap.add_argument("--out", default="/workspace/ovi_out/metric_real.json")
     ap.add_argument("--patch", type=int, default=16)
     ap.add_argument("--max-patches", type=int, default=400)
-    ap.add_argument("--estimator", default="knn")
+    ap.add_argument("--estimator", default="gaussian")
+    ap.add_argument(
+        "--pca",
+        type=int,
+        default=32,
+        help="reduce patches to this many principal components; 0 disables",
+    )
     ap.add_argument("--strengths", type=float, nargs="+", default=[0.5, 0.75, 0.9])
     ap.add_argument("--min-gap", type=float, default=0.15)
     args = ap.parse_args()
@@ -81,6 +112,8 @@ def main() -> None:
         print(f"\n=== {path.name} ===")
         frames = load_video(path)
         patches = to_patches(frames, args.patch, args.max_patches)
+        if args.pca:
+            patches = pca_reduce(patches, args.pca)
         print(f"frames {frames.shape[0]}  patches {patches.shape[1]}  dims {patches.shape[2]}")
 
         flat = [patches[i] for i in range(patches.shape[0])]
