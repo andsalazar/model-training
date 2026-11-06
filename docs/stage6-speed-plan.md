@@ -154,3 +154,48 @@ down:
 
 Point 3 is worth checking first from Phase 1's own timings, and point 2 is the honest
 caveat on any "quality held" claim from this design.
+
+## Phase 0 result: denoise dominates, so steps are worth cutting
+
+Ran before the sweep, because the answer decides whether the sweep is worth running.
+
+A previous 5-second run showed 30 steps at ~12s/step followed by a log line reading
+`1it [07:26, 446.13s/it]`. Read naively that looks like a 446-second decode — half the
+wall clock — which would mean halving steps saves only ~25% and the whole approach is
+marginal.
+
+**That reading was wrong.** tqdm's `elapsed` field is cumulative from the start of the
+generate call, not per-phase. 402s of denoise plus a decode marker at 435s means **33
+seconds of decoding**, not 435.
+
+The parser had this bug first, and it was caught by arithmetic: treating decode as
+per-phase gave a total (837s) larger than the measured wall clock (550s), which is
+impossible. `scripts/parse_phase_log.py` now subtracts the denoise marker from the
+decode marker.
+
+### Measured, two step counts
+
+| Steps | Denoise marker | Decode marker | Denoise | Decode | Total wall clock |
+|---|---|---|---|---|---|
+| 50 | 402s | 435s | **402s** | **33s** | 550s |
+| 12 | 95s | 127s | **95s** | **32s** | 229s |
+
+Decode is **constant at ~32s** regardless of step count. Denoise scales linearly at
+~8.0s/step. That is the model confirming itself: decode is a fixed cost, denoise is
+linear in steps.
+
+### What that means for the goal
+
+| Target | Steps needed | Measured saving |
+|---|---|---|
+| Halve total time | **4** | 550s → 229s at 12 steps |
+| 2× at 5s horizon | 4 steps | already achieved at 12 |
+| Denoise share at 50 steps | — | 92% |
+| Denoise share at 12 steps | — | 75% |
+
+At 50 steps denoise is **92% of wall clock**, so cutting steps is almost a pure win.
+At 12 steps decode becomes 25% and further cuts give diminishing returns — which is
+where a quality floor will be reached before a time floor.
+
+So Phase 1 is worth running, and the interesting question is no longer "can we go
+faster" (yes, substantially) but "where does quality break", which is Phase 2's job.

@@ -39,8 +39,12 @@ PROMPT = (
     "Audio: gentle water sounds and birdsong."
 )
 
-#: tqdm writes `\r`-delimited updates. A line matching this is a denoise step.
-_STEP_RE = re.compile(r"(\d+)/(\d+)\s*\[([\d:]+)<([\d:]+),\s*([\d.]+)(s/it|it/s)\]")
+#: tqdm writes `\r`-delimited updates. Ovi's actual format is
+#: `` 50it [06:42,  8.05s/it]`` or ``50it [06:42,  8.05s/it]`` — note there is no
+#: ``N/total`` form, which is why the first regex matched nothing. The first counter
+#: is followed by the literal ``it``; the decode phase emits its own ``1it`` line with
+#: a much larger per-iteration time.
+_STEP_RE = re.compile(r"(\d+)it\s*\[([\d:]+),\s*([\d.]+)(s/it|it/s)\]")
 
 
 def _write_config(
@@ -104,11 +108,14 @@ def main() -> None:
             # tqdm uses \r, so one "line" can contain many updates.
             for match in _STEP_RE.finditer(line):
                 current = int(match.group(1))
-                rate = float(match.group(5))
-                if match.group(6) == "s/it":
+                rate = float(match.group(3))
+                if match.group(4) == "s/it":
                     per_step.append(rate)
                 if last_step_seen is None or current > last_step_seen:
                     last_step_seen = current
+                # The denoise loop counts 1..steps. The decode phase then emits its own
+                # "1it" line, so a counter that drops back to 1 after reaching steps
+                # marks the phase boundary.
                 if current == args.steps and denoise_end is None:
                     denoise_end = time.time()
         proc.wait()
