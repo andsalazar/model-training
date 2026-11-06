@@ -195,6 +195,17 @@ the asymmetry the plan said to look for, and it means a single step setting for 
 horizons is the wrong design — the long one needs more steps for colour stability even
 though it has more time to gain.
 
+## The decode tail grows with frame count
+
+The 5s split was 92% denoise / 8% decode. At 10s and 30 steps the split is **79%
+denoise / 21% decode** (646s + 175s = 821s). Decode is not a fixed cost — it scales
+with frame count, so the longer the rollout the more the step cut is diluted.
+
+That matters for the goal: at 10s, decode is 175s of the 821s total. Even an infinite
+step cut cannot go below 175s, which caps the achievable speedup at 1243/175 ≈ **7.1×**
+for this horizon. The measured 1.53× is therefore a long way from the ceiling, but the
+ceiling is not infinite either.
+
 ## Audio survives the step cut
 
 Ovi is a joint video+audio model, so "quality" includes audio. Every metric above
