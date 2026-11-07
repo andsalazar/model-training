@@ -109,6 +109,29 @@ def _first_tensor(value: object) -> object:
     return value
 
 
+def attention_backend() -> str:
+    """Which attention path Ovi will take, named rather than assumed.
+
+    ``ovi/modules/attention.py`` checks ``FLASH_ATTN_2_AVAILABLE``, then
+    ``FLASH_ATTN_3_AVAILABLE``, and otherwise falls back to
+    ``torch.nn.functional.scaled_dot_product_attention``. The fallback is not
+    equivalent: it sets ``attn_mask = None`` after warning that the padding mask is
+    disabled, so it attends over padding tokens.
+
+    Returning a name instead of a bool keeps that distinction visible in a capture's
+    record. "SDPA" is a different computation, not a slower one.
+    """
+    try:
+        from ovi.modules import attention as ovi_attention
+    except Exception:  # noqa: BLE001 - Ovi may be absent entirely (unit tests)
+        return "unknown"
+    if getattr(ovi_attention, "FLASH_ATTN_3_AVAILABLE", False):
+        return "flash_attn_3"
+    if getattr(ovi_attention, "FLASH_ATTN_2_AVAILABLE", False):
+        return "flash_attn_2"
+    return "sdpa"
+
+
 class DitHooks:
     """Capture Ovi residual states while a generation runs.
 
@@ -282,9 +305,17 @@ class DitHooks:
                 f"{self.no_step} firings occurred outside a numbered step and were "
                 "not recorded"
             )
+        attention = attention_backend()
+        if attention != "flash_attn_2":
+            notes.append(
+                f"attention backend was {attention!r}, not 'flash_attn_2': the SDPA "
+                "fallback drops the padding mask and attends over padding tokens, so "
+                "these states are not the ones the model occupies under FA2"
+            )
         return {
             "attached": bool(self._handles) or self._original_forward is not None,
             "hook_site": "blocks[i].norm1 (forward_pre_hook)",
+            "attention_backend": attention,
             "layers": list(self.capture.schedule.layers),
             "streams": list(self.capture.schedule.streams),
             "fired": dict(self.fired),

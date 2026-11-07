@@ -109,10 +109,46 @@ never be read as a measured negative.
 |---|---|
 | `src/wsp/dit.py` | `CaptureSchedule`, `ResidualCapture`, `frame_window`, `_windowed_mean` — pure array logic, no torch |
 | `src/wsp/hooks.py` | `DitHooks` (hook attach/detach, step tracking, report), `StepTracker` |
+| `src/wsp/targeting.py` | `find_targets`, `build_plan`, `apply_plan` — direction to weight-column edits |
 | `scripts/pod_ovi_capture.py` | Drives `OviFusionEngine` with hooks attached; runs the drifting-vs-stable pair |
 
 `dit.py` deliberately does not import torch, so the reduction maths is testable
 without a GPU. `hooks.py` imports torch only where it must.
+
+## Finding 6: the FlashAttention fallback changes the answer, not just the speed
+
+Ovi's README calls FlashAttention "optional", and `attention.py` does fall back to
+`torch.nn.functional.scaled_dot_product_attention` when `flash_attn` is missing. But
+the fallback path contains:
+
+```python
+if q_lens is not None or k_lens is not None:
+    warnings.warn('Padding mask is disabled when using scaled_dot_product_attention.')
+attn_mask = None
+```
+
+Ovi passes `seq_lens`/`k_lens` on every attention call because sequences are padded.
+So the SDPA path **drops the padding mask and attends over the padding tokens**. That
+is a different computation, not a slower one — and it would silently contaminate any
+capture taken through it.
+
+For the earlier speed experiments this did not matter: they measured wall clock and
+output quality, and a wheel rendered in roughly the right time is still a valid timing
+sample. For activation capture it matters, because the direction would be read from a
+state the real model never occupies.
+
+So FA2 is **required** for stage 6b rather than optional, a capture must record which
+attention backend produced it, and the build is a source build on A100 (sm_80) because
+no wheel matches this torch/Python combination.
+
+### Torch version pinning
+
+`torchaudio` unpinned resolved to 2.11.0, built against CUDA 13, and importing it
+under `torch 2.6.0+cu124` fails with `libcudart.so.13: cannot open shared object file`.
+That error names a missing library rather than a version mismatch, so it reads like a
+broken container. All three of torch/torchvision/torchaudio are now pinned, and the
+setup script imports them immediately after installing, so a mismatch fails at install
+time rather than during the first capture run.
 
 ## Tests
 

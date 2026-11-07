@@ -15,7 +15,7 @@ import torch
 from torch import nn
 
 from wsp.dit import CaptureSchedule, ResidualCapture
-from wsp.hooks import DitHooks, StepTracker, _timestep_key
+from wsp.hooks import DitHooks, StepTracker, _timestep_key, attention_backend
 
 pytest.importorskip("torch")
 
@@ -157,7 +157,11 @@ class TestAttach:
         report = hooks.report()
         assert report["fired_total"] > 0
         assert report["recorded"] == 4  # 2 layers x 2 streams
-        assert report["notes"] == []
+        # The capture itself reported no problem. The only note allowed is the
+        # attention-backend one, which is about the environment rather than the
+        # capture (Ovi is absent in unit tests, so the backend is 'unknown').
+        capture_notes = [n for n in report["notes"] if "attention backend" not in n]
+        assert capture_notes == []
 
     def test_a_block_level_hook_would_not_fire(self):
         # Pins the actual reason norm1 is the hook site, rather than trusting it.
@@ -283,3 +287,35 @@ class TestGuidance:
         # a second step.
         assert tracker.calls == 2
         assert capture.timesteps("video") == [0]
+
+
+class TestAttentionBackend:
+    """The backend is named, not assumed.
+
+    Ovi's SDPA fallback sets ``attn_mask = None`` and so attends over padding
+    tokens. A capture taken through it is a different computation from the FA2 one,
+    so the report has to say which ran rather than leaving the reader to guess.
+    """
+
+    def test_off_pod_reports_unknown_rather_than_guessing(self):
+        # Ovi is not importable in the unit-test environment. Returning a default
+        # like "flash_attn_2" here would be a tool claiming to have looked.
+        assert attention_backend() == "unknown"
+
+    def test_report_carries_the_backend(self):
+        schedule = CaptureSchedule(layers=(0,), keep_patches=True)
+        model = _model()
+        report = DitHooks(model, _capture(schedule)).attach().report()
+        assert "attention_backend" in report
+
+    def test_a_non_fa2_backend_is_flagged(self):
+        # Whatever the backend resolves to here, if it is not FA2 the report must say
+        # the captured states are not the FA2 states.
+        schedule = CaptureSchedule(layers=(0,), keep_patches=True)
+        model = _model()
+        capture = _capture(schedule)
+        with DitHooks(model, capture) as hooks:
+            _run(model)
+        report = hooks.report()
+        if report["attention_backend"] != "flash_attn_2":
+            assert any("drops the padding mask" in n for n in report["notes"])
