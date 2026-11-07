@@ -85,6 +85,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "it is not None before generating."
         ),
     )
+    parser.add_argument(
+        "--patch-stride",
+        type=int,
+        default=1,
+        help=(
+            "keep every Nth patch within each frame. A full 960x960 video residual is "
+            "27900 tokens x 3072 wide = 171MB per (layer, step, stream) in float16, "
+            "so a multi-layer pair of rollouts needs this."
+        ),
+    )
+    parser.add_argument(
+        "--n-frames",
+        type=int,
+        default=None,
+        help="frames in the rollout, so the stride stays frame-aligned",
+    )
     return parser.parse_args(argv)
 
 
@@ -157,8 +173,17 @@ def main(argv: list[str] | None = None) -> int:
         timesteps=tuple(args.capture_steps),
         keep_patches=True,
         streams=tuple(args.streams),
+        patch_stride=args.patch_stride,
+        n_frames=args.n_frames,
     )
     print(f"schedule: {schedule.describe()}", flush=True)
+    if args.patch_stride > 1 and args.n_frames is None:
+        print(
+            "WARNING: patch_stride > 1 without --n-frames gives a flat stride, so the "
+            "recorded token count may no longer divide evenly by the frame count and "
+            "frame windows will raise",
+            flush=True,
+        )
 
     reports: dict[str, dict] = {}
     arrays: dict[str, np.ndarray] = {}

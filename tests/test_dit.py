@@ -22,6 +22,7 @@ from wsp.dit import (
     _as_patch_matrix,
     _windowed_mean,
     frame_window,
+    subsample_patches,
 )
 
 
@@ -241,6 +242,67 @@ class TestDirection:
         with pytest.raises(ValueError, match="identical"):
             mine.direction(0, 0, other, frames="1:4", n_frames=4)
         assert np.linalg.norm(vec0) == pytest.approx(1.0, rel=1e-5)
+
+
+class TestSubsample:
+    """Captures must fit on disk without breaking the frame window.
+
+    A full video residual at 960x960 is 27,900 tokens x 3072 wide = 171MB per
+    (layer, step, stream). A second compression pass was already removed; this is the
+    other half of making a multi-layer pair affordable.
+    """
+
+    def test_stride_one_is_a_no_op(self):
+        matrix = np.arange(24, dtype=np.float32).reshape(12, 2)
+        assert np.array_equal(subsample_patches(matrix, 1, 4), matrix)
+
+    def test_stride_is_taken_within_each_frame(self):
+        # 4 frames x 3 patches. A stride of 2 must keep 2 patches per frame, not
+        # every other token across the whole sequence.
+        matrix = np.arange(24, dtype=np.float32).reshape(12, 2)
+        out = subsample_patches(matrix, 2, n_frames=4)
+        assert out.shape == (8, 2)
+        # Frame 0 keeps rows 0 and 2; frame 1 keeps rows 3 and 5.
+        assert np.array_equal(out[0], matrix[0])
+        assert np.array_equal(out[1], matrix[2])
+        assert np.array_equal(out[2], matrix[3])
+        assert np.array_equal(out[3], matrix[5])
+
+    def test_result_still_divides_by_the_frame_count(self):
+        # frame_window raises when the token count does not divide by n_frames, so a
+        # flat stride that left 11 tokens for 4 frames would break every window.
+        matrix = np.arange(48, dtype=np.float32).reshape(12, 4)
+        out = subsample_patches(matrix, 2, n_frames=4)
+        assert out.shape[0] % 4 == 0
+        frame_window(out, "0:2", 4)  # must not raise
+
+    def test_window_still_selects_the_same_frames(self):
+        matrix = np.arange(24, dtype=np.float32).reshape(12, 2)
+        out = subsample_patches(matrix, 2, n_frames=4)
+        # Frame 1 after subsampling must be the stride of original frame 1.
+        original = matrix.reshape(4, 3, 2)
+        result = out.reshape(4, 2, 2)
+        assert np.array_equal(result[1], original[1][::2])
+
+    def test_no_frame_count_falls_back_to_a_flat_stride(self):
+        matrix = np.arange(24, dtype=np.float32).reshape(12, 2)
+        out = subsample_patches(matrix, 2, n_frames=None)
+        assert out.shape == (6, 2)
+
+    def test_schedule_records_the_stride(self):
+        schedule = CaptureSchedule(layers=(0,), patch_stride=4, n_frames=121)
+        assert "stride=4" in schedule.describe()
+
+    def test_capture_applies_the_schedule_stride(self):
+        schedule = CaptureSchedule(
+            layers=(0,), keep_patches=True, patch_stride=2, n_frames=4
+        )
+        capture = ResidualCapture(schedule=schedule)
+        capture.record(0, 0, _activation(12, 8))
+        # 12 patches / 4 frames = 3 per frame; a stride of 2 keeps indices 0 and 2,
+        # so 2 per frame and 8 in total.
+        assert capture.at(0, 0).n_patches == 8
+        assert capture.at(0, 0).n_patches % 4 == 0
 
 
 class TestLayerCapture:

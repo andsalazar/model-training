@@ -82,6 +82,13 @@ class CaptureSchedule:
     timesteps: tuple[int, ...] | None = None
     keep_patches: bool = False
     streams: tuple[str, ...] = STREAMS
+    #: Keep every ``patch_stride``-th patch within each frame. 1 records everything.
+    #: A full 960x960 video residual is 27,900 tokens x 3072 wide = 171MB per
+    #: (layer, step, stream), so a multi-layer pair of rollouts needs this.
+    patch_stride: int = 1
+    #: Frames in the rollout, needed so the stride can be taken *within* a frame and
+    #: leave a token count that still divides evenly for :func:`frame_window`.
+    n_frames: int | None = None
 
     def wants(self, layer: int, timestep: int, stream: str = "video") -> bool:
         """Whether this (layer, timestep, stream) triple should be recorded."""
@@ -95,10 +102,11 @@ class CaptureSchedule:
 
     def describe(self) -> str:
         steps = "all" if self.timesteps is None else ",".join(map(str, self.timesteps))
+        stride = "" if self.patch_stride <= 1 else f" stride={self.patch_stride}"
         return (
             f"layers={','.join(map(str, self.layers))} timesteps={steps} "
             f"streams={','.join(self.streams)} "
-            f"patches={'keep' if self.keep_patches else 'reduce'}"
+            f"patches={'keep' if self.keep_patches else 'reduce'}{stride}"
         )
 
 
@@ -121,6 +129,38 @@ def _as_patch_matrix(activation: np.ndarray) -> np.ndarray:
     if array.ndim != 2:
         raise ValueError(f"expected [tokens, hidden], got shape {array.shape}")
     return array
+
+
+def subsample_patches(
+    matrix: np.ndarray, stride: int, n_frames: int | None
+) -> np.ndarray:
+    """Keep every ``stride``-th patch, preserving the frame structure.
+
+    A full video capture is large: 27,900 patch tokens at hidden width 3072 is 171MB
+    in float16 for *one* (layer, step, stream). A pair of rollouts across several
+    layers and steps runs to many gigabytes, which is both a disk problem and a
+    network-volume transfer problem.
+
+    The subsampling is done *within* each frame rather than across the flat token
+    axis. That matters: :func:`frame_window` splits the token axis into ``n_frames``
+    equal blocks, so a flat stride would leave a count that no longer divides evenly
+    and every frame window would then raise. Taking a stride inside each frame keeps
+    ``per_frame`` identical across frames, so windowing still works.
+    """
+    if stride <= 1:
+        return matrix
+    array = np.asarray(matrix, dtype=np.float32)
+    if n_frames is None or n_frames <= 1:
+        return array[::stride]
+    total = array.shape[0]
+    if total % n_frames != 0:
+        # Not a frame-aligned token count; fall back to a flat stride and say so via
+        # the shape, rather than silently reshaping into the wrong blocks.
+        return array[::stride]
+    per_frame = total // n_frames
+    frames = array.reshape(n_frames, per_frame, array.shape[1])
+    kept = frames[:, ::stride, :]
+    return kept.reshape(n_frames * kept.shape[1], array.shape[1])
 
 
 def frame_window(
@@ -230,6 +270,9 @@ class ResidualCapture:
             self.skipped += 1
             return False
         matrix = _as_patch_matrix(activation)
+        matrix = subsample_patches(
+            matrix, self.schedule.patch_stride, self.schedule.n_frames
+        )
         self.captures[(stream, layer, timestep)] = LayerCapture(
             layer=layer,
             timestep=timestep,
