@@ -83,6 +83,34 @@ class TestValidation:
             capture_script.parse_args(["--config", "c.yaml", "--prompt", "x"])
 
 
+class TestHeightWidth:
+    """Ovi asserts video_frame_height_width is not None in t2v mode.
+
+    The first real capture died on exactly that: the engine loaded the 11.66B model,
+    printed the schedule, and then returned None with its own logged traceback.
+    """
+
+    def test_parses_hxw(self, capture_script):
+        assert capture_script._parse_height_width("704x704") == [704, 704]
+
+    def test_accepts_an_x_separator_case_insensitively(self, capture_script):
+        assert capture_script._parse_height_width("704X1280") == [704, 1280]
+
+    def test_accepts_a_comma_separator(self, capture_script):
+        assert capture_script._parse_height_width("960,960") == [960, 960]
+
+    def test_none_stays_none(self, capture_script):
+        assert capture_script._parse_height_width(None) is None
+
+    def test_malformed_input_is_rejected(self, capture_script):
+        with pytest.raises(ValueError, match="must be HxW"):
+            capture_script._parse_height_width("704")
+
+    def test_non_positive_is_rejected(self, capture_script):
+        with pytest.raises(ValueError, match="must be positive"):
+            capture_script._parse_height_width("0x704")
+
+
 class TestOutputPath:
     def test_out_is_a_path_not_a_string(self, capture_script):
         args = capture_script.parse_args(_base_args())
