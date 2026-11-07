@@ -175,11 +175,22 @@ def derive(
     }
 
 
-def summarize(direction_report: dict, depth: int = 20) -> dict:
-    """A JSON-safe summary: drop the raw vectors, keep the measurable facts."""
+def summarize(direction_report: dict, depth: int = 20, keep_vectors: bool = False) -> dict:
+    """A JSON-safe summary: drop the raw vectors, keep the measurable facts.
+
+    ``keep_vectors=True`` retains each unit direction, which the projection step needs.
+    The default drops them because a full-layer set at hidden width 3072 is megabytes of
+    JSON for numbers the summary already characterises.
+    """
     out: list[dict] = []
     for entry in direction_report["results"]:
-        row = {k: v for k, v in entry.items() if k != "direction"}
+        row = dict(entry)
+        if not keep_vectors:
+            row.pop("direction", None)
+        else:
+            vector = row.get("direction")
+            if vector is not None:
+                row["direction"] = [round(float(x), 8) for x in vector]
         out.append(row)
     norms = [r["delta_norm"] for r in out if "delta_norm" in r]
     return {
@@ -256,6 +267,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--stream", default="video", choices=["video", "audio"])
     parser.add_argument("--n-frames", type=int, default=None)
     parser.add_argument("--frames", default=None, help="frame window, e.g. 0:1")
+    parser.add_argument(
+        "--keep-vectors",
+        action="store_true",
+        help=(
+            "store each unit direction in the report. The projection step needs this; "
+            "without it the report is a characterisation, not an input to an edit."
+        ),
+    )
     args = parser.parse_args(argv)
 
     arrays, meta = load_capture(args.capture)
@@ -270,8 +289,15 @@ def main(argv: list[str] | None = None) -> int:
         n_frames=args.n_frames,
         frames=args.frames,
     )
-    summary = summarize(report)
-    print(json.dumps(summary, indent=2, default=str), flush=True)
+    summary = summarize(report, keep_vectors=args.keep_vectors)
+    printable = dict(summary)
+    if args.keep_vectors:
+        # Printing thousands of floats is noise; the counts and norms are the message.
+        printable["rows"] = [
+            {k: v for k, v in row.items() if k != "direction"}
+            for row in summary["rows"]
+        ]
+    print(json.dumps(printable, indent=2, default=str), flush=True)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(summary, indent=2, default=str))
