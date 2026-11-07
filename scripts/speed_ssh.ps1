@@ -15,8 +15,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Command,
     [int]$TimeoutSeconds = 120,
-    [string]$SshHost = "38.128.232.9",
-    [int]$Port = 21937
+    [string]$SshHost = "157.157.221.29",
+    [int]$Port = 11634
 )
 
 $key = "$env:USERPROFILE\.ssh\id_ed25519"
