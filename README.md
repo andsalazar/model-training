@@ -218,6 +218,17 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
   1.42× faster at 5s and 1.53× at 10s** with sharper output and unchanged audio. 20
   steps reaches 1.76× at 10s but its colour drifts in 2 of 3 seeds. The goal is met by
   configuration alone, with no model edit.
+- [docs/stage6b-hook-attachment.md](docs/stage6b-hook-attachment.md) — **getting a hook
+  into Ovi.** The obvious site (a forward hook on `blocks[i]`) fires **zero times**,
+  because Ovi's fused loop calls each block's submodules individually so video and audio
+  can cross-attend. `norm1` is the site that works in both paths. Also: Ovi's SDPA
+  fallback drops the padding mask, so FA2 is required rather than optional.
+- [docs/stage6c-direction-measured.md](docs/stage6c-direction-measured.md) — **the
+  direction, measured, and a negative result.** The drifting-to-stable contrast at
+  matched noise levels is a 2.5–4.7% relative perturbation (cosine 0.999). Projected onto
+  the two matrices that write to the residual stream, the best column alignment is 0.129
+  against a 0.018 chance level: above chance, but far too weak to justify an edit whose
+  effect would be 0.1–0.3% of the state norm.
 
 TBC published **two documents describing the same adapter at different stages**: a
 research post on **Oasis** (600M Minecraft DiT, goal: rollout stability) and the shipped
@@ -233,6 +244,26 @@ the adapter's benefit is **concentrated at low DDIM step counts** — at 40 step
 model nearly matches it. Stability and speed are two readings of one effect. That is the
 mechanistic bridge the brief was reaching for, and WSP's residual-stream measurement maps
 directly onto TBC's unanswered placement question.
+
+### Where that leaves the hypothesis
+
+The instrument now works end to end: a direction is captured from real Ovi rollouts,
+aligned by noise level, and projected onto real bfloat16 weights without loading the
+model. What it measured is a **weak** alignment. That is a real finding and it narrows the
+question rather than closing it:
+
+| Reading | Status |
+|---|---|
+| The drift-to-stable difference exists and is measurable | **yes**, 2.5–4.7% relative |
+| It concentrates in a few weight columns | **no** — the score distributions are plateaus (top 0.0621 vs second 0.0609) |
+| An edit aimed there could plausibly change the outcome | **not at these cosines** — a 0.02 damping would move the state 0.12–0.26%, against a 2.5–4.7% effect to chase |
+| Somewhere in Ovi is a stability-relevant direction | **weak evidence** — `ffn.2` aligns above `self_attn.o` at every layer, and block 4 is strongest in both |
+
+The most likely explanation is that a residual-stream direction is a *sum* of every
+component's contribution, and the components that distinguish drifting from stable may be
+in the attention pattern itself — which no column of `o` or `ffn.2` represents. Testing
+that would need a different measurement (attention-map contrast rather than residual
+contrast), not a stronger edit.
 
 ## License
 
