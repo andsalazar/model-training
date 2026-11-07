@@ -162,6 +162,37 @@ time rather than during the first capture run.
   version of this test used an identity norm, which made the two indistinguishable and
   the test vacuous; it now uses a real scaling layer.
 
+## First real capture — verified
+
+The smoke run (8 steps, 2 layers, 3 capture steps, 1 seed) proves the pipeline on the
+actual 11.66B model:
+
+| Field | Value | What it means |
+|---|---|---|
+| `attention_backend` | `flash_attn_2` | the real path, not the padding-dropping SDPA fallback |
+| `model_calls` | 16 for 8 steps | **CFG double-pass confirmed empirically**, not just read from source |
+| `fired` | `{audio: 32, video: 32}` | 2 layers × 8 steps × 2 passes, exactly as designed |
+| `recorded` | 12 | layers × steps × streams, after the schedule filtered |
+| `decoded_declined` | 40 | 64 firings − 12 recorded − 12 overwritten by the second CFG pass |
+| `steps_seen` | 8 | distinct timesteps, so guidance did not inflate the count |
+
+And the arrays are real, not empty:
+
+```
+capture_8_video_0_0: shape=(27900, 3072) std=0.3862 finite=True
+capture_8_audio_0_0: shape=(157, 3072)   std=6.7482 finite=True
+capture_8_audio_2_4: shape=(157, 3072)   std=27.0953 finite=True
+degenerate captures (non-finite or zero variance): 0
+video_8: shape=(3, 121, 960, 960)  audio_8: shape=(80384,)
+```
+
+12 of 12 captures non-degenerate. The video residual width is 3072 and there are
+27,900 patch tokens at 960×960 for a 121-frame rollout; audio is 157 tokens, which is
+why Ovi's two stacks cannot share a capture key.
+
+Timing: 92.7s for 8 steps at ~8.2s/step, plus load time. That matches the earlier
+5s/step sweeps, so capture adds no measurable overhead.
+
 ## Not yet done
 
 - No capture has run on the real model. The install was still downloading torch when
