@@ -89,6 +89,16 @@ class StepTracker:
         """How many distinct timesteps have been observed — the step count."""
         return len(self._order)
 
+    def timestep_of(self, step: int) -> float | None:
+        """The timestep value recorded for a step index, or ``None`` if unseen."""
+        if 0 <= step < len(self._order):
+            return self._order[step]
+        return None
+
+    def mapping(self) -> dict[int, float]:
+        """Step index to timestep value, for aligning runs of different lengths."""
+        return {i: value for i, value in enumerate(self._order)}
+
 
 def _first_tensor(value: object) -> object:
     """Ovi passes ``x`` as a list of tensors; take the first."""
@@ -283,6 +293,7 @@ class DitHooks:
             "decoded_declined": self.capture.skipped,
             "steps_seen": self.tracker.steps_seen,
             "model_calls": self.tracker.calls,
+            "step_timesteps": {str(k): v for k, v in self.tracker.mapping().items()},
             "recorded": recorded,
             "notes": notes,
         }
