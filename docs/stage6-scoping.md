@@ -16,7 +16,16 @@ distinction turns out to matter a great deal for this project.
 
 ## What TBC actually built
 
-From the primary source (tbc.co, "The Neural Dynamics Adapter"):
+⚠️ **TBC published two documents, and they describe the same adapter at different stages.**
+This section summarises the *research post* (`tbc.co/post/the-neural-dynamics-adapter`),
+which used **Oasis**. The *shipped product*, Mischief 1, is built on **Wan 2.2** per the PR
+Newswire/TNW/AWS announcement of Oct 30 2026. The parameter figures corroborate one adapter:
+156k/600M = 0.026%, consistent with the product's "under 0.1% of base". An earlier version of
+this document treated "Oasis" as refuting "Wan 2.2" — that was wrong; they are two documents,
+not two claims about one model. See [stage6-literature.md](stage6-literature.md) for the
+side-by-side.
+
+From the research post:
 
 **The base model** is the open-source **600M-parameter Oasis** Minecraft world
 generation model — a Diffusion Transformer with a ViT spatial autoencoder, action
@@ -94,6 +103,26 @@ The brief's instinct is sounder than it first appears. Consider what each side h
 So "surgically target where to implement the adapter" is not a metaphor — it is the
 literal output of the tooling this project already has. The adapter is a residual
 module; WSP measures residual directions. The mapping is direct.
+
+### The DDIM finding changes what the adapter is for
+
+The research post's stated goal is rollout stability, which is why an earlier version of
+this document framed the adapter as a stability device with no speed relevance. **TBC's own
+Figure 7 contradicts that framing.** Its caption: *"At high denoising step counts, the base
+Oasis model barely outperforms the adapter-augmented model."* And the discussion states the
+deployment target explicitly: practitioners "typically operate at lower DDIM settings, often
+between 10 and 20 steps", and "maintaining strong performance at 10 or 20 steps is a more
+relevant benchmark for our deployment-focused objectives."
+
+**The adapter's benefit is concentrated at low step counts.** At DDIM=40 the base model nearly
+matches it; at 10–20 the adapter is far ahead. So the adapter does not just stabilise rollouts
+— it makes low step counts viable. Stability and speed are two readings of one effect.
+
+That matters for this project because it means the brief's speed goal and TBC's stability goal
+are not in conflict. An adapter that holds quality at 20 steps *is* a speedup, and it is the
+same adapter TBC describes. The question this project should ask is therefore sharper than
+either framing alone: **can a residual edit hold quality at a step count where the base model
+degrades?**
 
 This is a much better fit than the earlier draft assumed. The earlier draft framed
 the gap as "everything is autoregressive-specific and nothing transfers". That is

@@ -28,10 +28,11 @@ unverified claim is treated as measured. Three times in Stages 4–5 a substring
 a success. The same discipline applies to literature: a citation that *sounds* like it
 supports a hypothesis is not evidence that it does.
 
-## Ground truth from the primary source
+## Ground truth from the research post
 
 Load-bearing facts, all directly quoted or paraphrased from
-<https://www.tbc.co/post/the-neural-dynamics-adapter>:
+<https://www.tbc.co/post/the-neural-dynamics-adapter>. **This is the research document, which
+used Oasis** — the shipped product's facts are in the correction table below.
 
 | Claim | Detail |
 |---|---|
@@ -46,18 +47,67 @@ Load-bearing facts, all directly quoted or paraphrased from
 | Stated rationale | biological networks "naturally produce stable representations over extended temporal dynamics" |
 | Published | Tue Nov 03 2026 (from page metadata) |
 
-Two things this table settles immediately, both of which contradict the original brief:
+### ⚠️ Correction: TBC published two documents, and they describe different models
 
-1. **TBC used Oasis, not Wan 2.2.** Wan 2.2 is never mentioned in the post. The adapter, the
-   fine-tuning baseline and the LoRA baseline were all applied to Oasis.
-2. **TBC's goal was stability, not speed.** The metric is a quality/stability axis. Nothing in
-   the post discusses latency, FLOPs or step-count reduction as an objective.
+An earlier version of this section claimed "TBC used Oasis, not Wan 2.2" and treated that as
+refuting the brief. **That was wrong, and the error was mine.** There are two separate TBC
+artifacts:
+
+| | Research post | Shipped product |
+|---|---|---|
+| Source | `tbc.co/post/the-neural-dynamics-adapter` | PR Newswire / TNW / AWS announcement, Oct 30 2026 |
+| Base model | **Oasis**, 600M Minecraft DiT | **Wan 2.2** (open-weight) |
+| Goal | long-horizon rollout **stability** | ~**5× faster** than base, 80% cheaper |
+| Metric | differential entropy across frames | speed + "comparable quality" |
+| Adapter size | ~156k params (0.026% of 600M) | "under 0.1% of base" |
+
+The two are consistent: **the same tiny adapter, developed on Oasis and shipped on Wan 2.2.**
+156k/600M = 0.026%, which satisfies "under 0.1%" — so the parameter figures describe one
+adapter seen in two contexts. The research post is the *method*; Mischief 1 is the *product*.
+
+So the brief's "TBC used Wan 2.2" is **correct for the product**, and my earlier refutation
+was based on reading only the research post. What survives from the correction:
+
+1. **The mechanism is not a LoRA.** TBC's own post says the adapter is "a shallow, lightweight
+   module that modifies residual information in early DiT layers by incorporating localized
+   spatial activations and a learned projection" — and LoRA appears only as a *baseline* they
+   benchmark against and claim to beat by ~5%. The parameter *budget* is LoRA-like; the
+   *mechanism* is not.
+2. **The research post's stated goal is stability, not speed** — but see the DDIM finding
+   below, which reconciles the two.
+
+### The DDIM finding: stability and speed are the same mechanism
+
+This is the most important thing in the research post and it was missed in the first pass.
+TBC states it directly:
+
+> "Selecting the optimal number of DDIM steps involves a trade-off between visual fidelity and
+> computational overhead... practitioners typically operate at lower DDIM settings, often
+> between 10 and 20 steps... while some competing methods in our benchmark may show higher
+> visual quality at higher DDIM regimes (e.g., DDIM = 40, Figure 7), maintaining strong
+> performance at 10 or 20 steps is a more relevant benchmark for our deployment-focused
+> objectives."
+
+And Figure 7's caption: *"At high denoising step counts, the base Oasis model barely
+outperforms the adapter-augmented model."*
+
+**The adapter's benefit is concentrated at low step counts.** At DDIM=40 the base model nearly
+matches the adapter; at DDIM=10–20 the adapter is far ahead. So the adapter does not merely
+stabilise rollouts — it *makes low step counts viable*, which is a speedup. Stability and speed
+are two readings of one effect. That is the mechanistic bridge the brief was reaching for, and
+it is stated in the primary source.
+
+This also means the brief's premise — "dampen parameters carrying redundant frame-to-frame
+pixel information to speed up generation" — is closer to TBC's actual framing than the first
+pass allowed. The *goal* named in the research post is stability, but the *deployment
+consequence* TBC optimises for is running at 10–20 steps instead of 40.
 
 The brief's premise — "TBC did their LoRA on Wan 2.2 to make Mischief 1, penalising weights
 that fired needlessly when pixels were similar frame to frame, exploiting Wan 2.2's MoE to
-expedite processing" — is wrong on the model, wrong on the mechanism (it is not a LoRA), and
-wrong on the goal. That correction is already recorded in
-[stage6-scoping.md](stage6-scoping.md); what follows is what the literature says *instead*.
+expedite processing" — is **right about the model** (Wan 2.2, for the product), **wrong about
+the mechanism** (not a LoRA), and **right about the goal** (speed, via low step counts). The
+MoE part remains unsupported: Wan 2.2's "MoE" is a timestep-split dense two-expert ensemble
+with no per-token router to exploit.
 
 ## The neuroscience lineage
 
@@ -462,7 +512,7 @@ Arithmetic); Meng, Bau, Andonian & Belinkov, "Locating and Editing Factual Assoc
 (ROME), NeurIPS 2022, **arXiv:2202.05262**; Meng, Sharma, Andonian, Belinkov & Bau, "Mass-Editing
 Memory in a Transformer" (MEMIT), ICLR 2023, **arXiv:2210.07229**.
 
-### 9. Video generation speed — **(b), and TBC's goal was not speed**
+### 9. Video generation speed — **(b), and TBC's deployment goal *was* speed**
 
 - Sauer, Lorenz, Blattmann & Rombach, "Adversarial Diffusion Distillation", **arXiv:2311.17042**.
   **Verified.** Distils to 1–4 steps via adversarial loss + score distillation.
@@ -484,37 +534,42 @@ of their own.
 > *TBC applied LoRA to Wan 2.2 to dampen parameters carrying similar video pixels frame-to-frame, to
 > speed up generation, possibly exploiting Wan 2.2's MoE.*
 
-**Not supported — contradicted by the primary source on every load-bearing point.**
+**Partly supported — the first pass over-corrected.**
 
 | Claim | Verdict | Basis |
 |---|---|---|
-| TBC used Wan 2.2 | **False** | Post names **Oasis** throughout; Wan 2.2 never mentioned |
-| TBC used LoRA | **False** | Adapter is a 156k-param residual module; LoRA is only a *baseline* |
-| Goal was speed | **False** | Goal is rollout stability; metric is differential entropy |
+| TBC used Wan 2.2 | **True for the product** | PR Newswire/TNW name Wan 2.2 as Mischief 1's base. The *research post* used Oasis — two documents, one adapter |
+| TBC used LoRA | **False** | Adapter is a 156k-param residual module; LoRA is only a *baseline* they beat by ~5% |
+| Goal was speed | **True for the product** | ~5× faster than Wan 2.2, 80% cheaper. The research post frames it as stability — and the DDIM finding reconciles them |
 | Dampened frame-to-frame redundancy | **Not stated** | No mechanism described; "localized spatial activations" is the only hint |
-| Exploited Wan 2.2's MoE | **False, twice over** | TBC never used Wan 2.2; and Wan 2.2's MoE is timestep-split, not per-token |
+| Exploited Wan 2.2's MoE | **Unsupported** | Wan 2.2's MoE is timestep-split dense two-expert, not per-token — no router to exploit |
 
 **What *is* real in the hypothesis:** the underlying mechanism — a small low-rank or small-magnitude
 weight-space direction used to *suppress* a specific existing behaviour — has solid precedent
-(Concept Sliders, Task Arithmetic negation). The brief's instinct about the *kind* of edit is sound.
-It is the attribution to TBC and to Wan 2.2 that is wrong.
+(Concept Sliders, Task Arithmetic negation). The brief's instinct about the *kind* of edit is sound,
+and its instinct about the *model* was right for the shipped product.
 
-**Most likely explanation for the confusion:** conflation with a real but unrelated ecosystem of
-Wan-2.2-specific caching/distillation/LoRA tools (LightX2V, FastVideo, Cache-dit, DiffSynth-Studio's
-Wan 2.2 LoRA training support) that genuinely exists but has no documented connection to TBC.
+**Where the first pass went wrong:** it read only the research post and treated "Oasis" as
+refuting "Wan 2.2". The two documents describe the same adapter at different stages — research
+on Oasis, product on Wan 2.2. The parameter figures corroborate this (156k/600M = 0.026%,
+consistent with "under 0.1%").
 
 ## What this changes for the project
 
-The literature review does not rescue the original premise, but it does sharpen the plan in four
-ways.
+The literature review does not rescue the original premise wholesale, but it sharpens the plan in
+four ways — and the DDIM finding makes the speed goal more defensible than the first pass allowed.
 
-### 1. The behaviour to target is stability, not speed
+### 1. The behaviour to target is stability *at low step counts* — which is speed
 
-The brief wanted speed. TBC's actual result is stability — preventing information collapse over long
-rollouts. These are different objectives with different metrics. If we target speed we are not
-reproducing TBC's method; we are doing something adjacent. **This should be an explicit decision, not
-a drift.** The honest framing: TBC's *architecture* (small residual module, early layers) is
-transferable; TBC's *behaviour* (rollout stability) is what the architecture was built for.
+An earlier version of this section said "the brief wanted speed, TBC's result is stability, these are
+different objectives." **The DDIM finding above shows that is a false dichotomy.** TBC's Figure 7
+shows the adapter's advantage is concentrated at 10–20 steps and nearly vanishes at 40. The adapter
+buys stability *by* making low step counts viable, so its deployment payoff is speed.
+
+The honest framing is therefore narrower than either the brief or the first pass had it: TBC's
+*architecture* (small residual module, early layers) is transferable, and its *behaviour* is holding
+quality at a step count where the base model degrades. That is a speed objective measured with a
+quality metric — which is exactly what this project's speed work needs.
 
 ### 2. The "frame-to-frame redundancy" axis is the wrong one for the caching literature
 
@@ -545,9 +600,10 @@ transfers even though the behaviour does not.
 3. **Whether criticality signatures hold in dissociated cultures** — the sub-debate was not resolved.
    Beggs & Plenz used laminar slices on 60 channels; TBC likely used dissociated cultures on a
    high-density array.
-4. **Whether differential entropy separates a degrading rollout from a healthy one on Ovi** — nothing
-   has been measured on video yet. This remains the cheapest decisive experiment, per
-   [stage6-scoping.md](stage6-scoping.md).
+4. ~~**Whether differential entropy separates a degrading rollout from a healthy one on Ovi**~~ —
+   **answered since this review was written.** Measured on four real Ovi rollouts: per-frame entropy
+   separates in 0 of 12 cases, delta entropy in 6 of 9. No real 5-second rollout collapses. See
+   [stage6-metric.md](stage6-metric.md).
 5. **Whether the audio branch can be edited the same way** — different backbone, different residual
    structure. Unmeasured.
 6. **Cross-modal fusion interaction** — Ovi's video and audio branches are not independent; an edit to

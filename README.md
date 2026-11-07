@@ -219,13 +219,20 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
   steps reaches 1.76× at 10s but its colour drifts in 2 of 3 seeds. The goal is met by
   configuration alone, with no model edit.
 
-Three premises in the brief did not survive contact with the primary source: TBC used
-**Oasis**, not Wan 2.2; the adapter is **not a LoRA**; and the goal was **rollout
-stability**, not speed. Wan 2.2's "MoE" is also a timestep-split dense two-expert
-ensemble, not per-token routing — so there is no router to exploit. What does survive:
-the mechanism (a small weight-space direction used to *suppress* a behaviour) has real
-precedent, and WSP's residual-stream measurement maps directly onto TBC's unanswered
-placement question.
+TBC published **two documents describing the same adapter at different stages**: a
+research post on **Oasis** (600M Minecraft DiT, goal: rollout stability) and the shipped
+**Mischief 1** product on **Wan 2.2** (goal: ~5× faster, 80% cheaper). The parameter
+figures corroborate one adapter — 156k/600M = 0.026%, consistent with "under 0.1% of
+base". So the brief's "TBC used Wan 2.2" is **right for the product**; an earlier version
+of this README wrongly refuted it by reading only the research post.
+
+What does not survive: the mechanism is **not a LoRA** (LoRA is a baseline TBC claims to
+beat by ~5%), and Wan 2.2's "MoE" is a timestep-split dense two-expert ensemble with no
+per-token router to exploit. What does survive, and matters most: TBC's own Figure 7 shows
+the adapter's benefit is **concentrated at low DDIM step counts** — at 40 steps the base
+model nearly matches it. Stability and speed are two readings of one effect. That is the
+mechanistic bridge the brief was reaching for, and WSP's residual-stream measurement maps
+directly onto TBC's unanswered placement question.
 
 ## License
 
