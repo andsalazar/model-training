@@ -150,6 +150,36 @@ consistently more strongly than `self_attn.o` (0.075–0.129 versus 0.059–0.09
 block 4 is the strongest site in both. That is a weak but coherent signal, and it is the
 first evidence in this project about *where* in Ovi a stability-relevant direction lives.
 
+### The audio projection — same weak pattern, weaker still
+
+The audio direction was derived from the same capture pair (157 audio tokens against
+27,900 video tokens, same 3072 width) and projected onto the audio stack's two residual
+matrices.
+
+| Site | best cosine | 2nd | 10th | spread | selected |
+|---|---|---|---|---|---|
+| blocks.0.self_attn.o | +0.0608 | +0.0552 | +0.0518 | 0.0090 | 4 |
+| blocks.0.ffn.2 | +0.0731 | +0.0669 | +0.0591 | 0.0139 | 4 |
+| blocks.2.self_attn.o | **+0.0792** | +0.0598 | +0.0520 | 0.0271 | 4 |
+| blocks.2.ffn.2 | +0.0659 | +0.0623 | +0.0564 | 0.0095 | 4 |
+| blocks.4.self_attn.o | +0.0656 | +0.0613 | +0.0492 | 0.0164 | 4 |
+| blocks.4.ffn.2 | +0.0729 | +0.0716 | +0.0637 | 0.0093 | 5 |
+| blocks.8.self_attn.o | +0.0602 | +0.0571 | +0.0471 | 0.0131 | 4 |
+| blocks.8.ffn.2 | +0.0743 | +0.0703 | +0.0578 | 0.0164 | 4 |
+| blocks.11.self_attn.o | +0.0605 | +0.0596 | +0.0464 | 0.0141 | 5 |
+| blocks.11.ffn.2 | +0.0646 | +0.0557 | +0.0526 | 0.0120 | 4 |
+
+Best alignment anywhere is **0.0792**, mean best 0.068, mean best-to-second gap 0.0058 —
+weaker than video on every measure. The `ffn.2` ordering holds (mean 0.0702 versus 0.0653
+for `self_attn.o`), but the block-4 lead does not: block 2 is the strongest audio site.
+`selected` is 4 or 5 everywhere, so the threshold again found nothing and the backfill
+supplied the columns.
+
+The audio result therefore does not rescue the residual hypothesis. It reproduces the
+same shape — above chance, far from decisive, selection driven by the backfill — on a
+branch with 178× fewer tokens. That consistency is itself informative: the weak alignment
+is a property of the method, not of the video stream.
+
 ## What an edit from this would look like — and why it is not obviously worth running
 
 `damping_vector` would scale 4–6 columns per site by `1 - strength`. With a cosine of
@@ -167,19 +197,20 @@ uninterpretable answer rather than a cheap one.
 
 | Item | Where |
 |---|---|
-| Capture | `/local/captures/pair_20v30.npz` (2.8 GB), `pair_20v30.json` |
-| Direction report (with vectors) | `/local/captures/direction_full.json` |
-| Projection | `/local/captures/projection.json` |
+| Capture | `/local/captures/pair_20v30.npz`, `pair_20v30.json` |
+| Video direction (with vectors) | `/local/captures/direction_full.json` |
+| Video projection | `/local/captures/projection.json` |
+| Audio direction (with vectors) | `/local/captures/direction_audio_full.json` |
+| Audio projection | `/local/captures/projection_audio.json` |
 | Derivation | `scripts/pod_derive_direction.py` |
 | Projection | `scripts/pod_project_direction.py` |
-| Summaries | `scripts/pod_direction_summary.sh`, `scripts/pod_score_distribution.sh` |
+| Summaries | `scripts/pod_direction_summary.sh`, `scripts/pod_score_distribution.sh`, `scripts/pod_audio_projection_summary.sh` |
 
 ## Not yet done
 
-- **No edit has been applied**, deliberately: see the arithmetic above.
+- **No edit has been applied**, deliberately: see the arithmetic above. The audio
+  projection makes this stronger, not weaker — a 0.079 cosine supports an even smaller
+  edit than video's 0.129.
 - One seed. The colour verdict it relies on came from 3 seeds; this direction is from a
   single pair.
-- The audio direction has not been projected. The capture holds audio states
-  (157 tokens, same 3072 width) and the projection script accepts `--stream audio`, but
-  only video was run.
 - Prompt adherence is still unmeasured anywhere in the project.

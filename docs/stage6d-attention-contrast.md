@@ -87,8 +87,8 @@ choice and would have silently discarded the strongest possible signal.
 
 ## What would count as a finding
 
-The module is an instrument, not a result. Three outcomes are possible and they mean
-different things:
+Three outcomes were possible and they mean different things. The measured result, below,
+landed on the middle one:
 
 | Outcome | Reading |
 |---|---|
@@ -125,19 +125,66 @@ Two structural facts the hook has to respect, both verified against the source:
   records 4 summaries; without it, 2 — the second step's blocks fall outside the schedule
   and are silently dropped.
 
-## What this does not establish
+## The measured result — and the confound that had to be removed first
 
-- **No attention contrast has been measured on the real model yet.** The module and the
-  hook are tested against constructed tensors and a stand-in module. The GPU run is the
-  next step.
+The contrast has now been run on the real 11.66B model: 20 steps against 30, same prompt
+and seed, five layers, ten capture steps. 3,540 attention calls fired per rollout
+(30 steps × 2 CFG passes × 59 blocks), 50 summaries recorded.
+
+**The first run's result was confounded and had to be discarded.** It aligned by step
+index and reported a clean monotonic rise — max effect 0.000 at step 0, 0.216 at step 10,
+0.680 at step 18. That looked like a strong finding. It was an artefact: a 20-step run and
+a 30-step run visit *different noise levels* at the same index. At index 18 the 20-step run
+is at t=233 and the 30-step run at t=756, a gap of 522. The "effect grows with step" was
+mostly the schedule difference between two different points on the trajectory.
+
+The fix is nearest-timestep pairing with an enforced tolerance. The two schedules share
+only t=999.0 exactly, so nearest pairing is required; but the schedules diverge sharply at
+the end (the 20-step run's last three steps are 111, 264 and 522 away from the 30-step
+run's final step), so pairs beyond a 50-unit gap are dropped and counted rather than
+silently averaged in. Of 21 candidate pairs, **20 survived and 1 was dropped** (t=208
+against t=262, gap 54).
+
+### What survives the alignment
+
+| Layer | max effect | mean | pairs |
+|---|---|---|---|
+| 0 | 0.0000 | 0.0000 | 4 |
+| 2 | 0.0693 | 0.0173 | 4 |
+| 4 | 0.0787 | 0.0197 | 4 |
+| 8 | 0.0000 | 0.0000 | 4 |
+| 11 | **0.1286** | 0.0685 | 4 |
+
+The strongest surviving row is layer 11 at t=768 (max 0.1286, 4 heads changed, top head
+17). Layer 11 head 17 recurs in 3 of the 4 kept timesteps — the only head that does.
+
+This is the **middle outcome** from the table above: a handful of heads separate weakly.
+The peak effect drops from 0.680 to 0.129 once the confound is removed — a 5× reduction,
+which is the measure of how much of the original signal was schedule artefact.
+
+Two things are notable and neither is a mechanism:
+
+- **Layers 0 and 8 show exactly zero** at every kept timestep. Not "small" — zero, meaning
+  no head moved at all. A step-count change that leaves two of five sampled layers
+  bit-identical is a real constraint on what the difference can be.
+- **The surviving signal is at layer 11**, the deepest sampled layer, whereas the residual
+  projection's strongest site was block 4. The two measurements do not agree on where the
+  difference lives, which is itself a finding: they are not measuring the same thing.
+
+### What this does not establish
+
 - **Whether head-level differences are causal.** A head that separates drifting from stable
   may be responding to the drift rather than causing it. Only an edit settles that.
+- **Whether the layer-11 head-17 recurrence is stable.** It rests on 4 kept timesteps from
+  one seed pair. The colour verdict needed 3 seeds to settle; this needs the same.
+- **The audio attention branch.** Only the video stack was captured. Audio attention is a
+  separate set of heads and was not measured.
 - **Prompt adherence is still unmeasured anywhere in the project.**
 
 ## Tests
 
-37 tests in `tests/test_attention.py`, 16 in `tests/test_attention_hooks.py` and 15 in
-`tests/test_ovi_attention.py`. Three are load-bearing for the findings above:
+50 tests in `tests/test_attention.py`, 17 in `tests/test_attention_hooks.py` and 21 in
+`tests/test_ovi_attention.py`. Four are load-bearing for the findings above:
 
 - `TestSummarizeAttention::test_zero_rows_are_rejected` — a pre-softmax hook would look
   like this, and silently normalising it would produce plausible-looking entropies from a
@@ -161,3 +208,8 @@ Two more are load-bearing for the hook:
 - `TestRecording::test_step_is_numbered_from_the_model_forward` — two calls at the same `t`
   are one step (the CFG double-pass); a new `t` starts a new step. Without this the capture
   would file 40 attention calls as 40 steps instead of 20.
+- `TestContrast::test_a_gap_beyond_tolerance_is_dropped_not_contrasted` — the guard that
+  removed the confound. Verified load-bearing by the pairing check: index pairing gives
+  `[(0,0),(2,2),...,(18,18)]` while nearest-timestep pairing gives
+  `[(0,0),(2,4),(4,6),(6,10),(8,12),(10,16),(12,18),(14,18),(16,18),(18,18)]` — genuinely
+  different, and the index version compares t=233 against t=756.

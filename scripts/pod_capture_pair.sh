@@ -15,7 +15,10 @@ cd /local/Ovi || exit 1
 export PYTHONPATH="/local/wsp/src:/local/Ovi:${PYTHONPATH:-}"
 export OVI_ROOT=/local/Ovi
 
-CFG=/local/ovi/configs/inference_fusion_wsp.yaml
+# The repo is at /local/Ovi (capital O); the config lives inside it. An earlier version
+# of this script pointed at /local/ovi, which is a different directory that only ever
+# held a stray configs/ tree, so the load failed with FileNotFoundError.
+CFG=/local/Ovi/ovi/configs/inference/inference_fusion_wsp.yaml
 PROMPT="A medium shot of a coastal road at golden hour, waves breaking against rocks, engines and gulls audible"
 # Written to the container disk, NOT /workspace. The network volume reports 461TB free
 # but enforces a per-volume quota, and it is full: writes there fail with

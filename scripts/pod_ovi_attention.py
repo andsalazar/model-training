@@ -80,6 +80,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="frame size as HxW, e.g. 960x960. Required in t2v/i2v modes.",
     )
     parser.add_argument("--max-frames", type=int, default=None)
+    parser.add_argument(
+        "--max-gap",
+        type=float,
+        default=50.0,
+        help=(
+            "largest timestep gap allowed when pairing steps across runs. The two "
+            "schedules diverge at the end (the 20-step run's last three steps are 111, "
+            "264 and 522 away from the 30-step run's final step), so a loose tolerance "
+            "would contrast different points on the trajectory and call it drift."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -139,35 +150,93 @@ def _summaries(capture) -> dict:
     return out
 
 
-def _contrast(capture_a, capture_b, min_effect: float) -> list[dict]:
-    """Per-head contrasts between two captures, aligned by timestep."""
+def _contrast(
+    capture_a,
+    capture_b,
+    timesteps_a: dict,
+    timesteps_b: dict,
+    min_effect: float,
+    max_gap: float = 50.0,
+) -> list[dict]:
+    """Per-head contrasts between two captures, aligned by real timestep.
+
+    Aligning by step index would be wrong. A 20-step run and a 30-step run visit
+    different noise levels at the same index: at index 18 the 20-step run is at t=233 and
+    the 30-step run at t=756. Comparing those compares two different points on the
+    trajectory, so "the effect grows with step" would be an artefact of the schedule
+    rather than a measurement of drift.
+
+    The timestep values are the alignment key. Exact matching is not enough: the two
+    schedules share only t=1000.0, because 20 and 30 steps land on different grids. So each
+    step in run A is paired with the *nearest* timestep in run B, the same rule
+    ``pod_derive_direction.pair_by_timestep`` uses for the residual contrast.
+
+    ``max_gap`` is enforced, not merely reported. The schedules diverge sharply at the
+    end: the 20-step run's last three steps (t=645, 492, 233) all pair with the 30-step
+    run's final step at t=756, gaps of 111, 264 and 522. Contrasting those would compare
+    different points on the trajectory and call the difference drift. Pairs beyond the
+    tolerance are dropped and counted, so the surviving rows are all near-matched.
+    """
     from wsp.attention import attention_contrast, head_ranking
 
+    time_a = {int(k): float(v) for k, v in timesteps_a.items()}
+    time_b = {int(k): float(v) for k, v in timesteps_b.items()}
+    if not time_a or not time_b:
+        return []
+
     rows: list[dict] = []
-    # Align by timestep, not by step index: a 20-step run and a 30-step run visit
-    # different timesteps at the same index. The tracker's mapping is what makes the
-    # comparison meaningful.
-    common = set(capture_a.maps) & set(capture_b.maps)
-    for key in sorted(common):
-        stream, layer, step = key
-        a = capture_a.maps[key]
-        b = capture_b.maps[key]
-        try:
-            contrasts = attention_contrast(a, b, min_effect=min_effect)
-        except ValueError as exc:
-            rows.append({"key": f"{stream}_{layer}_{step}", "skipped": str(exc)})
+    for step_a, t_a in sorted(time_a.items()):
+        step_b = min(time_b, key=lambda j: abs(time_b[j] - t_a))
+        t_b = time_b[step_b]
+        gap = abs(t_b - t_a)
+        if gap > max_gap:
+            rows.append(
+                {
+                    "key": f"video_t{t_a}",
+                    "skipped": (
+                        f"nearest timestep in run B is {t_b:.2f}, a gap of {gap:.2f} "
+                        f"beyond the {max_gap:.2f} tolerance"
+                    ),
+                    "timestep_a": round(t_a, 2),
+                    "timestep_b": round(t_b, 2),
+                    "timestep_gap": round(gap, 2),
+                    "step_a": step_a,
+                    "step_b": step_b,
+                }
+            )
             continue
-        ranked = head_ranking(contrasts)
-        rows.append(
-            {
-                "stream": stream,
-                "layer": layer,
-                "step": step,
-                "n_heads_changed": len(contrasts),
-                "top_heads": [c.summary() for c in ranked[:5]],
-                "max_effect": ranked[0].effect_size if ranked else 0.0,
-            }
-        )
+        for layer in sorted({lay for _, lay, _ in capture_a.maps}):
+            key_a = ("video", layer, step_a)
+            key_b = ("video", layer, step_b)
+            if key_a not in capture_a.maps or key_b not in capture_b.maps:
+                continue
+            a = capture_a.maps[key_a]
+            b = capture_b.maps[key_b]
+            try:
+                contrasts = attention_contrast(a, b, min_effect=min_effect)
+            except ValueError as exc:
+                rows.append(
+                    {
+                        "key": f"video_{layer}_t{t_a}",
+                        "skipped": str(exc),
+                    }
+                )
+                continue
+            ranked = head_ranking(contrasts)
+            rows.append(
+                {
+                    "stream": "video",
+                    "layer": layer,
+                    "timestep_a": round(t_a, 2),
+                    "timestep_b": round(t_b, 2),
+                    "timestep_gap": round(gap, 2),
+                    "step_a": step_a,
+                    "step_b": step_b,
+                    "n_heads_changed": len(contrasts),
+                    "top_heads": [c.summary() for c in ranked[:5]],
+                    "max_effect": ranked[0].effect_size if ranked else 0.0,
+                }
+            )
     return rows
 
 
@@ -228,7 +297,15 @@ def main(argv: list[str] | None = None) -> int:
         payload["contrast"] = {
             "a_steps": a,
             "b_steps": b,
-            "rows": _contrast(captures[a], captures[b], min_effect=0.05),
+            "aligned_by": "timestep",
+            "rows": _contrast(
+                captures[a],
+                captures[b],
+                reports[str(a)].get("timesteps", {}),
+                reports[str(b)].get("timesteps", {}),
+                min_effect=0.05,
+                max_gap=args.max_gap,
+            ),
         }
 
     if failures:

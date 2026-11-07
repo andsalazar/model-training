@@ -70,6 +70,17 @@ class TestParseArgs:
         args = attention_script.parse_args(_base_args())
         assert args.negative_prompt == ""
 
+    def test_max_gap_defaults_to_the_strict_tolerance(self):
+        # The default has to be strict: the real schedules diverge by up to 522 at the
+        # end, and a permissive default would contrast different points on the
+        # trajectory and report the schedule difference as drift.
+        args = attention_script.parse_args(_base_args())
+        assert args.max_gap == 50.0
+
+    def test_max_gap_is_configurable(self):
+        args = attention_script.parse_args(_base_args(**{"--max-gap": "600"}))
+        assert args.max_gap == 600.0
+
 
 class TestParseHeightWidth:
     def test_parses_hxw(self):
@@ -108,7 +119,7 @@ class TestContrast:
     def test_identical_captures_produce_no_contrast(self):
         a = _capture_with(0, 0, seed=0)
         b = _capture_with(0, 0, seed=0)
-        rows = attention_script._contrast(a, b, min_effect=0.05)
+        rows = attention_script._contrast(a, b, {0: 1000.0}, {0: 1000.0}, min_effect=0.05)
         assert len(rows) == 1
         assert rows[0]["n_heads_changed"] == 0
         assert rows[0]["max_effect"] == 0.0
@@ -116,24 +127,74 @@ class TestContrast:
     def test_different_captures_produce_a_contrast(self):
         a = _capture_with(0, 0, seed=0)
         b = _capture_with(0, 0, seed=1)
-        rows = attention_script._contrast(a, b, min_effect=0.0)
+        rows = attention_script._contrast(a, b, {0: 1000.0}, {0: 1000.0}, min_effect=0.0)
         assert len(rows) == 1
         assert rows[0]["n_heads_changed"] > 0
         assert rows[0]["max_effect"] > 0.0
 
-    def test_only_common_keys_are_contrasted(self):
-        # A 20-step run and a 30-step run do not share every step index. Contrasting a
-        # key present in only one capture would compare against nothing.
-        a = _capture_with(0, 0, seed=0)
-        a.record_summary(0, 1, summarize_attention_chunked(
-            np.ones((2, 4, 8), dtype=np.float32),
-            np.ones((2, 4, 8), dtype=np.float32),
-            layer=0, timestep=1,
-        ))
-        b = _capture_with(0, 0, seed=1)
-        rows = attention_script._contrast(a, b, min_effect=0.0)
+    def test_alignment_is_by_timestep_not_index(self):
+        # The confound this guards: a 20-step run's step 18 is at t=233 and a 30-step
+        # run's step 18 is at t=756. Aligning by index would compare those two. Aligning
+        # by nearest timestep pairs step 18 of the 20-step run with a different step of
+        # the 30-step run.
+        a = _capture_with(0, 18, seed=0)
+        b = _capture_with(0, 15, seed=1)
+        rows = attention_script._contrast(
+            a, b, {18: 233.24}, {15: 233.24}, min_effect=0.0
+        )
         assert len(rows) == 1
-        assert rows[0]["step"] == 0
+        assert rows[0]["step_a"] == 18
+        assert rows[0]["step_b"] == 15
+        assert rows[0]["timestep_a"] == 233.24
+        assert rows[0]["timestep_gap"] == 0.0
+
+    def test_nearest_timestep_is_paired_when_none_match_exactly(self):
+        # The two schedules share only t=1000.0, so exact matching would yield one pair.
+        # Nearest pairing gives a partner in B, with the gap recorded.
+        a = _capture_with(0, 18, seed=0)
+        b = _capture_with(0, 15, seed=1)
+        rows = attention_script._contrast(
+            a, b, {18: 233.24}, {15: 250.0}, min_effect=0.0
+        )
+        assert len(rows) == 1
+        assert rows[0]["step_b"] == 15
+        # The gap is reported so a loose match is visible, not hidden.
+        assert rows[0]["timestep_gap"] == pytest.approx(16.76, abs=0.01)
+
+    def test_a_gap_beyond_tolerance_is_dropped_not_contrasted(self):
+        # The real schedules diverge at the end: the 20-step run's final step is at
+        # t=233 and the 30-step run's final step at t=756. Contrasting those would
+        # compare different points on the trajectory and report the schedule difference
+        # as drift. The pair must be dropped and counted, not silently averaged in.
+        a = _capture_with(0, 18, seed=0)
+        b = _capture_with(0, 18, seed=1)
+        rows = attention_script._contrast(
+            a, b, {18: 233.24}, {18: 755.85}, min_effect=0.0
+        )
+        assert len(rows) == 1
+        assert "skipped" in rows[0]
+        assert "522.61" in rows[0]["skipped"]
+        assert "max_effect" not in rows[0]
+
+    def test_tolerance_is_configurable(self):
+        # A caller who wants the loose pairs can raise the tolerance; the default is
+        # strict so the reported rows are near-matched by default.
+        a = _capture_with(0, 18, seed=0)
+        b = _capture_with(0, 18, seed=1)
+        rows = attention_script._contrast(
+            a, b, {18: 233.24}, {18: 755.85}, min_effect=0.0, max_gap=600.0
+        )
+        assert len(rows) == 1
+        assert "skipped" not in rows[0]
+        assert rows[0]["timestep_gap"] == pytest.approx(522.61, abs=0.01)
+
+    def test_missing_timesteps_produce_no_contrast(self):
+        # A capture without a timestep table cannot be aligned at all. Returning nothing
+        # is honest; aligning by index would invent a comparison.
+        a = _capture_with(0, 0, seed=0)
+        b = _capture_with(0, 0, seed=1)
+        rows = attention_script._contrast(a, b, {}, {}, min_effect=0.0)
+        assert rows == []
 
     def test_shape_mismatch_is_skipped_not_raised(self):
         # A cross-attention map cannot be compared with a self-attention map. The driver
@@ -144,7 +205,7 @@ class TestContrast:
         k = gen.normal(size=(2, 9, 8)).astype(np.float32)
         b = AttentionCapture()
         b.record_summary(0, 0, summarize_attention_chunked(q, k, layer=0, timestep=0))
-        rows = attention_script._contrast(a, b, min_effect=0.0)
+        rows = attention_script._contrast(a, b, {0: 1000.0}, {0: 1000.0}, min_effect=0.0)
         assert len(rows) == 1
         assert "skipped" in rows[0]
 

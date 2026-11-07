@@ -294,6 +294,25 @@ class TestRecording:
         assert hooks.capture.layers() == [0, 1]
         assert hooks.capture.timesteps() == [0, 1]
 
+    def test_torch_inputs_take_the_gpu_path(self, fake_ovi):
+        # The numpy reduction took 49 minutes of CPU time for one real run. When the
+        # inputs are torch tensors the hook must use the torch path, or the GPU run is
+        # unusable.
+        import torch
+
+        module, calls = fake_ovi
+        schedule = CaptureSchedule(layers=(0,), timesteps=(0,))
+        model = _Model(module, calls)
+        hooks = AttentionHooks(model=model, schedule=schedule)
+        gen = np.random.default_rng(0)
+        q = torch.from_numpy(gen.normal(size=(1, 4, 2, 8)).astype(np.float32))
+        with hooks:
+            model.forward(q, t=1.0)
+        summary = hooks.capture.at(0, 0)
+        assert summary.heads == 2
+        assert summary.queries == 4
+        assert np.all(np.isfinite(summary.row_entropy))
+
     def test_call_outside_a_forward_is_unattributed(self, fake_ovi):
         # A call with no step in flight cannot be filed under a timestep. Counting it as
         # unattributed is honest; filing it under step 0 would invent a measurement.

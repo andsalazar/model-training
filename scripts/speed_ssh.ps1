@@ -16,7 +16,7 @@ param(
     [string]$Command,
     [int]$TimeoutSeconds = 120,
     [string]$SshHost = "157.157.221.29",
-    [int]$Port = 11634
+    [int]$Port = 11077
 )
 
 $key = "$env:USERPROFILE\.ssh\id_ed25519"

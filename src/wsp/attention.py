@@ -60,6 +60,7 @@ lives in :mod:`wsp.hooks`.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 import numpy as np
 
@@ -291,6 +292,88 @@ def summarize_attention_chunked(
         row_entropy=row_entropy.astype(np.float32),
         column_mass=column_mass.astype(np.float32),
         diagonal_mass=diagonal.astype(np.float32),
+        layer=layer,
+        timestep=timestep,
+        stream=stream,
+    )
+
+
+def summarize_attention_torch(
+    q: Any,
+    k: Any,
+    layer: int = 0,
+    timestep: int = 0,
+    stream: str = "video",
+    softmax_scale: float | None = None,
+    chunk: int = 512,
+) -> AttentionMap:
+    """GPU version of :func:`summarize_attention_chunked`.
+
+    The numpy path is the reference and stays the tested one, but it cannot run on the
+    real model: a 27,900-key attention call is 18.7 billion score entries, and reducing
+    that in numpy took 49 minutes of CPU time for a single run. The same arithmetic in
+    torch on the GPU is seconds.
+
+    ``q`` and ``k`` are torch tensors shaped ``[heads, queries, head_dim]``. The result is
+    an :class:`AttentionMap` with numpy arrays, so downstream code does not care which path
+    produced it. Equivalence with the numpy path is tested in ``tests/test_attention.py``.
+    """
+    import torch
+
+    if not isinstance(q, torch.Tensor) or not isinstance(k, torch.Tensor):
+        raise TypeError("summarize_attention_torch needs torch tensors")
+    if q.ndim != 3 or k.ndim != 3:
+        raise ValueError(
+            f"expected q and k as [heads, tokens, head_dim], got {q.shape} and {k.shape}"
+        )
+    heads, queries, head_dim = q.shape
+    k_heads, keys, k_dim = k.shape
+    if heads != k_heads:
+        raise ValueError(f"head count mismatch: q has {heads}, k has {k_heads}")
+    if head_dim != k_dim:
+        raise ValueError(f"head dim mismatch: q has {head_dim}, k has {k_dim}")
+    if queries == 0 or keys == 0:
+        raise ValueError(f"empty attention: {queries} queries x {keys} keys")
+
+    # Accumulate in float32 on the GPU. bfloat16 scores would lose the tail of the
+    # distribution, which is exactly what entropy measures.
+    qf = q.detach().to(torch.float32)
+    kf = k.detach().to(torch.float32)
+    scale = softmax_scale if softmax_scale is not None else head_dim**-0.5
+
+    row_entropy = torch.zeros(heads, dtype=torch.float64, device=q.device)
+    column_mass = torch.zeros((heads, keys), dtype=torch.float64, device=q.device)
+    diagonal = torch.zeros(heads, dtype=torch.float64, device=q.device)
+
+    for start in range(0, queries, chunk):
+        stop = min(start + chunk, queries)
+        # [heads, chunk, keys]
+        scores = torch.einsum("hqd,hkd->hqk", qf[:, start:stop], kf) * scale
+        scores -= scores.max(dim=-1, keepdim=True).values
+        weights = torch.softmax(scores, dim=-1)
+        weights64 = weights.to(torch.float64)
+
+        clipped = weights64.clamp_min(_EPS)
+        row_entropy += (-(weights64 * clipped.log()).sum(dim=-1)).sum(dim=1)
+        column_mass += weights64.sum(dim=1)
+
+        if queries == keys:
+            idx = torch.arange(start, stop, device=q.device)
+            diagonal += weights64[:, idx - start, idx].sum(dim=1)
+
+    row_entropy /= queries
+    column_mass /= queries
+    totals = column_mass.sum(dim=1, keepdim=True)
+    column_mass = torch.where(totals > 0, column_mass / totals, torch.zeros_like(column_mass))
+    diagonal /= queries
+
+    return AttentionMap(
+        heads=heads,
+        queries=queries,
+        keys=keys,
+        row_entropy=row_entropy.cpu().numpy().astype(np.float32),
+        column_mass=column_mass.cpu().numpy().astype(np.float32),
+        diagonal_mass=diagonal.cpu().numpy().astype(np.float32),
         layer=layer,
         timestep=timestep,
         stream=stream,

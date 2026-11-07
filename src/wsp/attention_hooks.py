@@ -31,30 +31,38 @@ from typing import Any
 
 import numpy as np
 
-from wsp.attention import AttentionCapture, summarize_attention_chunked
+from wsp.attention import (
+    AttentionCapture,
+    summarize_attention_chunked,
+    summarize_attention_torch,
+)
 from wsp.dit import CaptureSchedule
 from wsp.hooks import StepTracker
 
 
-def _to_numpy(tensor: Any) -> np.ndarray:
-    """Detach a torch tensor to a float32 numpy array without copying twice."""
-    if hasattr(tensor, "detach"):
-        tensor = tensor.detach()
-    if hasattr(tensor, "float"):
-        tensor = tensor.float()
-    if hasattr(tensor, "cpu"):
-        tensor = tensor.cpu()
-    return np.asarray(tensor, dtype=np.float32)
-
-
-def _split_heads(tensor: Any) -> np.ndarray:
+def _split_heads(tensor: Any) -> Any:
     """Coerce a ``[B, L, H, C]`` attention input to ``[H, L, C]``.
 
     Ovi's ``flash_attention`` takes ``[B, L, H, C]``. Batch is 1 for a single
     generation; a genuine multi-batch call is rejected rather than averaged, because
     averaging across generations would mix two rollouts into one summary.
+
+    Returns a torch tensor when given one, so the summary can be computed on the GPU.
+    Reducing 27,900 keys in numpy took 49 minutes of CPU time for one run; the same
+    arithmetic in torch is seconds.
     """
-    array = _to_numpy(tensor)
+    if hasattr(tensor, "detach") and hasattr(tensor, "transpose"):
+        if tensor.ndim != 4:
+            raise ValueError(f"expected [B, L, H, C], got shape {tuple(tensor.shape)}")
+        if tensor.shape[0] != 1:
+            raise ValueError(
+                f"expected batch size 1, got {tensor.shape[0]}; "
+                "average per-batch rather than across generations"
+            )
+        # [B, L, H, C] -> [H, L, C]
+        return tensor.detach()[0].transpose(0, 1).contiguous()
+
+    array = np.asarray(tensor, dtype=np.float32)
     if array.ndim != 4:
         raise ValueError(f"expected [B, L, H, C], got shape {array.shape}")
     if array.shape[0] != 1:
@@ -62,7 +70,6 @@ def _split_heads(tensor: Any) -> np.ndarray:
             f"expected batch size 1, got {array.shape[0]}; "
             "average per-batch rather than across generations"
         )
-    # [B, L, H, C] -> [H, L, C]
     return np.ascontiguousarray(array[0].transpose(1, 0, 2))
 
 
@@ -201,16 +208,28 @@ class AttentionHooks:
             self.capture.skipped += 1
             return
 
-        q_array = _split_heads(q)
-        k_array = _split_heads(k)
-        summary = summarize_attention_chunked(
-            q_array,
-            k_array,
-            layer=layer,
-            timestep=step,
-            stream="video",
-            chunk=self.chunk,
-        )
+        q_split = _split_heads(q)
+        k_split = _split_heads(k)
+        # Use the GPU path when the inputs are torch tensors. The numpy path is the
+        # reference and stays tested, but it is far too slow for a real 27,900-key call.
+        if hasattr(q_split, "detach"):
+            summary = summarize_attention_torch(
+                q_split,
+                k_split,
+                layer=layer,
+                timestep=step,
+                stream="video",
+                chunk=self.chunk,
+            )
+        else:
+            summary = summarize_attention_chunked(
+                q_split,
+                k_split,
+                layer=layer,
+                timestep=step,
+                stream="video",
+                chunk=self.chunk,
+            )
         self.capture.record_summary(layer, step, summary, stream="video", keep=True)
 
     def detach(self) -> None:
@@ -258,6 +277,12 @@ class AttentionHooks:
             "skipped": self.capture.skipped,
             "recorded": len(self.capture.maps),
             "steps_seen": self.tracker.steps_seen,
+            # Step index to real timestep value. A 20-step run and a 30-step run visit
+            # different noise levels at the same step index -- at index 18 they are at
+            # t=233 and t=756 -- so aligning two runs by index compares different points
+            # on the trajectory. This mapping is what makes a timestep-aligned contrast
+            # possible.
+            "timesteps": self.tracker.mapping(),
             "capture": self.capture.summary(),
             "notes": notes,
         }

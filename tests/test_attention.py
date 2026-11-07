@@ -186,6 +186,72 @@ class TestSummarizeAttentionChunked:
         assert summary.stream == "audio"
 
 
+class TestSummarizeAttentionTorch:
+    """The GPU path must equal the numpy path, or every GPU number is unverified.
+
+    The numpy path is the reference and stays the tested one. The torch path exists
+    because reducing 27,900 keys in numpy took 49 minutes of CPU time for one run.
+    """
+
+    def _qk(self, heads=2, n=6, dim=8, seed=0):
+        import torch
+
+        gen = np.random.default_rng(seed)
+        q = gen.normal(size=(heads, n, dim)).astype(np.float32)
+        k = gen.normal(size=(heads, n, dim)).astype(np.float32)
+        return torch.from_numpy(q), torch.from_numpy(k), q, k
+
+    def test_matches_the_numpy_path(self):
+        from wsp.attention import summarize_attention_torch
+
+        q_t, k_t, q, k = self._qk()
+        expected = summarize_attention_chunked(q, k)
+        actual = summarize_attention_torch(q_t, k_t)
+        assert np.allclose(actual.row_entropy, expected.row_entropy, atol=1e-4)
+        assert np.allclose(actual.column_mass, expected.column_mass, atol=1e-4)
+        assert np.allclose(actual.diagonal_mass, expected.diagonal_mass, atol=1e-4)
+
+    def test_chunk_size_does_not_change_the_result(self):
+        from wsp.attention import summarize_attention_torch
+
+        q_t, k_t, _, _ = self._qk(n=7)
+        whole = summarize_attention_torch(q_t, k_t, chunk=7)
+        ragged = summarize_attention_torch(q_t, k_t, chunk=3)
+        assert np.allclose(whole.row_entropy, ragged.row_entropy, atol=1e-4)
+        assert np.allclose(whole.column_mass, ragged.column_mass, atol=1e-4)
+
+    def test_bfloat16_input_is_widened(self):
+        # Ovi runs in bfloat16. The summary must widen before the softmax or the tail of
+        # the distribution -- what entropy measures -- is lost.
+        import torch
+
+        from wsp.attention import summarize_attention_torch
+
+        q_t, k_t, _, _ = self._qk()
+        summary = summarize_attention_torch(q_t.bfloat16(), k_t.bfloat16())
+        assert summary.row_entropy.dtype == np.float32
+        assert np.all(np.isfinite(summary.row_entropy))
+
+    def test_cross_attention_has_no_diagonal(self):
+        import torch
+
+        from wsp.attention import summarize_attention_torch
+
+        gen = np.random.default_rng(1)
+        q = torch.from_numpy(gen.normal(size=(2, 4, 8)).astype(np.float32))
+        k = torch.from_numpy(gen.normal(size=(2, 9, 8)).astype(np.float32))
+        summary = summarize_attention_torch(q, k)
+        assert summary.queries == 4
+        assert summary.keys == 9
+        assert np.allclose(summary.diagonal_mass, 0.0)
+
+    def test_numpy_input_is_rejected(self):
+        from wsp.attention import summarize_attention_torch
+
+        with pytest.raises(TypeError, match="needs torch tensors"):
+            summarize_attention_torch(np.ones((2, 4, 8)), np.ones((2, 4, 8)))
+
+
 class TestEntropyOfDistribution:
     def test_uniform_is_log_n(self):
         assert np.isclose(_entropy_of_distribution(np.ones(8)), np.log(8.0))
