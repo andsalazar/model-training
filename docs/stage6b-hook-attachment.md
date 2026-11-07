@@ -195,9 +195,15 @@ Timing: 92.7s for 8 steps at ~8.2s/step, plus load time. That matches the earlie
 
 ## Not yet done
 
-- No capture has run on the real model. The install was still downloading torch when
-  this was written.
-- The direction is computed but not yet *applied*. Nothing has been edited, so the
-  hypothesis that a stable-minus-drifting direction can raise the quality floor at
-  aggressive step counts remains untested on this model.
+- The direction is computed and projected but not yet *applied*. Nothing has been
+  edited, so the hypothesis that a stable-minus-drifting direction can raise the
+  quality floor at aggressive step counts remains untested on this model. See
+  [stage6c-direction-measured.md](stage6c-direction-measured.md) for the projection
+  result and the arithmetic that argues against running the edit as designed.
 - Prompt adherence is still unmeasured anywhere in the project.
+- **The capture artifacts no longer exist.** The 2.8 GB `pair_20v30.npz` and the
+  derived reports were written to the A100 pod's container disk — deliberately, because
+  `/workspace` enforces a 640 MB quota — and that pod has since been terminated. The
+  measurement is documented but not reproducible without re-running the capture
+  (~20 min of generation plus a ~40 min reinstall). The network volume survives; the
+  venv and captures do not.
