@@ -117,6 +117,24 @@ def _parse_height_width(text: str | None) -> list[int] | None:
     return [height, width]
 
 
+def _encode_video(video: np.ndarray) -> np.ndarray:
+    """Store the decoded video compactly.
+
+    The decoded output dominates the file: a 121-frame 960x960 rollout is 669MB as
+    float16, against 21MB for one captured layer. It is kept for the colour and
+    sharpness checks, but as uint8 — the quality metrics work on 8-bit frames anyway,
+    and float16 decoded video buys nothing they can use.
+    """
+    array = np.asarray(video, dtype=np.float32)
+    low, high = float(array.min()), float(array.max())
+    span = high - low
+    if span <= 0:
+        return np.zeros(array.shape, dtype=np.uint8)
+    # Ovi's decode output is in [-1, 1]; map that (and any other range) onto 0..255.
+    scaled = (array - low) / span
+    return np.rint(scaled * 255.0).astype(np.uint8)
+
+
 def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object]:
     """One generation with hooks attached; returns the hook report and outputs."""
     from wsp.hooks import DitHooks
@@ -204,7 +222,18 @@ def main(argv: list[str] | None = None) -> int:
         np.savez(out, **arrays)
         out.with_suffix(".json").write_text(json.dumps(reports, indent=2))
         size = out.stat().st_size / 1e6 if out.exists() else 0.0
-        print(f"  (flushed {len(arrays)} arrays, {size:.0f} MB -> {out})", flush=True)
+        capture_bytes = sum(
+            a.nbytes for k, a in arrays.items() if k.startswith("capture_")
+        )
+        output_bytes = sum(
+            a.nbytes for k, a in arrays.items() if not k.startswith("capture_")
+        )
+        print(
+            f"  (flushed {len(arrays)} arrays, {size:.0f} MB -> {out}; "
+            f"captures {capture_bytes / 1e6:.0f} MB, decoded outputs "
+            f"{output_bytes / 1e6:.0f} MB)",
+            flush=True,
+        )
 
     failures: list[str] = []
     for steps in args.rollouts:
@@ -220,7 +249,7 @@ def main(argv: list[str] | None = None) -> int:
         reports[str(steps)] = report
         print(json.dumps(report, indent=2), flush=True)
         if video is not None:
-            arrays[f"video_{steps}"] = np.asarray(video, dtype=np.float16)
+            arrays[f"video_{steps}"] = _encode_video(video)
         if audio is not None:
             arrays[f"audio_{steps}"] = np.asarray(audio, dtype=np.float32)
         for (stream, layer, step), cap in capture.captures.items():

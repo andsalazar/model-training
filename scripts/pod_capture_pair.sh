@@ -17,10 +17,12 @@ export OVI_ROOT=/local/Ovi
 
 CFG=/local/ovi/configs/inference_fusion_wsp.yaml
 PROMPT="A medium shot of a coastal road at golden hour, waves breaking against rocks, engines and gulls audible"
-# Written to the network volume, not the container disk: the container has ~14GB free
-# and 2 rollouts x 5 layers x 10 steps x 2 streams of float16 video patches would not
-# fit alongside a 37GB checkpoint.
-OUT="${1:-/workspace/captures/pair_20v30.npz}"
+# Written to the container disk, NOT /workspace. The network volume reports 461TB free
+# but enforces a per-volume quota, and it is full: writes there fail with
+# "OSError: [Errno 122] Disk quota exceeded" after exactly 640MB. That is also what
+# silently killed the earlier detached runs -- the failure surfaced only once the job was
+# run attached.
+OUT="${1:-/local/captures/pair_20v30.npz}"
 
 echo "--- backend gate ---"
 python3 -c "
@@ -31,8 +33,11 @@ raise SystemExit(0 if b == 'flash_attn_2' else 1)
 " || { echo "ABORT: not FA2"; exit 1; }
 
 mkdir -p /local/captures
+rm -f /workspace/captures/pair_20v30.npz
+echo "--- disk before ---"
+df -h / | tail -1
 echo "--- capturing 20 vs 30 steps ---"
-time python3 /local/wsp/scripts/pod_ovi_capture.py \
+python3 -u /local/wsp/scripts/pod_ovi_capture.py \
   --config "$CFG" \
   --prompt "$PROMPT" \
   --seed 42 \
@@ -42,4 +47,7 @@ time python3 /local/wsp/scripts/pod_ovi_capture.py \
   --height-width 960x960 \
   --patch-stride 8 \
   --n-frames 121 \
-  --out "$OUT" 2>&1 | tail -80
+  --out "$OUT"
+echo "=== exit: $? ==="
+df -h / | tail -1
+ls -la /local/captures/
