@@ -15,10 +15,12 @@ import numpy as np
 import pytest
 
 from wsp.dit import (
+    STREAMS,
     CaptureSchedule,
     LayerCapture,
     ResidualCapture,
     _as_patch_matrix,
+    _windowed_mean,
     frame_window,
 )
 
@@ -254,3 +256,90 @@ class TestLayerCapture:
         summary = cap.summary()
         assert summary["kept_patches"] is False
         assert summary["n_patches"] == 5
+
+
+class TestTwoStacks:
+    """Ovi fuses a video stack and an audio stack, block for block.
+
+    Both stacks have a block 3, so a capture keyed on (layer, timestep) alone would
+    let the audio tensor overwrite the video one at the same index. These tests pin
+    the stream in the key.
+    """
+
+    def _pair(self, stream: str, *, value: float) -> ResidualCapture:
+        schedule = CaptureSchedule(layers=(3,), keep_patches=True, streams=(stream,))
+        capture = ResidualCapture(schedule=schedule)
+        base = np.zeros((1, 4, 6), dtype=np.float32)
+        capture.record(3, 0, base + value, stream=stream)
+        return capture
+
+    def test_streams_default_to_both(self):
+        assert STREAMS == ("video", "audio")
+
+    def test_same_layer_index_does_not_collide_across_streams(self):
+        schedule = CaptureSchedule(layers=(3,), keep_patches=True)
+        capture = ResidualCapture(schedule=schedule)
+        capture.record(3, 0, np.ones((1, 4, 6), dtype=np.float32), stream="video")
+        capture.record(
+            3, 0, np.full((1, 7, 4), 2.0, dtype=np.float32), stream="audio"
+        )
+        # Different hidden widths because the two stacks are different models.
+        assert capture.at(3, 0, "video").hidden == 6
+        assert capture.at(3, 0, "audio").hidden == 4
+        assert capture.at(3, 0, "video").n_patches == 4
+        assert capture.at(3, 0, "audio").n_patches == 7
+
+    def test_schedule_can_select_one_stream(self):
+        schedule = CaptureSchedule(layers=(3,), streams=("audio",))
+        capture = ResidualCapture(schedule=schedule)
+        assert capture.record(3, 0, np.ones((1, 4, 6)), stream="video") is False
+        assert capture.record(3, 0, np.ones((1, 4, 6)), stream="audio") is True
+        assert capture.skipped == 1
+
+    def test_streams_reports_what_was_recorded(self):
+        schedule = CaptureSchedule(layers=(3,), keep_patches=True)
+        capture = ResidualCapture(schedule=schedule)
+        capture.record(3, 0, np.ones((1, 4, 6), dtype=np.float32), stream="audio")
+        assert capture.streams() == ["audio"]
+        assert capture.layers("audio") == [3]
+        assert capture.layers("video") == []
+
+    def test_direction_rejects_a_cross_stream_comparison(self):
+        # Two captures of different streams must not be subtracted: their hidden
+        # sizes differ, and a width mismatch is the one case that would fail loudly.
+        video = self._pair("video", value=1.0)
+        audio = self._pair("audio", value=2.0)
+        with pytest.raises(KeyError, match="stream=audio"):
+            video.direction(3, 0, audio, stream="audio")
+
+
+class TestWindowedMean:
+    def test_frame_window_on_audio_is_refused(self):
+        # Audio has no (F, H, W) grid. Slicing it by "frames" would average a time
+        # range unrelated to the video's frame boundaries and return a number.
+        matrix = np.ones((8, 4), dtype=np.float32)
+        with pytest.raises(ValueError, match="only defined for the video stream"):
+            _windowed_mean(matrix, "0:1", 4, "audio")
+
+    def test_no_window_works_on_audio(self):
+        matrix = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
+        assert np.allclose(_windowed_mean(matrix, None, 4, "audio"), [2.0, 3.0])
+
+    def test_video_window_still_slices(self):
+        matrix = np.arange(16, dtype=np.float32).reshape(8, 2)
+        windowed = _windowed_mean(matrix, "0:1", 4, "video")
+        assert np.allclose(windowed, matrix[:2].mean(axis=0))
+
+
+class TestPatchCountMismatch:
+    def test_direction_rejects_different_patch_counts(self):
+        # A direction between a 5s and a 10s rollout subtracts vectors of different
+        # length; without this guard numpy broadcasts and returns a plausible wrong
+        # answer.
+        schedule = CaptureSchedule(layers=(0,), keep_patches=True)
+        short = ResidualCapture(schedule=schedule)
+        short.record(0, 0, np.ones((1, 8, 4), dtype=np.float32))
+        long = ResidualCapture(schedule=schedule)
+        long.record(0, 0, np.ones((1, 16, 4), dtype=np.float32))
+        with pytest.raises(ValueError, match="patch count mismatch"):
+            short.direction(0, 0, long)

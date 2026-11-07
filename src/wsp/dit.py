@@ -53,10 +53,16 @@ import numpy as np
 #: direction needs.
 _DEFAULT_LAYERS = (0, 1, 2, 3, 6, 9, 12)
 
+#: Ovi runs two WanModel stacks side by side and fuses them block by block, so every
+#: block index exists twice. A video state and an audio state at the same
+#: (layer, timestep) are different tensors of different widths, and averaging them
+#: would be the same mistake as averaging across a batch.
+STREAMS = ("video", "audio")
+
 
 @dataclass(frozen=True)
 class CaptureSchedule:
-    """Which layers and timesteps to record.
+    """Which layers, timesteps and streams to record.
 
     ``layers`` are DiT block indices (0-based). ``timesteps`` are denoising step
     indices — 0 is the noisiest, ``n_steps-1`` the cleanest. TBC's adapter sits in
@@ -66,14 +72,21 @@ class CaptureSchedule:
     ``keep_patches`` additionally retains the full ``[n_patches, hidden]`` matrix
     per capture instead of only its mean. Needed to compute a *direction*, because a
     direction is a contrast of means over a patch subset; not needed for a summary.
+
+    ``streams`` selects which of Ovi's two fused stacks to record. Both by default,
+    because the project's question is whether one method can be aimed at video and
+    audio separately — which needs both captured from the same rollout.
     """
 
     layers: tuple[int, ...] = _DEFAULT_LAYERS
     timesteps: tuple[int, ...] | None = None
     keep_patches: bool = False
+    streams: tuple[str, ...] = STREAMS
 
-    def wants(self, layer: int, timestep: int) -> bool:
-        """Whether this (layer, timestep) pair should be recorded."""
+    def wants(self, layer: int, timestep: int, stream: str = "video") -> bool:
+        """Whether this (layer, timestep, stream) triple should be recorded."""
+        if stream not in self.streams:
+            return False
         if layer not in self.layers:
             return False
         if self.timesteps is None:
@@ -84,6 +97,7 @@ class CaptureSchedule:
         steps = "all" if self.timesteps is None else ",".join(map(str, self.timesteps))
         return (
             f"layers={','.join(map(str, self.layers))} timesteps={steps} "
+            f"streams={','.join(self.streams)} "
             f"patches={'keep' if self.keep_patches else 'reduce'}"
         )
 
@@ -146,9 +160,27 @@ def frame_window(
     return array[start * per_frame : stop * per_frame]
 
 
+def _windowed_mean(
+    matrix: np.ndarray, frames: str | None, n_frames: int, stream: str
+) -> np.ndarray:
+    """Mean over a stream's tokens, optionally restricted to a frame range.
+
+    Video tokens are frame-major — ``rope_apply_3d`` flattens ``[F, H, W]`` in that
+    order — so a frame window is a contiguous slice. Audio is 1-D: it has a temporal
+    extent but no ``(F, H, W)`` grid, and slicing it by "frames" would silently
+    average a time range unrelated to the video's frame boundaries. So a frame
+    window on audio is refused rather than guessed at.
+    """
+    if frames and stream != "video":
+        raise ValueError(
+            f"frame windows are only defined for the video stream, not {stream}"
+        )
+    return frame_window(matrix, frames, n_frames).mean(axis=0)
+
+
 @dataclass
 class LayerCapture:
-    """What was recorded for one (layer, timestep) pair."""
+    """What was recorded for one (stream, layer, timestep) triple."""
 
     layer: int
     timestep: int
@@ -156,6 +188,7 @@ class LayerCapture:
     hidden: int
     #: ``[n_patches, hidden]`` when the schedule kept patches, else ``None``.
     patches: np.ndarray | None = None
+    stream: str = "video"
 
     @property
     def mean(self) -> np.ndarray:
@@ -169,6 +202,7 @@ class LayerCapture:
 
     def summary(self) -> dict:
         return {
+            "stream": self.stream,
             "layer": self.layer,
             "timestep": self.timestep,
             "n_patches": self.n_patches,
@@ -179,42 +213,48 @@ class LayerCapture:
 
 @dataclass
 class ResidualCapture:
-    """Accumulates hooked DiT tensors, keyed by (layer, timestep)."""
+    """Accumulates hooked DiT tensors, keyed by (stream, layer, timestep)."""
 
     schedule: CaptureSchedule
-    captures: dict[tuple[int, int], LayerCapture] = field(default_factory=dict)
+    captures: dict[tuple[str, int, int], LayerCapture] = field(default_factory=dict)
     #: Calls the schedule declined to record. Reported so a schedule that silently
     #: matched nothing is visible rather than looking like a capture that found no
     #: structure.
     skipped: int = 0
 
-    def record(self, layer: int, timestep: int, activation: np.ndarray) -> bool:
+    def record(
+        self, layer: int, timestep: int, activation: np.ndarray, stream: str = "video"
+    ) -> bool:
         """Record one hooked tensor. Returns whether the schedule wanted it."""
-        if not self.schedule.wants(layer, timestep):
+        if not self.schedule.wants(layer, timestep, stream):
             self.skipped += 1
             return False
         matrix = _as_patch_matrix(activation)
-        self.captures[(layer, timestep)] = LayerCapture(
+        self.captures[(stream, layer, timestep)] = LayerCapture(
             layer=layer,
             timestep=timestep,
             n_patches=int(matrix.shape[0]),
             hidden=int(matrix.shape[1]),
             patches=matrix if self.schedule.keep_patches else None,
+            stream=stream,
         )
         return True
 
-    def layers(self) -> list[int]:
-        return sorted({layer for layer, _ in self.captures})
+    def layers(self, stream: str = "video") -> list[int]:
+        return sorted({layer for s, layer, _ in self.captures if s == stream})
 
-    def timesteps(self) -> list[int]:
-        return sorted({step for _, step in self.captures})
+    def timesteps(self, stream: str = "video") -> list[int]:
+        return sorted({step for s, _, step in self.captures if s == stream})
 
-    def at(self, layer: int, timestep: int) -> LayerCapture:
-        key = (layer, timestep)
+    def streams(self) -> list[str]:
+        return sorted({s for s, _, _ in self.captures})
+
+    def at(self, layer: int, timestep: int, stream: str = "video") -> LayerCapture:
+        key = (stream, layer, timestep)
         if key not in self.captures:
             raise KeyError(
-                f"nothing captured at layer {layer} timestep {timestep}; "
-                f"available: {sorted(self.captures)}"
+                f"nothing captured for stream={stream} layer {layer} "
+                f"timestep {timestep}; available: {sorted(self.captures)}"
             )
         return self.captures[key]
 
@@ -225,8 +265,9 @@ class ResidualCapture:
         other: "ResidualCapture",
         frames: str | None = None,
         n_frames: int = 1,
+        stream: str = "video",
     ) -> np.ndarray:
-        """Unit direction from ``other``'s state toward this one at (layer, timestep).
+        """Unit direction from ``other``'s state toward this one at (stream, layer, timestep).
 
         Both captures must have been taken with ``keep_patches`` and with the same
         ``n_frames``, or the frame window would index different spatial regions in
@@ -236,16 +277,20 @@ class ResidualCapture:
         the same subtraction and normalisation, applied to a frame-restricted mean
         over patch tokens instead of a token-window mean over text positions.
         """
-        mine = self.at(layer, timestep)
-        theirs = other.at(layer, timestep)
+        mine = self.at(layer, timestep, stream)
+        theirs = other.at(layer, timestep, stream)
         if mine.patches is None or theirs.patches is None:
             raise ValueError("both captures must set keep_patches=True")
         if mine.hidden != theirs.hidden:
             raise ValueError(
                 f"hidden size mismatch: {mine.hidden} vs {theirs.hidden}"
             )
-        a = frame_window(mine.patches, frames, n_frames).mean(axis=0)
-        b = frame_window(theirs.patches, frames, n_frames).mean(axis=0)
+        if mine.n_patches != theirs.n_patches:
+            raise ValueError(
+                f"patch count mismatch: {mine.n_patches} vs {theirs.n_patches}"
+            )
+        a = _windowed_mean(mine.patches, frames, n_frames, stream)
+        b = _windowed_mean(theirs.patches, frames, n_frames, stream)
         delta = a - b
         norm = float(np.linalg.norm(delta))
         if norm == 0.0:
@@ -257,7 +302,8 @@ class ResidualCapture:
             "schedule": self.schedule.describe(),
             "n_captures": len(self.captures),
             "n_skipped": self.skipped,
-            "layers": self.layers(),
-            "timesteps": self.timesteps(),
+            "streams": self.streams(),
+            "layers": {s: self.layers(s) for s in self.streams()},
+            "timesteps": {s: self.timesteps(s) for s in self.streams()},
             "captures": [c.summary() for c in self.captures.values()],
         }
