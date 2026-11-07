@@ -77,7 +77,28 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--out", required=True, type=Path, help="output .npz path")
     parser.add_argument("--max-frames", type=int, default=None)
     parser.add_argument("--negative-prompt", default="", help="Ovi's negative prompt")
+    parser.add_argument(
+        "--height-width",
+        default=None,
+        help=(
+            "frame size as HxW, e.g. 704x704. Required in t2v/i2v modes: Ovi asserts "
+            "it is not None before generating."
+        ),
+    )
     return parser.parse_args(argv)
+
+
+def _parse_height_width(text: str | None) -> list[int] | None:
+    """Parse ``HxW`` into the ``[height, width]`` list Ovi expects."""
+    if not text:
+        return None
+    parts = text.lower().replace(",", "x").split("x")
+    if len(parts) != 2:
+        raise ValueError(f"height-width must be HxW, got {text!r}")
+    height, width = (int(p.strip()) for p in parts)
+    if height <= 0 or width <= 0:
+        raise ValueError(f"height-width must be positive, got {text!r}")
+    return [height, width]
 
 
 def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object]:
@@ -93,6 +114,7 @@ def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object
                 text_prompt=args.prompt,
                 seed=args.seed,
                 sample_steps=steps,
+                video_frame_height_width=_parse_height_width(args.height_width),
                 video_negative_prompt=args.negative_prompt,
                 audio_negative_prompt=args.negative_prompt,
             )
@@ -102,6 +124,15 @@ def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object
     report["seconds"] = round(time.time() - started, 1)
     report["sample_steps"] = steps
     report["seed"] = args.seed
+    # `None in (video, audio)` is wrong here: video and audio are numpy arrays, and
+    # `in` against an array raises "truth value of an array is ambiguous". Compare
+    # identities instead.
+    if video is None or audio is None:
+        report["notes"].append(
+            "generate() returned None for at least one output: Ovi logs its own "
+            "traceback and returns early rather than raising, so this rollout "
+            "produced no output"
+        )
     return report, video, audio
 
 
@@ -132,10 +163,35 @@ def main(argv: list[str] | None = None) -> int:
     reports: dict[str, dict] = {}
     arrays: dict[str, np.ndarray] = {}
 
+    def flush() -> None:
+        """Write everything captured so far.
+
+        Called after each rollout, not only at the end: a capture run is a long GPU
+        job, and a failure in the last rollout should not discard the earlier ones.
+
+        The arrays are already float16, so deflating them again is a poor trade --
+        a 1.05GB smoke capture spent about six minutes compressing on top of 93
+        seconds of generation. ``savez`` (uncompressed) keeps the write cost
+        proportional to the data instead of to its entropy.
+        """
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        np.savez(out, **arrays)
+        out.with_suffix(".json").write_text(json.dumps(reports, indent=2))
+        size = out.stat().st_size / 1e6 if out.exists() else 0.0
+        print(f"  (flushed {len(arrays)} arrays, {size:.0f} MB -> {out})", flush=True)
+
+    failures: list[str] = []
     for steps in args.rollouts:
         capture = ResidualCapture(schedule=schedule)
         print(f"\n=== rollout: {steps} steps, seed {args.seed} ===", flush=True)
-        report, video, audio = run_rollout(engine, args, steps, capture)
+        try:
+            report, video, audio = run_rollout(engine, args, steps, capture)
+        except Exception as exc:  # noqa: BLE001 - a partial run is still useful
+            failures.append(f"{steps} steps: {type(exc).__name__}: {exc}")
+            print(f"ROLLOUT FAILED: {type(exc).__name__}: {exc}", flush=True)
+            flush()
+            continue
         reports[str(steps)] = report
         print(json.dumps(report, indent=2), flush=True)
         if video is not None:
@@ -148,14 +204,22 @@ def main(argv: list[str] | None = None) -> int:
             arrays[f"capture_{steps}_{stream}_{layer}_{step}"] = cap.patches.astype(
                 np.float16
             )
+        flush()
 
+    if failures:
+        reports["_failures"] = failures
+        print("\n=== failures ===")
+        for line in failures:
+            print(" ", line)
+        # The last flush already wrote the arrays; rewrite the report so the failure
+        # list is on disk too.
+        Path(args.out).with_suffix(".json").write_text(json.dumps(reports, indent=2))
     out = Path(args.out)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(out, **arrays)
-    meta = out.with_suffix(".json")
-    meta.write_text(json.dumps(reports, indent=2))
-    print(f"\nwrote {out} ({out.stat().st_size / 1e6:.1f} MB) and {meta}")
-    return 0
+    if not out.exists():
+        print(f"no output was written to {out}")
+        return 1
+    print(f"\ndone: {out} ({out.stat().st_size / 1e6:.1f} MB)")
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
