@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -46,6 +47,12 @@ import time
 from pathlib import Path
 
 import numpy as np
+
+#: Where Ovi and this repo live on the pod. Earlier pods used the network volume
+#: (/workspace); later ones use the container disk (/local) because the volume's quota
+#: is 640MB. Overridable so one script serves both layouts.
+OVI_ROOT = Path(os.environ.get("OVI_ROOT", "/workspace/Ovi"))
+WSP_SRC = os.environ.get("WSP_SRC", "/workspace/src")
 
 #: The step budgets to test. 50 is Ovi's default and the quality reference. The rest
 #: bracket it downward; 12 is aggressive enough that a failure is informative.
@@ -109,7 +116,7 @@ def _write_config(
     """Write an Ovi inference YAML for one condition."""
     # The prompt contains a colon and commas, so it must be quoted for YAML.
     safe_prompt = prompt.replace('"', '\\"')
-    text = f"""ckpt_dir: /workspace/Ovi/ckpts
+    text = f"""ckpt_dir: {OVI_ROOT / "ckpts"}
 output_dir: {output_dir}
 sample_steps: {steps}
 solver_name: unipc
@@ -145,7 +152,7 @@ def _run_generation(config_path: Path, log_path: Path, timeout: int) -> dict:
     with log_path.open("w") as log:
         proc = subprocess.run(
             cmd,
-            cwd="/workspace/Ovi",
+            cwd=str(OVI_ROOT),
             stdout=log,
             stderr=subprocess.STDOUT,
             timeout=timeout,
@@ -187,7 +194,7 @@ def _measure_existing(video: Path, max_frames: int) -> dict | None:
     sweep. A generation costs minutes of GPU; losing the whole run to a decoder
     problem in the last condition is a waste that is easy to avoid.
     """
-    sys.path.insert(0, "/workspace/src")
+    sys.path.insert(0, WSP_SRC)
     from wsp.quality import measure_quality  # noqa: PLC0415
 
     try:
@@ -246,7 +253,7 @@ def main() -> None:
     work.mkdir(parents=True, exist_ok=True)
 
     # Imported here so the module can be read without the wsp package on the pod path.
-    sys.path.insert(0, "/workspace/src")
+    sys.path.insert(0, WSP_SRC)
     from wsp.quality import compare_quality, measure_quality  # noqa: PLC0415
 
     results: list[dict] = []
