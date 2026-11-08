@@ -141,6 +141,24 @@ def normalised_mse(prediction: torch.Tensor, target: torch.Tensor) -> torch.Tens
     return ((prediction.float() - target) ** 2).mean() / target.pow(2).mean().clamp_min(1e-12)
 
 
+def normalised_mse_grad(
+    prediction: torch.Tensor, target: torch.Tensor
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """:func:`normalised_mse` and its gradient with respect to ``prediction``.
+
+    Used to train through classifier-free guidance one pass at a time. The guided
+    output is ``g = s * pos + (1 - s) * neg``, so ``dL/dpos = s * dL/dg`` and
+    ``dL/dneg = (1 - s) * dL/dg``: each pass can be backpropagated separately with that
+    upstream gradient, holding only one pass's activations at once. At 10 s a single
+    pass already peaks at 67 GB, so the two cannot be held together.
+    """
+    diff = prediction.float() - target.float()
+    denom = target.float().pow(2).mean().clamp_min(1e-12)
+    loss = diff.pow(2).mean() / denom
+    grad = 2.0 * diff / (diff.numel() * denom)
+    return loss, grad
+
+
 @dataclass
 class EulerGridScheduler:
     """Euler steps on a fixed timestep/sigma grid, with the scheduler ``step`` interface.

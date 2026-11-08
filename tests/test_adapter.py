@@ -10,6 +10,7 @@ from wsp.adapter import (
     ResidualAdapter,
     install_adapters,
     normalised_mse,
+    normalised_mse_grad,
     patched_schedulers,
     target_velocity,
 )
@@ -137,6 +138,38 @@ class TestTargets:
         a = normalised_mse(pred, target)
         b = normalised_mse(pred * 1000, target * 1000)
         assert torch.allclose(a, b, rtol=1e-4)
+
+
+class TestSequentialCfgGradient:
+    def test_analytic_gradient_matches_autograd(self):
+        pred = torch.randn(3, 7, requires_grad=True)
+        target = torch.randn(3, 7)
+        normalised_mse(pred, target).backward()
+        loss, grad = normalised_mse_grad(pred.detach(), target)
+        assert torch.allclose(loss, normalised_mse(pred.detach(), target))
+        assert torch.allclose(grad, pred.grad, atol=1e-7)
+
+    def test_per_pass_backward_equals_joint_backward(self):
+        # The 10 s training step backpropagates the conditional and unconditional passes
+        # separately. It must produce exactly the gradient of the joint guided loss.
+        torch.manual_seed(0)
+        lin = nn.Linear(4, 4)
+        x_pos, x_neg, target = torch.randn(5, 4), torch.randn(5, 4), torch.randn(5, 4)
+        s = 4.0
+
+        def guided():
+            n, p = lin(x_neg), lin(x_pos)
+            return n + s * (p - n)
+
+        normalised_mse(guided(), target).backward()
+        joint = lin.weight.grad.clone()
+        lin.zero_grad()
+
+        with torch.no_grad():
+            _, g = normalised_mse_grad(guided(), target)
+        (lin(x_pos) * g * s).sum().backward()
+        (lin(x_neg) * g * (1 - s)).sum().backward()
+        assert torch.allclose(lin.weight.grad, joint, atol=1e-6)
 
 
 class TestEulerGrid:
