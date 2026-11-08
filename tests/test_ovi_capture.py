@@ -116,8 +116,9 @@ class TestOutputPath:
         args = capture_script.parse_args(_base_args())
         assert isinstance(args.out, Path)
 
-    def test_negative_prompt_defaults_to_empty(self, capture_script):
-        # Ovi distinguishes a blank negative prompt from an absent one, and the
-        # sampler always passes a value.
+    def test_negative_prompt_defaults_to_the_config(self, capture_script):
+        # None means "use the config's per-stream negative prompts", as inference.py
+        # does. The old default of "" silently replaced them with empty strings.
         args = capture_script.parse_args(_base_args())
-        assert args.negative_prompt == ""
+        assert args.negative_prompt is None
+        assert args.cfg_pass == "cond"

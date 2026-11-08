@@ -39,8 +39,16 @@ OVI_ROOT = Path(os.environ.get("OVI_ROOT", "/local/Ovi"))
 if str(OVI_ROOT) not in sys.path:
     sys.path.insert(0, str(OVI_ROOT))
 
-DEFAULT_LAYERS = (0, 2, 4, 8, 11)
+DEFAULT_LAYERS = (0, 3, 6, 9, 12, 15, 18, 21, 24, 27)
 DEFAULT_STEPS = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18)
+#: Per-rollout capture steps chosen so both runs sit on the *same* timesteps. Under
+#: Ovi's UniPC schedule (shift 5.0) the 20-step run's even indices and the 30-step
+#: run's every-third indices land on identical values: 999, 978, 952, 920, 882, 833,
+#: 768, 681, 555, 356. Capturing those makes every contrast row an exact match.
+DEFAULT_STEPS_FOR = {
+    20: (0, 2, 4, 6, 8, 10, 12, 14, 16, 18),
+    30: (0, 3, 6, 9, 12, 15, 18, 21, 24, 27),
+}
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -55,13 +63,44 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=[20, 30],
         help="one or more sample_steps values; each is a separate rollout",
     )
-    parser.add_argument("--layers", type=int, nargs="+", default=list(DEFAULT_LAYERS))
+    parser.add_argument(
+        "--layers",
+        type=int,
+        nargs="+",
+        default=list(DEFAULT_LAYERS),
+        help="block indices to record, in each stream (Ovi has 30 per stream)",
+    )
+    parser.add_argument(
+        "--streams",
+        nargs="+",
+        default=["video", "audio"],
+        choices=["video", "audio"],
+    )
     parser.add_argument(
         "--capture-steps",
         type=int,
         nargs="+",
-        default=list(DEFAULT_STEPS),
-        help="denoising step indices to record (0 is noisiest)",
+        default=None,
+        help=(
+            "denoising step indices to record (0 is noisiest), for rollouts without a "
+            "per-rollout entry. Defaults to timestep-matched steps for 20 and 30."
+        ),
+    )
+    parser.add_argument(
+        "--capture-steps-for",
+        nargs="+",
+        default=[],
+        metavar="STEPS=I,J,K",
+        help="per-rollout capture steps, e.g. 30=0,3,6,9 (overrides --capture-steps)",
+    )
+    parser.add_argument(
+        "--cfg-pass",
+        default="cond",
+        choices=["cond", "uncond"],
+        help=(
+            "which CFG pass to record. Ovi runs the conditional pass first and the "
+            "unconditional (SLG) pass second at each timestep."
+        ),
     )
     parser.add_argument(
         "--chunk",
@@ -73,7 +112,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument("--out", required=True, type=Path, help="output .json path")
-    parser.add_argument("--negative-prompt", default="", help="Ovi's negative prompt")
+    parser.add_argument(
+        "--negative-prompt",
+        default=None,
+        help=(
+            "override both negative prompts. By default the config's "
+            "video_/audio_negative_prompt are used, as Ovi's inference.py does"
+        ),
+    )
     parser.add_argument(
         "--height-width",
         default=None,
@@ -83,15 +129,32 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--max-gap",
         type=float,
-        default=50.0,
+        default=1.0,
         help=(
-            "largest timestep gap allowed when pairing steps across runs. The two "
-            "schedules diverge at the end (the 20-step run's last three steps are 111, "
-            "264 and 522 away from the 30-step run's final step), so a loose tolerance "
-            "would contrast different points on the trajectory and call it drift."
+            "largest timestep gap allowed when pairing captured steps across runs. "
+            "With the default timestep-matched schedules every pair is exact, so a "
+            "non-zero gap means the schedules were overridden; a loose tolerance would "
+            "contrast different points on the trajectory and call it drift."
         ),
     )
     return parser.parse_args(argv)
+
+
+def capture_steps_for(args: argparse.Namespace, steps: int) -> tuple[int, ...] | None:
+    """Which step indices to record for a rollout of ``steps`` steps.
+
+    Priority: ``--capture-steps-for``, then ``--capture-steps``, then the
+    timestep-matched defaults, then ``None`` (every step).
+    """
+    for item in args.capture_steps_for:
+        key, _, values = item.partition("=")
+        if not values:
+            raise ValueError(f"--capture-steps-for entry must be STEPS=I,J,K: {item!r}")
+        if int(key) == steps:
+            return tuple(int(v) for v in values.split(","))
+    if args.capture_steps is not None:
+        return tuple(args.capture_steps)
+    return DEFAULT_STEPS_FOR.get(steps)
 
 
 def _parse_height_width(text: str | None) -> list[int] | None:
@@ -107,14 +170,20 @@ def _parse_height_width(text: str | None) -> list[int] | None:
     return [height, width]
 
 
-def run_rollout(engine, args, steps: int, schedule) -> tuple[dict, object, object]:
+def run_rollout(
+    engine, args, steps: int, schedule, sampler: dict
+) -> tuple[dict, object, object, object]:
     """One generation with attention hooks attached."""
     from wsp.attention import AttentionCapture
     from wsp.attention_hooks import AttentionHooks
 
     capture = AttentionCapture()
     hooks = AttentionHooks(
-        model=engine.model, schedule=schedule, capture=capture, chunk=args.chunk
+        model=engine.model,
+        schedule=schedule,
+        capture=capture,
+        chunk=args.chunk,
+        cfg_pass=0 if args.cfg_pass == "cond" else 1,
     )
     started = time.time()
     video = audio = None
@@ -125,8 +194,7 @@ def run_rollout(engine, args, steps: int, schedule) -> tuple[dict, object, objec
                 seed=args.seed,
                 sample_steps=steps,
                 video_frame_height_width=_parse_height_width(args.height_width),
-                video_negative_prompt=args.negative_prompt,
-                audio_negative_prompt=args.negative_prompt,
+                **sampler,
             )
     finally:
         hooks.detach()
@@ -134,6 +202,7 @@ def run_rollout(engine, args, steps: int, schedule) -> tuple[dict, object, objec
     report["seconds"] = round(time.time() - started, 1)
     report["sample_steps"] = steps
     report["seed"] = args.seed
+    report["sampler"] = dict(sampler)
     if video is None or audio is None:
         report["notes"].append(
             "generate() returned None for at least one output: Ovi logs its own "
@@ -161,21 +230,17 @@ def _contrast(
     """Per-head contrasts between two captures, aligned by real timestep.
 
     Aligning by step index would be wrong. A 20-step run and a 30-step run visit
-    different noise levels at the same index: at index 18 the 20-step run is at t=233 and
-    the 30-step run at t=756. Comparing those compares two different points on the
-    trajectory, so "the effect grows with step" would be an artefact of the schedule
-    rather than a measurement of drift.
+    different noise levels at the same index: under Ovi's UniPC schedule, index 18 is
+    t=356 in the 20-step run and t=768 in the 30-step run. Comparing those compares two
+    different points on the trajectory, so "the effect grows with step" would be an
+    artefact of the schedule rather than a measurement of drift.
 
-    The timestep values are the alignment key. Exact matching is not enough: the two
-    schedules share only t=1000.0, because 20 and 30 steps land on different grids. So each
-    step in run A is paired with the *nearest* timestep in run B, the same rule
-    ``pod_derive_direction.pair_by_timestep`` uses for the residual contrast.
-
-    ``max_gap`` is enforced, not merely reported. The schedules diverge sharply at the
-    end: the 20-step run's last three steps (t=645, 492, 233) all pair with the 30-step
-    run's final step at t=756, gaps of 111, 264 and 522. Contrasting those would compare
-    different points on the trajectory and call the difference drift. Pairs beyond the
-    tolerance are dropped and counted, so the surviving rows are all near-matched.
+    Pairing is over *captured* steps only. An earlier version paired each step of run A
+    with the nearest step of run B's full schedule and then silently skipped the row
+    when that step had not been captured, so most requested timesteps vanished without
+    a trace. Now each captured (stream, block, step) in A is paired with the nearest
+    captured step for the same (stream, block) in B; a pair beyond ``max_gap`` is kept
+    as a ``skipped`` row with the reason, never dropped.
     """
     from wsp.attention import attention_contrast, head_ranking
 
@@ -185,58 +250,73 @@ def _contrast(
         return []
 
     rows: list[dict] = []
-    for step_a, t_a in sorted(time_a.items()):
-        step_b = min(time_b, key=lambda j: abs(time_b[j] - t_a))
-        t_b = time_b[step_b]
-        gap = abs(t_b - t_a)
-        if gap > max_gap:
+    for stream, layer, step_a in sorted(capture_a.maps):
+        t_a = time_a.get(step_a)
+        if t_a is None:
             rows.append(
                 {
-                    "key": f"video_t{t_a}",
-                    "skipped": (
-                        f"nearest timestep in run B is {t_b:.2f}, a gap of {gap:.2f} "
-                        f"beyond the {max_gap:.2f} tolerance"
-                    ),
-                    "timestep_a": round(t_a, 2),
-                    "timestep_b": round(t_b, 2),
-                    "timestep_gap": round(gap, 2),
+                    "stream": stream,
+                    "layer": layer,
                     "step_a": step_a,
-                    "step_b": step_b,
+                    "skipped": f"run A has no timestep recorded for step {step_a}",
                 }
             )
             continue
-        for layer in sorted({lay for _, lay, _ in capture_a.maps}):
-            key_a = ("video", layer, step_a)
-            key_b = ("video", layer, step_b)
-            if key_a not in capture_a.maps or key_b not in capture_b.maps:
-                continue
-            a = capture_a.maps[key_a]
-            b = capture_b.maps[key_b]
-            try:
-                contrasts = attention_contrast(a, b, min_effect=min_effect)
-            except ValueError as exc:
-                rows.append(
-                    {
-                        "key": f"video_{layer}_t{t_a}",
-                        "skipped": str(exc),
-                    }
-                )
-                continue
-            ranked = head_ranking(contrasts)
+        candidates = [
+            s for (st, lay, s) in capture_b.maps if st == stream and lay == layer
+        ]
+        candidates = [s for s in candidates if s in time_b]
+        if not candidates:
             rows.append(
                 {
-                    "stream": "video",
+                    "stream": stream,
                     "layer": layer,
-                    "timestep_a": round(t_a, 2),
-                    "timestep_b": round(t_b, 2),
-                    "timestep_gap": round(gap, 2),
                     "step_a": step_a,
-                    "step_b": step_b,
-                    "n_heads_changed": len(contrasts),
-                    "top_heads": [c.summary() for c in ranked[:5]],
-                    "max_effect": ranked[0].effect_size if ranked else 0.0,
+                    "timestep_a": round(t_a, 2),
+                    "skipped": f"run B captured nothing for {stream} block {layer}",
                 }
             )
+            continue
+        step_b = min(candidates, key=lambda j: (abs(time_b[j] - t_a), j))
+        t_b = time_b[step_b]
+        gap = abs(t_b - t_a)
+        base = {
+            "stream": stream,
+            "layer": layer,
+            "timestep_a": round(t_a, 2),
+            "timestep_b": round(t_b, 2),
+            "timestep_gap": round(gap, 2),
+            "step_a": step_a,
+            "step_b": step_b,
+        }
+        if gap > max_gap:
+            rows.append(
+                {
+                    **base,
+                    "skipped": (
+                        f"nearest captured timestep in run B is {t_b:.2f}, a gap of "
+                        f"{gap:.2f} beyond the {max_gap:.2f} tolerance"
+                    ),
+                }
+            )
+            continue
+        a = capture_a.maps[(stream, layer, step_a)]
+        b = capture_b.maps[(stream, layer, step_b)]
+        try:
+            contrasts = attention_contrast(a, b, min_effect=min_effect)
+        except ValueError as exc:
+            rows.append({**base, "skipped": str(exc)})
+            continue
+        ranked = head_ranking(contrasts)
+        rows.append(
+            {
+                **base,
+                "n_heads_changed": len(contrasts),
+                "top_heads": [c.summary() for c in ranked[:5]],
+                "max_effect": ranked[0].effect_size if ranked else 0.0,
+                "effect_kind": ranked[0].effect_kind if ranked else None,
+            }
+        )
     return rows
 
 
@@ -246,32 +326,39 @@ def main(argv: list[str] | None = None) -> int:
     from omegaconf import OmegaConf
     from ovi.ovi_fusion_engine import OviFusionEngine
 
-    from wsp.dit import CaptureSchedule
+    from wsp.dit import CaptureSchedule, ovi_sampler_kwargs
 
     config = OmegaConf.load(args.config)
     if args.max_frames is not None:
         config.max_frames = args.max_frames
 
+    sampler = ovi_sampler_kwargs(config, args.negative_prompt)
+    print(f"sampler: {sampler}", flush=True)
+
     print("loading engine...", flush=True)
     engine = OviFusionEngine(config=config, device=0)
     print("engine loaded", flush=True)
 
-    schedule = CaptureSchedule(
-        layers=tuple(args.layers),
-        timesteps=tuple(args.capture_steps),
-        keep_patches=False,
-        streams=("video",),
-    )
-    print(f"schedule: {schedule.describe()}", flush=True)
-
     reports: dict[str, dict] = {}
     captures: dict[int, object] = {}
     failures: list[str] = []
+    steps_used: dict[str, list[int] | None] = {}
 
     for steps in args.rollouts:
         print(f"\n=== rollout: {steps} steps, seed {args.seed} ===", flush=True)
+        chosen = capture_steps_for(args, steps)
+        steps_used[str(steps)] = None if chosen is None else list(chosen)
+        schedule = CaptureSchedule(
+            layers=tuple(args.layers),
+            timesteps=chosen,
+            keep_patches=False,
+            streams=tuple(args.streams),
+        )
+        print(f"schedule: {schedule.describe()}", flush=True)
         try:
-            report, capture, _video, _audio = run_rollout(engine, args, steps, schedule)
+            report, capture, _video, _audio = run_rollout(
+                engine, args, steps, schedule, sampler
+            )
         except Exception as exc:  # noqa: BLE001 - a partial run is still useful
             failures.append(f"{steps} steps: {type(exc).__name__}: {exc}")
             print(f"ROLLOUT FAILED: {type(exc).__name__}: {exc}", flush=True)
@@ -284,7 +371,10 @@ def main(argv: list[str] | None = None) -> int:
         "prompt": args.prompt,
         "seed": args.seed,
         "layers": list(args.layers),
-        "capture_steps": list(args.capture_steps),
+        "streams": list(args.streams),
+        "capture_steps": steps_used,
+        "cfg_pass": args.cfg_pass,
+        "sampler": sampler,
         "chunk": args.chunk,
         "rollouts": reports,
         "summaries": {str(s): _summaries(c) for s, c in captures.items()},
@@ -294,18 +384,23 @@ def main(argv: list[str] | None = None) -> int:
     if len(captures) >= 2:
         ordered = sorted(captures)
         a, b = ordered[0], ordered[1]
+        rows = _contrast(
+            captures[a],
+            captures[b],
+            reports[str(a)].get("timesteps", {}),
+            reports[str(b)].get("timesteps", {}),
+            min_effect=0.05,
+            max_gap=args.max_gap,
+        )
         payload["contrast"] = {
             "a_steps": a,
             "b_steps": b,
-            "aligned_by": "timestep",
-            "rows": _contrast(
-                captures[a],
-                captures[b],
-                reports[str(a)].get("timesteps", {}),
-                reports[str(b)].get("timesteps", {}),
-                min_effect=0.05,
-                max_gap=args.max_gap,
-            ),
+            "aligned_by": "timestep (captured steps only)",
+            "min_effect": 0.05,
+            "n_rows": len(rows),
+            "n_compared": sum(1 for r in rows if "skipped" not in r),
+            "n_skipped": sum(1 for r in rows if "skipped" in r),
+            "rows": rows,
         }
 
     if failures:

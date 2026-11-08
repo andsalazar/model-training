@@ -444,3 +444,48 @@ class TestAttentionMapSummary:
         array[0, :, 0] = 1.0
         summary = summarize_attention(array)
         assert np.isclose(summary.summary()["column_mass_entropy"], 0.0, atol=1e-5)
+
+
+class TestRowEntropyVariance:
+    def test_all_three_summarisers_agree_on_per_query_variance(self):
+        # effect_size divides by this spread. An earlier version took np.var of the
+        # per-head *mean*, which is always 0, so every effect silently fell back to a
+        # relative change. The variance must be the real across-query spread.
+        import torch
+
+        from wsp.attention import (
+            attention_contrast,
+            summarize_attention,
+            summarize_attention_chunked,
+            summarize_attention_torch,
+        )
+
+        gen = np.random.default_rng(5)
+        q = gen.normal(size=(3, 7, 8)).astype(np.float32)
+        k = gen.normal(size=(3, 7, 8)).astype(np.float32)
+        scores = np.einsum("hqd,hkd->hqk", q, k) / np.sqrt(8)
+        weights = np.exp(scores - scores.max(-1, keepdims=True))
+        weights /= weights.sum(-1, keepdims=True)
+        per_query = -(weights * np.log(weights)).sum(-1)
+
+        full = summarize_attention(weights)
+        chunked = summarize_attention_chunked(q, k, chunk=3)
+        gpu = summarize_attention_torch(torch.from_numpy(q), torch.from_numpy(k), chunk=3)
+        for summary in (full, chunked, gpu):
+            assert np.allclose(summary.row_entropy_var, per_query.var(-1), atol=1e-5)
+            assert np.all(summary.row_entropy_var > 0)
+
+        other = summarize_attention_chunked(q * 1.5, k, chunk=3)
+        contrasts = attention_contrast(chunked, other, min_effect=0.0)
+        assert contrasts and all(c.effect_kind == "pooled_sd" for c in contrasts)
+
+    def test_maps_without_variance_are_labelled_relative(self):
+        from wsp.attention import attention_contrast, summarize_attention_chunked
+
+        gen = np.random.default_rng(6)
+        q = gen.normal(size=(2, 5, 8)).astype(np.float32)
+        a = summarize_attention_chunked(q, q)
+        b = summarize_attention_chunked(q * 2.0, q)
+        a.row_entropy_var = None
+        contrasts = attention_contrast(a, b, min_effect=0.0)
+        assert contrasts and all(c.effect_kind == "relative" for c in contrasts)

@@ -64,7 +64,11 @@ def parse_capture_key(key: str) -> tuple[int, str, int, int] | None:
 
 
 def pair_by_timestep(
-    meta: dict, steps_a: int, steps_b: int
+    meta: dict,
+    steps_a: int,
+    steps_b: int,
+    captured_a: set[int] | None = None,
+    captured_b: set[int] | None = None,
 ) -> list[tuple[int, int, float, float]]:
     """Match step indices across two rollouts by nearest timestep value.
 
@@ -72,6 +76,10 @@ def pair_by_timestep(
     record its timesteps cannot be paired -- refusing is the point, because pairing by
     index would produce a plausible direction from two different points on the
     trajectory.
+
+    ``captured_a``/``captured_b`` restrict pairing to steps that were actually recorded.
+    Without them, a captured step in A could pair with an uncaptured nearest step in B
+    and then be dropped downstream without a trace.
     """
     map_a = meta.get(str(steps_a), {}).get("step_timesteps")
     map_b = meta.get(str(steps_b), {}).get("step_timesteps")
@@ -83,6 +91,12 @@ def pair_by_timestep(
         )
     time_a = {int(k): float(v) for k, v in map_a.items()}
     time_b = {int(k): float(v) for k, v in map_b.items()}
+    if captured_a is not None:
+        time_a = {k: v for k, v in time_a.items() if k in captured_a}
+    if captured_b is not None:
+        time_b = {k: v for k, v in time_b.items() if k in captured_b}
+    if not time_b:
+        return []
     pairs: list[tuple[int, int, float, float]] = []
     for ia, ta in sorted(time_a.items()):
         ib = min(time_b, key=lambda j: abs(time_b[j] - ta))
@@ -107,7 +121,19 @@ def derive(
     The direction points from ``steps_a`` toward ``steps_b``; callers should pass the
     drifting run first so the direction points toward stability.
     """
-    pairs = pair_by_timestep(meta, steps_a, steps_b)
+    def _captured(run: int) -> set[int]:
+        return {
+            step
+            for key in arrays
+            for parsed in [parse_capture_key(key)]
+            if parsed
+            for r, s, _, step in [parsed]
+            if r == run and s == stream
+        }
+
+    pairs = pair_by_timestep(
+        meta, steps_a, steps_b, _captured(steps_a), _captured(steps_b)
+    )
     layers = sorted(
         {
             layer
@@ -124,6 +150,15 @@ def derive(
             key_a = f"capture_{steps_a}_{stream}_{layer}_{ia}"
             key_b = f"capture_{steps_b}_{stream}_{layer}_{ib}"
             if key_a not in arrays or key_b not in arrays:
+                missing = [k for k in (key_a, key_b) if k not in arrays]
+                results.append(
+                    {
+                        "layer": layer,
+                        "step_a": ia,
+                        "step_b": ib,
+                        "skipped": f"not captured: {', '.join(missing)}",
+                    }
+                )
                 continue
             matrix_a = np.asarray(arrays[key_a], dtype=np.float32)
             matrix_b = np.asarray(arrays[key_b], dtype=np.float32)

@@ -31,6 +31,7 @@ it is why the schedule is explicit rather than "capture everything".
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import os
 import sys
@@ -68,15 +69,43 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="denoising step indices to record (0 is noisiest)",
     )
     parser.add_argument(
+        "--capture-steps-for",
+        nargs="+",
+        default=[],
+        metavar="STEPS=I,J,K",
+        help=(
+            "per-rollout capture steps, e.g. 30=0,3,6 (overrides --capture-steps for "
+            "that rollout). Under UniPC the 20-step even indices and the 30-step "
+            "every-third indices sit on identical timesteps."
+        ),
+    )
+    parser.add_argument(
         "--streams",
         nargs="+",
         default=["video", "audio"],
         choices=["video", "audio"],
         help="which of Ovi's two stacks to capture",
     )
+    parser.add_argument(
+        "--cfg-pass",
+        default="cond",
+        choices=["cond", "uncond"],
+        help=(
+            "which CFG pass to record. Ovi runs the conditional pass first and the "
+            "unconditional (SLG) pass second at each timestep; before this option the "
+            "second silently overwrote the first"
+        ),
+    )
     parser.add_argument("--out", required=True, type=Path, help="output .npz path")
     parser.add_argument("--max-frames", type=int, default=None)
-    parser.add_argument("--negative-prompt", default="", help="Ovi's negative prompt")
+    parser.add_argument(
+        "--negative-prompt",
+        default=None,
+        help=(
+            "override both negative prompts. By default the config's "
+            "video_/audio_negative_prompt are used, as Ovi's inference.py does"
+        ),
+    )
     parser.add_argument(
         "--height-width",
         default=None,
@@ -135,11 +164,26 @@ def _encode_video(video: np.ndarray) -> np.ndarray:
     return np.rint(scaled * 255.0).astype(np.uint8)
 
 
-def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object]:
+def capture_steps_for(args: argparse.Namespace, steps: int) -> tuple[int, ...]:
+    """Step indices to record for a rollout of ``steps`` steps."""
+    for item in args.capture_steps_for:
+        key, _, values = item.partition("=")
+        if not values:
+            raise ValueError(f"--capture-steps-for entry must be STEPS=I,J,K: {item!r}")
+        if int(key) == steps:
+            return tuple(int(v) for v in values.split(","))
+    return tuple(args.capture_steps)
+
+
+def run_rollout(
+    engine, args, steps: int, capture, sampler: dict
+) -> tuple[dict, object, object]:
     """One generation with hooks attached; returns the hook report and outputs."""
     from wsp.hooks import DitHooks
 
-    hooks = DitHooks(engine.model, capture)
+    hooks = DitHooks(
+        engine.model, capture, cfg_pass=0 if args.cfg_pass == "cond" else 1
+    )
     started = time.time()
     video = audio = None
     try:
@@ -149,8 +193,7 @@ def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object
                 seed=args.seed,
                 sample_steps=steps,
                 video_frame_height_width=_parse_height_width(args.height_width),
-                video_negative_prompt=args.negative_prompt,
-                audio_negative_prompt=args.negative_prompt,
+                **sampler,
             )
     finally:
         hooks.detach()
@@ -158,6 +201,7 @@ def run_rollout(engine, args, steps: int, capture) -> tuple[dict, object, object
     report["seconds"] = round(time.time() - started, 1)
     report["sample_steps"] = steps
     report["seed"] = args.seed
+    report["sampler"] = dict(sampler)
     # `None in (video, audio)` is wrong here: video and audio are numpy arrays, and
     # `in` against an array raises "truth value of an array is ambiguous". Compare
     # identities instead.
@@ -176,11 +220,14 @@ def main(argv: list[str] | None = None) -> int:
     from omegaconf import OmegaConf
     from ovi.ovi_fusion_engine import OviFusionEngine
 
-    from wsp.dit import CaptureSchedule, ResidualCapture
+    from wsp.dit import CaptureSchedule, ResidualCapture, ovi_sampler_kwargs
 
     config = OmegaConf.load(args.config)
     if args.max_frames is not None:
         config.max_frames = args.max_frames
+
+    sampler = ovi_sampler_kwargs(config, args.negative_prompt)
+    print(f"sampler: {sampler}", flush=True)
 
     print("loading engine...", flush=True)
     engine = OviFusionEngine(config=config, device=0)
@@ -237,10 +284,14 @@ def main(argv: list[str] | None = None) -> int:
 
     failures: list[str] = []
     for steps in args.rollouts:
-        capture = ResidualCapture(schedule=schedule)
+        rollout_schedule = dataclasses.replace(
+            schedule, timesteps=capture_steps_for(args, steps)
+        )
+        capture = ResidualCapture(schedule=rollout_schedule)
         print(f"\n=== rollout: {steps} steps, seed {args.seed} ===", flush=True)
+        print(f"schedule: {rollout_schedule.describe()}", flush=True)
         try:
-            report, video, audio = run_rollout(engine, args, steps, capture)
+            report, video, audio = run_rollout(engine, args, steps, capture, sampler)
         except Exception as exc:  # noqa: BLE001 - a partial run is still useful
             failures.append(f"{steps} steps: {type(exc).__name__}: {exc}")
             print(f"ROLLOUT FAILED: {type(exc).__name__}: {exc}", flush=True)

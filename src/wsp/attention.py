@@ -124,6 +124,11 @@ class AttentionMap:
     layer: int = 0
     timestep: int = 0
     stream: str = "video"
+    #: Per-head variance of row entropy across queries. ``row_entropy`` is already the
+    #: per-head mean, so the within-head spread an effect size needs is not recoverable
+    #: from it; it has to be accumulated alongside. ``None`` for maps built before this
+    #: field existed.
+    row_entropy_var: np.ndarray | None = None
 
     def summary(self) -> dict:
         return {
@@ -134,6 +139,7 @@ class AttentionMap:
             "queries": self.queries,
             "keys": self.keys,
             "row_entropy_mean": float(self.row_entropy.mean()),
+            # Spread of the per-head means across heads, not across queries.
             "row_entropy_std": float(self.row_entropy.std()),
             "diagonal_mass_mean": float(self.diagonal_mass.mean()),
             # Per head, then averaged. Flattening the [heads, keys] array first would
@@ -189,7 +195,9 @@ def summarize_attention(
     probabilities = array / row_sums
 
     clipped = np.clip(probabilities, _EPS, None)
-    row_entropy = -(probabilities * np.log(clipped)).sum(axis=-1).mean(axis=-1)
+    per_query = -(probabilities * np.log(clipped)).sum(axis=-1)
+    row_entropy = per_query.mean(axis=-1)
+    row_entropy_var = per_query.var(axis=-1)
 
     column_mass = probabilities.mean(axis=1)
     column_mass = column_mass / column_mass.sum(axis=-1, keepdims=True)
@@ -206,6 +214,7 @@ def summarize_attention(
         layer=layer,
         timestep=timestep,
         stream=stream,
+        row_entropy_var=row_entropy_var.astype(np.float32),
     )
 
 
@@ -258,6 +267,7 @@ def summarize_attention_chunked(
     scale = softmax_scale if softmax_scale is not None else head_dim**-0.5
 
     row_entropy = np.zeros(heads, dtype=np.float64)
+    row_entropy_sq = np.zeros(heads, dtype=np.float64)
     column_mass = np.zeros((heads, keys), dtype=np.float64)
     diagonal = np.zeros(heads, dtype=np.float64)
 
@@ -270,7 +280,9 @@ def summarize_attention_chunked(
         weights /= weights.sum(axis=-1, keepdims=True)
 
         clipped = np.clip(weights, _EPS, None)
-        row_entropy += (-(weights * np.log(clipped)).sum(axis=-1)).sum(axis=1)
+        per_query = -(weights * np.log(clipped)).sum(axis=-1)
+        row_entropy += per_query.sum(axis=1)
+        row_entropy_sq += (per_query**2).sum(axis=1)
         column_mass += weights.sum(axis=1)
 
         if queries == keys:
@@ -278,6 +290,7 @@ def summarize_attention_chunked(
             diagonal += weights[:, idx - start, idx].sum(axis=1)
 
     row_entropy /= queries
+    row_entropy_var = np.maximum(row_entropy_sq / queries - row_entropy**2, 0.0)
     column_mass /= queries
     totals = column_mass.sum(axis=1, keepdims=True)
     column_mass = np.divide(
@@ -295,6 +308,7 @@ def summarize_attention_chunked(
         layer=layer,
         timestep=timestep,
         stream=stream,
+        row_entropy_var=row_entropy_var.astype(np.float32),
     )
 
 
@@ -342,6 +356,7 @@ def summarize_attention_torch(
     scale = softmax_scale if softmax_scale is not None else head_dim**-0.5
 
     row_entropy = torch.zeros(heads, dtype=torch.float64, device=q.device)
+    row_entropy_sq = torch.zeros(heads, dtype=torch.float64, device=q.device)
     column_mass = torch.zeros((heads, keys), dtype=torch.float64, device=q.device)
     diagonal = torch.zeros(heads, dtype=torch.float64, device=q.device)
 
@@ -354,7 +369,9 @@ def summarize_attention_torch(
         weights64 = weights.to(torch.float64)
 
         clipped = weights64.clamp_min(_EPS)
-        row_entropy += (-(weights64 * clipped.log()).sum(dim=-1)).sum(dim=1)
+        per_query = -(weights64 * clipped.log()).sum(dim=-1)
+        row_entropy += per_query.sum(dim=1)
+        row_entropy_sq += (per_query**2).sum(dim=1)
         column_mass += weights64.sum(dim=1)
 
         if queries == keys:
@@ -362,6 +379,7 @@ def summarize_attention_torch(
             diagonal += weights64[:, idx - start, idx].sum(dim=1)
 
     row_entropy /= queries
+    row_entropy_var = (row_entropy_sq / queries - row_entropy**2).clamp_min(0.0)
     column_mass /= queries
     totals = column_mass.sum(dim=1, keepdim=True)
     column_mass = torch.where(totals > 0, column_mass / totals, torch.zeros_like(column_mass))
@@ -377,6 +395,7 @@ def summarize_attention_torch(
         layer=layer,
         timestep=timestep,
         stream=stream,
+        row_entropy_var=row_entropy_var.cpu().numpy().astype(np.float32),
     )
 
 
@@ -388,9 +407,12 @@ class HeadContrast:
     entropy_delta: float
     diagonal_delta: float
     column_mass_l1: float
-    #: ``|delta| / pooled_std`` — how large the difference is against the head's own
-    #: variability. A head that differs by 0.5 with a spread of 0.5 is not a finding.
+    #: See ``effect_kind`` for what this number is.
     effect_size: float
+    #: ``"pooled_sd"``: ``|delta| / pooled within-head std across queries`` (a Cohen's-d
+    #: style effect). ``"relative"``: ``|delta| / mean entropy level`` — used when either
+    #: map lacks per-query variance. The two are not on the same scale.
+    effect_kind: str = "pooled_sd"
 
     def summary(self) -> dict:
         return {
@@ -399,6 +421,7 @@ class HeadContrast:
             "diagonal_delta": round(self.diagonal_delta, 6),
             "column_mass_l1": round(self.column_mass_l1, 6),
             "effect_size": round(self.effect_size, 4),
+            "effect_kind": self.effect_kind,
         }
 
 
@@ -413,9 +436,11 @@ def attention_contrast(
     inverted ``direction_similarity`` sign and reported the opposite conclusion.
 
     ``effect_size`` is the difference divided by the pooled standard deviation of the
-    two heads' row entropies. It is a crude but honest guard: without it, a head whose
-    entropy differs by 0.001 while its own queries vary by 0.5 would rank alongside a
-    head that genuinely separates.
+    two heads' per-query row entropies (``effect_kind="pooled_sd"``). It is a crude but
+    honest guard: without it, a head whose entropy differs by 0.001 while its own
+    queries vary by 0.5 would rank alongside a head that genuinely separates. When a map
+    carries no per-query variance, or the pooled spread is zero, it falls back to the
+    relative change ``|delta| / mean level`` and says so with ``effect_kind="relative"``.
 
     ``min_effect`` filters the returned list. Pass ``0`` to see every head.
     """
@@ -445,28 +470,28 @@ def attention_contrast(
             continue
         # Pooled spread of the two heads' per-query entropies. This is a within-head
         # spread, not a between-condition one, so it measures how much this head varies
-        # across queries rather than how much the conditions differ.
-        pooled = float(
-            np.sqrt(
-                (
-                    np.var(a.row_entropy[head], ddof=0)
-                    + np.var(b.row_entropy[head], ddof=0)
-                )
-                / 2.0
+        # across queries rather than how much the conditions differ. ``row_entropy`` is
+        # the per-head mean, so the variance must come from ``row_entropy_var``; an
+        # earlier version took np.var of the scalar mean, which is always 0, so every
+        # contrast silently used the relative fallback below.
+        pooled = 0.0
+        if a.row_entropy_var is not None and b.row_entropy_var is not None:
+            pooled = float(
+                np.sqrt((a.row_entropy_var[head] + b.row_entropy_var[head]) / 2.0)
             )
-        )
         if pooled > _EPS:
             effect = abs(entropy_delta) / pooled
+            kind = "pooled_sd"
         else:
-            # Degenerate head: every query has the same entropy, so there is no
-            # within-head noise to normalise by. Dividing by zero would report inf and
-            # returning 0.0 would hide a real difference -- the "tool that cannot look
-            # must say so" failure. Scale by the head's own entropy level instead, which
-            # is finite and interpretable: "this head moved by N times its own mean".
+            # No within-head spread to normalise by. Dividing by zero would report inf
+            # and returning 0.0 would hide a real difference -- the "tool that cannot
+            # look must say so" failure. Scale by the head's own entropy level instead
+            # and label it, because it is not on the pooled-SD scale.
             level = float(
                 np.mean([a.row_entropy[head], b.row_entropy[head]])
             )
             effect = abs(entropy_delta) / max(level, _EPS)
+            kind = "relative"
         if effect < min_effect:
             continue
         results.append(
@@ -476,6 +501,7 @@ def attention_contrast(
                 diagonal_delta=diagonal_delta,
                 column_mass_l1=column_mass_l1,
                 effect_size=effect,
+                effect_kind=kind,
             )
         )
     return results

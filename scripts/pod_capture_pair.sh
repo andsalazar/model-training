@@ -4,10 +4,15 @@
 # 20 steps drifted colour in 2 of 3 seeds in the earlier sweeps; 30 steps was stable
 # in all 3. Same prompt, same seed, so step count is the only difference.
 #
-# Layers: 0, 2, 4, 8 and 11. Block 11 is the default slg_layer, and Ovi skips it in the
-# negative pass only -- capturing it would give a conditional-only state. It is
-# included deliberately so the asymmetry is visible and can be excluded downstream,
-# rather than silently absent.
+# Layers: 0, 2, 4, 8 and 11. Block 11 is the config's slg_layer, which Ovi skips in the
+# negative pass only. The capture records the conditional pass (--cfg-pass cond), which
+# runs every block, so block 11 is a like-for-like state.
+#
+# v2 (review fixes): the sampler settings now come from the config, as inference.py
+# reads them (guidance 4.0/3.0, slg_layer 11, the config's negative prompts) -- the v1
+# capture used generate()'s defaults (5.0/4.0, slg 9, empty negatives) and recorded the
+# unconditional pass. Capture steps are per rollout so both runs sit on the same ten
+# UniPC timesteps instead of four.
 set -uo pipefail
 
 source /local/ovi-env/bin/activate
@@ -25,7 +30,7 @@ PROMPT="A medium shot of a coastal road at golden hour, waves breaking against r
 # "OSError: [Errno 122] Disk quota exceeded" after exactly 640MB. That is also what
 # silently killed the earlier detached runs -- the failure surfaced only once the job was
 # run attached.
-OUT="${1:-/local/captures/pair_20v30.npz}"
+OUT="${1:-/local/captures/pair_20v30_v2.npz}"
 
 echo "--- backend gate ---"
 python3 -c "
@@ -36,7 +41,6 @@ raise SystemExit(0 if b == 'flash_attn_2' else 1)
 " || { echo "ABORT: not FA2"; exit 1; }
 
 mkdir -p /local/captures
-rm -f /workspace/captures/pair_20v30.npz
 echo "--- disk before ---"
 df -h / | tail -1
 echo "--- capturing 20 vs 30 steps ---"
@@ -45,7 +49,8 @@ python3 -u /local/wsp/scripts/pod_ovi_capture.py \
   --prompt "$PROMPT" \
   --seed 42 \
   --rollouts 20 30 \
-  --capture-steps 0 2 4 6 8 10 12 14 16 18 \
+  --capture-steps-for 20=0,2,4,6,8,10,12,14,16,18 30=0,3,6,9,12,15,18,21,24,27 \
+  --cfg-pass cond \
   --layers 0 2 4 8 11 \
   --height-width 960x960 \
   --patch-stride 8 \

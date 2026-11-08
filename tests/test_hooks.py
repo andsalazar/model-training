@@ -283,10 +283,42 @@ class TestGuidance:
             _run(model, t=750.0, seed=2)
         tracker = hooks.tracker
         assert tracker.steps_seen == 1
-        # The second pass overwrote the first at the same key rather than creating
-        # a second step.
         assert tracker.calls == 2
         assert capture.timesteps("video") == [0]
+
+    def _two_pass_capture(self, cfg_pass):
+        schedule = CaptureSchedule(layers=(0,), keep_patches=True, streams=("video",))
+        capture = _capture(schedule)
+        model = _model()
+        with DitHooks(model, capture, cfg_pass=cfg_pass) as hooks:
+            _run(model, t=750.0, seed=1)
+            _run(model, t=750.0, seed=2)
+        return hooks, capture
+
+    def test_default_keeps_the_conditional_pass(self):
+        # Both passes share a key, so recording both let the second (unconditional)
+        # overwrite the first. Every Stage 6 direction was measured that way.
+        cond, _ = self._two_pass_capture(cfg_pass=0)
+        uncond, _ = self._two_pass_capture(cfg_pass=1)
+        last, _ = self._two_pass_capture(cfg_pass=None)
+        a, b, c = (
+            np.asarray(next(iter(h.capture.captures.values())).patches)
+            for h in (cond, uncond, last)
+        )
+        assert not np.allclose(a, b)
+        assert np.allclose(b, c)
+        assert cond.report()["cfg_pass"] == "conditional"
+        # One declined firing per hooked stream on the second pass.
+        assert cond.report()["other_pass_declined"] == 2
+
+    def test_tracker_numbers_passes_within_a_timestep(self):
+        tracker = StepTracker()
+        tracker.observe(750.0)
+        assert tracker.last_pass == 0
+        tracker.observe(750.0)
+        assert tracker.last_pass == 1
+        tracker.observe(500.0)
+        assert tracker.last_pass == 0
 
 
 class TestAttentionBackend:

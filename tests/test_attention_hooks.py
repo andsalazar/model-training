@@ -10,6 +10,7 @@ import types
 
 import numpy as np
 import pytest
+import torch
 
 from wsp.attention_hooks import AttentionHooks, _split_heads
 from wsp.dit import CaptureSchedule
@@ -62,32 +63,58 @@ def _qk(heads=2, n=4, dim=8, seed=0):
     return q, k
 
 
+class _SelfAttn(torch.nn.Module):
+    """Stands in for ``WanSelfAttention``: reaches attention via the module function."""
+
+    def __init__(self, module):
+        super().__init__()
+        self._ovi = module
+
+    def forward(self, q, k):
+        return self._ovi.flash_attention(q=q, k=k, v=q)
+
+
+class _Block:
+    def __init__(self, module):
+        self.self_attn = _SelfAttn(module)
+
+
+class _Stack:
+    def __init__(self, module, n):
+        self.blocks = [_Block(module) for _ in range(n)]
+
+
 class _Model:
-    """Stands in for Ovi's DiT: a forward that takes a timestep and runs N blocks.
+    """Stands in for Ovi's FusionModel: two stacks, called audio-then-video per block.
 
-    ``AttentionHooks`` wraps ``forward`` to number the denoising step, because
-    ``flash_attention`` never receives the timestep. A stand-in without a forward would
-    let the hook attach but never attribute a call to a step.
+    The order matters. The real fused block calls ``audio_block.self_attn`` before
+    ``vid_block.self_attn``, and an earlier hook that counted calls labelled the
+    interleaved sequence as one stream's layers. A fake that only had one stream could
+    not catch that.
 
-    ``blocks`` matters: a real DiT calls attention once per block per forward, so the
-    layer counter must reset at the start of each forward. A one-block stand-in cannot
-    distinguish "resets per forward" from "increments forever".
+    ``stray`` makes one extra attention call per forward outside any ``self_attn`` --
+    the shape of an unfused cross-attention call -- which must be counted, not filed.
     """
 
-    def __init__(self, module, calls, blocks=1):
+    def __init__(self, module, calls, blocks=1, stray=False):
         self.module = module
         self.calls = calls
-        self.blocks = blocks
+        self.video_model = _Stack(module, blocks)
+        self.audio_model = _Stack(module, blocks)
+        self.n_blocks = blocks
+        self.stray = stray
         self.forward_calls = 0
 
-    def forward(self, x, t=None, k=None):
+    def forward(self, x, t=None, k=None, audio=None):
         self.forward_calls += 1
+        a = x if audio is None else audio
         out = None
-        for _ in range(self.blocks):
-            # Mirror the real call: reach attention through the module-level function.
-            # ``k`` defaults to ``x`` for self-attention; pass a different key tensor to
-            # exercise the cross-attention path.
-            out = self.module.flash_attention(q=x, k=x if k is None else k, v=x)
+        for i in range(self.n_blocks):
+            self.audio_model.blocks[i].self_attn(a, a)
+            # ``k`` defaults to ``x``; pass a different key tensor to exercise q != k.
+            out = self.video_model.blocks[i].self_attn(x, x if k is None else k)
+        if self.stray:
+            self.module.flash_attention(q=x, k=x, v=x)
         return out
 
     def __call__(self, *args, **kwargs):
@@ -120,8 +147,9 @@ class TestAttach:
         q, k = _qk()
         with hooks:
             model.forward(q, t=1.0)
-        assert len(calls) == 1
-        assert hooks.report()["fired"] == 1
+        # One audio and one video self-attention call per block.
+        assert len(calls) == 2
+        assert hooks.report()["fired"] == 2
 
     def test_output_is_not_modified(self, fake_ovi):
         # The intercept must be a pure side effect. A hook that changed the output would
@@ -191,16 +219,16 @@ class TestRecording:
     def test_records_only_scheduled_layers(self, fake_ovi):
         module, calls = fake_ovi
         schedule = CaptureSchedule(layers=(1,), timesteps=(0,))
-        # Three blocks per forward: layer 0, 1, 2. Only layer 1 is scheduled.
+        # Three blocks per forward in each of two streams. Only block 1 is scheduled.
         model = _Model(module, calls, blocks=3)
         hooks = AttentionHooks(model=model, schedule=schedule)
         q, k = _qk()
         with hooks:
             model.forward(q, t=1.0)
         report = hooks.report()
-        assert report["fired"] == 3
-        assert report["recorded"] == 1
-        assert report["skipped"] == 2
+        assert report["fired"] == 6
+        assert report["recorded"] == 2
+        assert report["skipped"] == 4
 
     def test_recorded_summary_has_real_entropy(self, fake_ovi):
         module, calls = fake_ovi
@@ -229,7 +257,7 @@ class TestRecording:
             result = model.forward(np.ones((4, 2, 8)), t=1.0)
         assert result == "attention-output"
         report = hooks.report()
-        assert report["failed"] == 1
+        assert report["failed"] == 2
         assert any("failed to summarise" in n for n in report["notes"])
 
     def test_detached_hook_does_not_claim_it_was_never_attached(self, fake_ovi):
@@ -244,7 +272,7 @@ class TestRecording:
         with hooks:
             model.forward(q, t=1.0)
         report = hooks.report()
-        assert report["fired"] == 1
+        assert report["fired"] == 2
         assert not any("never called" in n for n in report["notes"])
 
     def test_never_firing_is_reported(self, fake_ovi):
@@ -279,20 +307,18 @@ class TestRecording:
         # double-pass); a new t starts a new step.
         module, calls = fake_ovi
         schedule = CaptureSchedule(layers=(0, 1), timesteps=(0, 1))
-        # Two blocks per forward, so each forward fires layer 0 then layer 1. The layer
-        # counter must reset per forward or the second step would report layers 2 and 3.
         model = _Model(module, calls, blocks=2)
         hooks = AttentionHooks(model=model, schedule=schedule)
         q, k = _qk()
         with hooks:
-            model.forward(q, t=1.0)  # step 0: layers 0, 1
-            model.forward(q, t=0.5)  # step 1: layers 0, 1
+            model.forward(q, t=1.0)  # step 0: blocks 0, 1 in both streams
+            model.forward(q, t=0.5)  # step 1: blocks 0, 1 in both streams
         report = hooks.report()
         assert report["steps_seen"] == 2
-        assert report["recorded"] == 4
-        # Both steps must have both layers, which only holds if the counter reset.
-        assert hooks.capture.layers() == [0, 1]
-        assert hooks.capture.timesteps() == [0, 1]
+        assert report["recorded"] == 8
+        for stream in ("video", "audio"):
+            assert hooks.capture.layers(stream) == [0, 1]
+            assert hooks.capture.timesteps(stream) == [0, 1]
 
     def test_torch_inputs_take_the_gpu_path(self, fake_ovi):
         # The numpy reduction took 49 minutes of CPU time for one real run. When the
@@ -328,3 +354,103 @@ class TestRecording:
         assert report["unattributed"] == 1
         assert report["recorded"] == 0
         assert any("outside a model forward" in n for n in report["notes"])
+
+
+class TestLabelling:
+    def test_streams_and_blocks_are_labelled_by_module_not_call_order(self, fake_ovi):
+        # The regression: counting calls per forward labelled audio block i as "layer
+        # 2i" and video block i as "layer 2i+1", all filed as video. Give the two
+        # streams different token counts so a mislabel is visible in the shape.
+        module, calls = fake_ovi
+        schedule = CaptureSchedule(layers=(0, 1, 2), timesteps=(0,))
+        model = _Model(module, calls, blocks=3)
+        hooks = AttentionHooks(model=model, schedule=schedule)
+        video, _ = _qk(n=6, seed=1)
+        audio, _ = _qk(n=3, seed=2)
+        with hooks:
+            model.forward(video, t=1.0, audio=audio)
+        for block in range(3):
+            v = hooks.capture.at(block, 0, stream="video")
+            a = hooks.capture.at(block, 0, stream="audio")
+            assert (v.stream, v.layer, v.queries) == ("video", block, 6)
+            assert (a.stream, a.layer, a.queries) == ("audio", block, 3)
+
+    def test_call_outside_self_attn_is_unlabelled_not_filed(self, fake_ovi):
+        module, calls = fake_ovi
+        schedule = CaptureSchedule(layers=(0,), timesteps=(0,))
+        model = _Model(module, calls, stray=True)
+        hooks = AttentionHooks(model=model, schedule=schedule)
+        q, _ = _qk()
+        with hooks:
+            model.forward(q, t=1.0)
+        report = hooks.report()
+        assert report["fired"] == 3
+        assert report["unlabelled"] == 1
+        assert report["recorded"] == 2
+        assert any("outside any hooked self_attn" in n for n in report["notes"])
+
+    def test_model_without_stacks_is_an_error(self, fake_ovi):
+        module, calls = fake_ovi
+
+        class _Bare:
+            def forward(self, x, t=None):
+                return module.flash_attention(q=x, k=x, v=x)
+
+        hooks = AttentionHooks(
+            model=_Bare(), schedule=CaptureSchedule(layers=(0,), timesteps=(0,))
+        )
+        hooks.attach()
+        assert hooks.error is not None
+        assert "neither video_model nor audio_model" in hooks.error
+
+    def test_detach_removes_module_hooks(self, fake_ovi):
+        module, calls = fake_ovi
+        model = _Model(module, calls, blocks=2)
+        hooks = AttentionHooks(
+            model=model, schedule=CaptureSchedule(layers=(0,), timesteps=(0,))
+        )
+        hooks.attach()
+        attn = model.video_model.blocks[1].self_attn
+        assert attn._forward_pre_hooks and attn._forward_hooks
+        hooks.detach()
+        assert not attn._forward_pre_hooks and not attn._forward_hooks
+
+
+class TestCfgPass:
+    def _two_pass(self, fake_ovi, cfg_pass):
+        # Ovi runs the conditional pass and then the unconditional pass at the same t.
+        # They share a capture key, so without a pass filter the second overwrote the
+        # first and every "measurement" was of the unconditional branch.
+        module, calls = fake_ovi
+        model = _Model(module, calls)
+        hooks = AttentionHooks(
+            model=model,
+            schedule=CaptureSchedule(layers=(0,), timesteps=(0,), streams=("video",)),
+            cfg_pass=cfg_pass,
+        )
+        cond, _ = _qk(n=4, seed=10)
+        uncond, _ = _qk(n=4, seed=11)
+        with hooks:
+            model.forward(cond, t=1.0)
+            model.forward(uncond, t=1.0)
+        return hooks, cond, uncond
+
+    def _entropy(self, q):
+        from wsp.attention import summarize_attention_chunked
+
+        split = _split_heads(q)
+        return summarize_attention_chunked(split, split).row_entropy
+
+    def test_default_records_the_conditional_pass(self, fake_ovi):
+        hooks, cond, uncond = self._two_pass(fake_ovi, cfg_pass=0)
+        got = hooks.capture.at(0, 0).row_entropy
+        assert np.allclose(got, self._entropy(cond))
+        assert not np.allclose(got, self._entropy(uncond))
+        report = hooks.report()
+        assert report["cfg_pass"] == "conditional"
+        assert report["other_pass_declined"] == 2
+
+    def test_pass_one_records_the_unconditional_pass(self, fake_ovi):
+        hooks, cond, uncond = self._two_pass(fake_ovi, cfg_pass=1)
+        assert np.allclose(hooks.capture.at(0, 0).row_entropy, self._entropy(uncond))
+        assert hooks.report()["cfg_pass"] == "unconditional"

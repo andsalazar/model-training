@@ -5,6 +5,11 @@
 # levels at the same index, then "the effect grows with step" could be an artefact of
 # comparing different points on the trajectory rather than a measurement of drift. This
 # prints the real schedule so the confound is visible instead of assumed away.
+#
+# The solver must be the one generate() uses: 'unipc'. An earlier version of this script
+# used 'euler', which produced the wrong table (t=233 vs t=756 at index 18) that was then
+# quoted in docs. Under unipc the 20-step even indices and the 30-step every-third indices
+# coincide exactly: 999, 978, 952, 920, 882, 833, 768, 681, 555, 356.
 set -uo pipefail
 
 source /local/ovi-env/bin/activate
@@ -20,7 +25,7 @@ for steps in (20, 30):
     engine = OviFusionEngine.__new__(OviFusionEngine)
     try:
         _sched, timesteps = engine.get_scheduler_time_steps(
-            sampling_steps=steps, solver_name="euler", device="cpu", shift=5.0
+            sampling_steps=steps, solver_name="unipc", device="cpu", shift=5.0
         )
         values = [float(t) for t in timesteps]
         print(f"{steps} steps -> {len(values)} timesteps")
@@ -35,10 +40,10 @@ for steps in (20, 30):
 try:
     engine = OviFusionEngine.__new__(OviFusionEngine)
     _s20, t20 = engine.get_scheduler_time_steps(
-        sampling_steps=20, solver_name="euler", device="cpu", shift=5.0
+        sampling_steps=20, solver_name="unipc", device="cpu", shift=5.0
     )
     _s30, t30 = engine.get_scheduler_time_steps(
-        sampling_steps=30, solver_name="euler", device="cpu", shift=5.0
+        sampling_steps=30, solver_name="unipc", device="cpu", shift=5.0
     )
     v20 = [float(t) for t in t20]
     v30 = [float(t) for t in t30]

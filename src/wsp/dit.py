@@ -59,6 +59,38 @@ _DEFAULT_LAYERS = (0, 1, 2, 3, 6, 9, 12)
 #: would be the same mistake as averaging across a batch.
 STREAMS = ("video", "audio")
 
+#: The sampler settings Ovi's own ``inference.py`` reads from its config, with the
+#: defaults it falls back to. ``OviFusionEngine.generate`` has *different* defaults
+#: (video/audio guidance 5.0/4.0, ``slg_layer=9``, empty negative prompts), so a driver
+#: that calls ``generate`` without passing these samples a different trajectory from the
+#: one every speed and quality sweep measured. The Stage 6 capture drivers did exactly
+#: that until this was added.
+OVI_SAMPLER_DEFAULTS = {
+    "solver_name": "unipc",
+    "shift": 5.0,
+    "video_guidance_scale": 4.0,
+    "audio_guidance_scale": 3.0,
+    "slg_layer": 11,
+    "video_negative_prompt": "",
+    "audio_negative_prompt": "",
+}
+
+
+def ovi_sampler_kwargs(config: object, negative_prompt: str | None = None) -> dict:
+    """``generate`` keyword arguments matching Ovi's ``inference.py`` for ``config``.
+
+    ``config`` is anything with ``.get`` (an OmegaConf ``DictConfig`` or a dict).
+    ``negative_prompt``, when given, overrides both streams' negative prompts.
+    """
+    kwargs = {
+        key: config.get(key, default)  # type: ignore[attr-defined]
+        for key, default in OVI_SAMPLER_DEFAULTS.items()
+    }
+    if negative_prompt is not None:
+        kwargs["video_negative_prompt"] = negative_prompt
+        kwargs["audio_negative_prompt"] = negative_prompt
+    return kwargs
+
 
 @dataclass(frozen=True)
 class CaptureSchedule:

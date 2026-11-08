@@ -5,9 +5,20 @@ Why the intercept is ``flash_attention`` and not a module hook
 Ovi's ``WanSelfAttention.forward`` calls the module-level ``flash_attention`` function,
 imported into ``ovi.modules.model``'s namespace. No module's ``forward`` returns
 attention weights, so ``register_forward_hook`` cannot see them. The interceptable object
-is the function itself: replacing ``ovi.modules.model.flash_attention`` catches every
-self- and cross-attention call in both the fused and unfused paths, because both reach
-attention through ``self_attn(...)``.
+is the function itself.
+
+What the intercept sees, and how a call is labelled
+---------------------------------------------------
+In the fused path, each fusion block calls ``audio_block.self_attn`` and then
+``vid_block.self_attn``; both reach ``ovi.modules.model.flash_attention``. Cross-
+attention goes through ``ovi/modules/fusion.py``, which imports ``flash_attention`` from
+``ovi.modules.attention`` and is therefore *not* intercepted. An earlier version labelled
+calls by counting them per forward, which interleaved the two streams: "layer 0, 2, 4,
+8" were audio blocks 0, 1, 2, 4 and "layer 11" was video block 5, all filed as video.
+
+Calls are now labelled by forward pre/post hooks on every ``blocks[i].self_attn`` of
+both stacks, which set the ``(stream, block)`` in flight. A call made outside any
+``self_attn`` is counted as ``unlabelled`` and not recorded.
 
 Why the full matrix is never materialised
 -----------------------------------------
@@ -37,7 +48,7 @@ from wsp.attention import (
     summarize_attention_torch,
 )
 from wsp.dit import CaptureSchedule
-from wsp.hooks import StepTracker
+from wsp.hooks import StepTracker, _pass_name
 
 
 def _split_heads(tensor: Any) -> Any:
@@ -77,10 +88,11 @@ def _split_heads(tensor: Any) -> Any:
 class AttentionHooks:
     """Intercept ``flash_attention`` and record attention summaries.
 
-    ``schedule`` decides which (layer, timestep) pairs to keep. ``tracker`` numbers the
-    distinct timesteps so the CFG double-pass at one ``t`` counts as one step — the same
-    convention :class:`wsp.hooks.DitHooks` uses for residual capture, so the two captures
-    line up step for step.
+    ``schedule`` decides which (block, timestep, stream) triples to keep. ``tracker``
+    numbers the distinct timesteps so the CFG double-pass at one ``t`` counts as one step
+    — the same convention :class:`wsp.hooks.DitHooks` uses for residual capture, so the
+    two captures line up step for step. ``cfg_pass`` selects which of those two passes
+    is recorded (0 = conditional, the default; 1 = unconditional; ``None`` = last wins).
     """
 
     model: Any
@@ -89,13 +101,22 @@ class AttentionHooks:
     tracker: StepTracker = field(default_factory=StepTracker)
     #: Query rows per chunk. Lower it if the card runs out of memory.
     chunk: int = 512
+    #: Which CFG pass to record at each timestep; see the class docstring.
+    cfg_pass: int | None = 0
     #: Set when the intercept could not be installed; ``report`` surfaces it rather than
     #: letting an empty capture look like "attention showed no structure".
     error: str | None = None
 
     _original: Any = None
     _module: Any = None
-    _layer: int = -1
+    #: ``(stream, block)`` of the ``self_attn`` currently running, or ``None``.
+    _context: tuple[str, int] | None = None
+    _handles: list[Any] = field(default_factory=list)
+    _current_pass: int = 0
+    #: Calls outside any hooked ``self_attn``, so they had no block to file under.
+    _unlabelled: int = 0
+    #: Calls declined because they belonged to a different CFG pass.
+    _other_pass: int = 0
     _fired: int = 0
     _failed: int = 0
     _failures: list[str] = field(default_factory=list)
@@ -131,12 +152,58 @@ class AttentionHooks:
             self.error = f"could not locate flash_attention: {exc}"
             return self
 
+        try:
+            self._label_blocks()
+        except Exception as exc:  # noqa: BLE001 - surfaced in report()
+            self.error = f"could not hook self_attn modules: {exc}"
+            self._remove_handles()
+            return self
+
         self._module = module
         self._original = module.flash_attention
         module.flash_attention = self._intercept
         self._wrap_forward()
         self._attached = True
         return self
+
+    def _label_blocks(self) -> None:
+        """Hook every ``blocks[i].self_attn`` so a call knows its stream and block."""
+        found = False
+        for stream in ("video", "audio"):
+            stack = getattr(self.model, f"{stream}_model", None)
+            if stack is None:
+                continue
+            blocks = getattr(stack, "blocks", None)
+            if blocks is None:
+                raise AttributeError(f"{stream}_model has no .blocks")
+            for index, block in enumerate(blocks):
+                attn = getattr(block, "self_attn", None)
+                if attn is None:
+                    raise AttributeError(f"{stream} block {index} has no .self_attn")
+                self._handles.append(
+                    attn.register_forward_pre_hook(self._make_enter(stream, index))
+                )
+                self._handles.append(attn.register_forward_hook(self._exit))
+                found = True
+        if not found:
+            raise AttributeError(
+                "model has neither video_model nor audio_model; calls could not be "
+                "attributed to a stream and block"
+            )
+
+    def _make_enter(self, stream: str, index: int):
+        def enter(module: Any, args: Any) -> None:
+            self._context = (stream, index)
+
+        return enter
+
+    def _exit(self, module: Any, args: Any, output: Any) -> None:
+        self._context = None
+
+    def _remove_handles(self) -> None:
+        for handle in self._handles:
+            handle.remove()
+        self._handles.clear()
 
     def _wrap_forward(self) -> None:
         """Number the denoising step before the blocks run.
@@ -158,10 +225,8 @@ class AttentionHooks:
             t = kwargs.get("t", args[2] if len(args) > 2 else None)
             if t is not None:
                 self._current_step = tracker.observe(t)
-            # Reset the layer counter per forward. Without this it increases across the
-            # whole run, so a 12-block model would report layer 12 on the second step and
-            # every layer beyond the first would be mislabelled.
-            self._layer = -1
+                self._current_pass = tracker.last_pass
+            self._context = None
             return original(*args, **kwargs)
 
         model.forward = wrapped  # type: ignore[method-assign]
@@ -192,8 +257,6 @@ class AttentionHooks:
     def _record(self, q: Any, k: Any) -> None:
         """Summarise one attention call and offer it to the schedule."""
         self._fired += 1
-        self._layer += 1
-        layer = self._layer
 
         # The timestep is not passed to flash_attention; the wrapped model.forward set
         # _current_step before the blocks ran. A call outside a model forward has no
@@ -203,7 +266,17 @@ class AttentionHooks:
             self._unattributed += 1
             return
 
-        keep = self.schedule.wants(layer, step)
+        context = self._context
+        if context is None:
+            self._unlabelled += 1
+            return
+        stream, layer = context
+
+        if self.cfg_pass is not None and self._current_pass != self.cfg_pass:
+            self._other_pass += 1
+            return
+
+        keep = self.schedule.wants(layer, step, stream)
         if not keep:
             self.capture.skipped += 1
             return
@@ -218,7 +291,7 @@ class AttentionHooks:
                 k_split,
                 layer=layer,
                 timestep=step,
-                stream="video",
+                stream=stream,
                 chunk=self.chunk,
             )
         else:
@@ -227,10 +300,10 @@ class AttentionHooks:
                 k_split,
                 layer=layer,
                 timestep=step,
-                stream="video",
+                stream=stream,
                 chunk=self.chunk,
             )
-        self.capture.record_summary(layer, step, summary, stream="video", keep=True)
+        self.capture.record_summary(layer, step, summary, stream=stream, keep=True)
 
     def detach(self) -> None:
         """Restore the original ``flash_attention`` and the model's forward."""
@@ -238,6 +311,8 @@ class AttentionHooks:
             self._module.flash_attention = self._original
         if self._original_forward is not None:
             self.model.forward = self._original_forward  # type: ignore[method-assign]
+        self._remove_handles()
+        self._context = None
         self._original = None
         self._module = None
         self._original_forward = None
@@ -270,18 +345,27 @@ class AttentionHooks:
                 f"{self._unattributed} attention calls happened outside a model "
                 "forward and could not be attributed to a denoising step"
             )
+        if self._unlabelled:
+            notes.append(
+                f"{self._unlabelled} attention calls happened outside any hooked "
+                "self_attn (e.g. unfused cross-attention) and were not recorded"
+            )
         return {
             "fired": self._fired,
             "failed": self._failed,
             "unattributed": self._unattributed,
+            "unlabelled": self._unlabelled,
+            "label_site": "blocks[i].self_attn (forward pre/post hooks), both stacks",
+            "cfg_pass": _pass_name(self.cfg_pass),
+            "other_pass_declined": self._other_pass,
             "skipped": self.capture.skipped,
             "recorded": len(self.capture.maps),
             "steps_seen": self.tracker.steps_seen,
             # Step index to real timestep value. A 20-step run and a 30-step run visit
-            # different noise levels at the same step index -- at index 18 they are at
-            # t=233 and t=756 -- so aligning two runs by index compares different points
-            # on the trajectory. This mapping is what makes a timestep-aligned contrast
-            # possible.
+            # different noise levels at the same step index -- under Ovi's UniPC
+            # schedule, index 18 is t=356 vs t=768 -- so aligning two runs by index
+            # compares different points on the trajectory. This mapping is what makes a
+            # timestep-aligned contrast possible.
             "timesteps": self.tracker.mapping(),
             "capture": self.capture.summary(),
             "notes": notes,

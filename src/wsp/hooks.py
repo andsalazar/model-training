@@ -73,7 +73,11 @@ class StepTracker:
 
     _index: dict[float, int] = field(default_factory=dict)
     _order: list[float] = field(default_factory=list)
+    _passes: dict[float, int] = field(default_factory=dict)
     calls: int = 0
+    #: Which pass at its timestep the most recent ``observe`` was: 0 for the first
+    #: (Ovi's conditional pass), 1 for the second (unconditional, with SLG), and so on.
+    last_pass: int = 0
 
     def observe(self, t: object) -> int:
         """Record a timestep for the current pass and return its step index."""
@@ -82,6 +86,8 @@ class StepTracker:
         if key not in self._index:
             self._index[key] = len(self._order)
             self._order.append(key)
+        self.last_pass = self._passes.get(key, 0)
+        self._passes[key] = self.last_pass + 1
         return self._index[key]
 
     @property
@@ -98,6 +104,13 @@ class StepTracker:
     def mapping(self) -> dict[int, float]:
         """Step index to timestep value, for aligning runs of different lengths."""
         return {i: value for i, value in enumerate(self._order)}
+
+
+def _pass_name(cfg_pass: int | None) -> str:
+    """Human label for a CFG pass index, as Ovi orders them."""
+    if cfg_pass is None:
+        return "all (last pass at each timestep wins)"
+    return {0: "conditional", 1: "unconditional"}.get(cfg_pass, f"pass {cfg_pass}")
 
 
 def _first_tensor(value: object) -> object:
@@ -155,10 +168,20 @@ class DitHooks:
         capture: ResidualCapture,
         *,
         batch_index: int = 0,
+        cfg_pass: int | None = 0,
     ):
         self.model = model
         self.capture = capture
         self.batch_index = batch_index
+        #: Which classifier-free-guidance pass to record at each timestep. Ovi runs the
+        #: conditional pass first and the unconditional (SLG) pass second at the same
+        #: ``t``; both land on the same capture key, so recording both meant the second
+        #: silently overwrote the first. 0 keeps the conditional pass, 1 the
+        #: unconditional one, ``None`` restores the old last-pass-wins behaviour.
+        self.cfg_pass = cfg_pass
+        #: Firings declined because they belonged to a different CFG pass.
+        self.other_pass: int = 0
+        self._current_pass: int = 0
         self.tracker = StepTracker()
         self._handles: list[object] = []
         self._original_forward: object | None = None
@@ -232,6 +255,9 @@ class DitHooks:
         if step is None:
             self.no_step += 1
             return
+        if self.cfg_pass is not None and self._current_pass != self.cfg_pass:
+            self.other_pass += 1
+            return
         raw = _first_tensor(args[0] if args else None)
         array = np.asarray(raw.detach().float().cpu().numpy())
         # A multi-batch tensor is sliced to one generation rather than averaged:
@@ -263,6 +289,7 @@ class DitHooks:
                     "locates it positionally (args[2]) or as the 't' keyword"
                 )
             self._current_step = self.tracker.observe(t)
+            self._current_pass = self.tracker.last_pass
             return original(*args, **kwargs)
 
         model.forward = wrapped  # type: ignore[method-assign]
@@ -321,6 +348,8 @@ class DitHooks:
             "fired": dict(self.fired),
             "fired_total": total_fired,
             "no_step": self.no_step,
+            "cfg_pass": _pass_name(self.cfg_pass),
+            "other_pass_declined": self.other_pass,
             "decoded_declined": self.capture.skipped,
             "steps_seen": self.tracker.steps_seen,
             "model_calls": self.tracker.calls,
