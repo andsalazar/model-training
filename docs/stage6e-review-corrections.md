@@ -142,8 +142,14 @@ identical" meant no head crossed 0.05, not that the states were identical. Corre
 
 ## What this means for the hypothesis
 
-Nothing measured so far is evidence for or against the targeted-edit hypothesis. The
-speed result (30 steps, 1.42–1.53× faster with quality held) stands: it came from the
-sweeps, which used the correct settings. The residual and attention contrasts must be
-re-read from the v2 captures, which fix 1–5 and 8 together. See 6d for the v2 attention
-result and 6c for the v2 residual result.
+The speed result (30 steps, 1.42?1.53? faster with quality held) stands: it came from the
+sweeps, which used the correct settings. The re-measured contrasts:
+
+- **Residual (6c v2):** the conclusion survives ? best column alignment 0.112 video /
+  0.077 audio against 0.018 chance, plateaus everywhere. But the captured 20-step rollout
+  does **not** drift, so this is a step-count direction, not a drift direction.
+- **Attention (6d v2 + null):** video's 20-vs-30 contrast is indistinguishable from a
+  30-vs-40 null; audio shows a modest excess in blocks 0, 3 and 12 on one seed.
+
+The v1 attention claims ("layer 11 head 17", "layers 0 and 8 exactly zero") are
+retracted.

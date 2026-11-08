@@ -3,6 +3,11 @@
 *What the drifting-versus-stable contrast actually looks like in Ovi's residual stream,
 and what it says about whether this instrument can support the hypothesis.*
 
+> **Read the v2 section below first.** The numbers in the first half of this document
+> are from the v1 capture, which recorded the unconditional CFG pass under the wrong
+> sampler settings ([stage6e](stage6e-review-corrections.md)). The v2 re-measurement
+> reaches the same conclusion, and adds that this prompt/seed does not drift at 20 steps.
+
 ## The pair
 
 Two rollouts of one prompt and one seed, differing only in step count:
@@ -180,6 +185,70 @@ same shape — above chance, far from decisive, selection driven by the backfill
 branch with 178× fewer tokens. That consistency is itself informative: the weak alignment
 is a property of the method, not of the video stream.
 
+## v2: re-measured after the review
+
+The review ([stage6e-review-corrections.md](stage6e-review-corrections.md)) found that
+the capture above recorded the **unconditional** CFG pass, sampled with `generate()`'s
+defaults instead of the config's (guidance 5.0/4.0 vs 4.0/3.0, `slg_layer` 9 vs 11, empty
+vs real negative prompts), and aligned on only 4 timesteps. The pair was re-captured with
+all three fixed: conditional pass, config sampler, and per-rollout capture steps so both
+runs sit on the same ten UniPC timesteps (999 … 356). 50 of 50 pairs compared per stream,
+none skipped.
+
+### The premise does not hold for this pair
+
+The decoded videos were checked with the same trend-vs-oscillation colour probe the
+sweeps used:
+
+| rollout | colour_stability | mean R² | verdict |
+|---|---|---|---|
+| 20 steps | 0.43 | 0.103 | oscillation, no trend |
+| 30 steps | 0.63 | 0.090 | oscillation, no trend |
+
+**Neither drifts**, and the 20-step rollout is the steadier of the two. The sweeps' "20
+drifts in 2 of 3 seeds" was a statement about other prompt/seed combinations; this one is
+not among the drifting cases. So the v2 contrast — and, as far as anyone can now tell, the
+v1 contrast, whose rollouts were never colour-checked — is a **20-vs-30 step** direction,
+not a **drifting-vs-stable** one.
+
+### Relative delta, `|Δ| / |state|`, at each matched timestep
+
+Video:
+
+| layer | 978 | 952 | 920 | 882 | 833 | 768 | 681 | 555 | 356 |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 2.1% | 3.0% | 4.4% | 5.6% | 6.6% | 7.4% | 7.9% | 8.3% | 8.5% |
+| 2 | 3.0% | 2.4% | 2.5% | 2.7% | 2.9% | 3.2% | 3.5% | 4.0% | 4.8% |
+| 4 | 6.9% | 4.6% | 4.9% | 5.0% | 5.1% | 4.7% | 4.7% | 4.8% | 5.4% |
+| 8 | 4.3% | 4.1% | 4.9% | 5.6% | 6.2% | 6.2% | 6.1% | 5.9% | 5.8% |
+| 11 | 4.4% | 4.1% | 4.8% | 5.5% | 6.0% | 6.1% | 6.1% | 6.2% | 6.0% |
+
+Audio:
+
+| layer | 978 | 952 | 920 | 882 | 833 | 768 | 681 | 555 | 356 |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 1.5% | 1.7% | 2.3% | 2.3% | 2.4% | 3.1% | 3.8% | 4.8% | 5.6% |
+| 2 | 0.4% | 0.5% | 0.5% | 0.6% | 0.7% | 1.0% | 1.3% | 1.7% | 2.0% |
+| 4 | 1.0% | 0.7% | 0.7% | 0.8% | 0.9% | 1.3% | 1.6% | 2.1% | 2.6% |
+| 8 | 2.9% | 2.6% | 2.4% | 1.9% | 1.8% | 2.6% | 3.2% | 3.9% | 4.5% |
+| 11 | 4.7% | 4.2% | 4.6% | 3.3% | 2.7% | 3.7% | 4.6% | 5.3% | 5.5% |
+
+t=999 is 0.0% at every layer in both streams (identical first-step input). The
+divergence grows toward low noise, and the low-noise end — which v1 never reached — is
+where it is largest.
+
+### Projection
+
+| | v1 best | v2 best | v2 mean of per-site best | chance |
+|---|---|---|---|---|
+| video | 0.129 | **0.112** (block 4 `ffn.2`) | 0.079 | 0.018 |
+| audio | 0.079 | **0.077** (block 8 `ffn.2`) | 0.067 | 0.018 |
+
+Every site again selected 4–6 columns, which is the `min_columns` backfill: the score
+distributions are plateaus. **The v1 conclusion survives the fixes** — the residual
+difference is real and measurable, but it is not concentrated in any column of the two
+matrices that write to the residual stream.
+
 ## What an edit from this would look like — and why it is not obviously worth running
 
 `damping_vector` would scale 4–6 columns per site by `1 - strength`. With a cosine of
@@ -202,6 +271,8 @@ uninterpretable answer rather than a cheap one.
 | Video projection | `/local/captures/projection.json` |
 | Audio direction (with vectors) | `/local/captures/direction_audio_full.json` |
 | Audio projection | `/local/captures/projection_audio.json` |
+| v2 capture, directions, projections | `/local/captures/pair_20v30_v2.npz`; `direction_{video,audio}_v2.json`, `projection_{video,audio}_v2.json` (copies in local `artifacts/stage6_pod2/`, gitignored) |
+| v2 colour check | `scripts/pod_pair_colour.py` → `pair_v2_colour.json` |
 | Derivation | `scripts/pod_derive_direction.py` |
 | Projection | `scripts/pod_project_direction.py` |
 | Summaries | `scripts/pod_direction_summary.sh`, `scripts/pod_score_distribution.sh`, `scripts/pod_audio_projection_summary.sh` |

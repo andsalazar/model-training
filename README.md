@@ -230,6 +230,17 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
   against a 0.018 chance level: above chance, but far too weak to justify an edit whose
   effect would be 0.1–0.3% of the state norm.
 
+- [docs/stage6d-attention-contrast.md](docs/stage6d-attention-contrast.md) ? **the
+  attention-map contrast.** Both streams, 10 blocks each, ten exactly matched timesteps,
+  plus a 30-vs-40-step null baseline. Video attention differs between 20 and 30 steps
+  **no more than between 30 and 40** (median ratio 1.02); audio shows a modest excess
+  (1.31) confined to blocks 0, 3 and 12, on one seed.
+- [docs/stage6e-review-corrections.md](docs/stage6e-review-corrections.md) ? **nine
+  defects found in review**, six of which changed what 6c/6d measured: mislabelled
+  attention streams, the unconditional CFG pass overwriting the conditional one, capture
+  drivers using `generate()` defaults instead of the config, a degenerate effect size,
+  silent pairing drops, and Euler-solver timestep tables. All fixed and re-run.
+
 TBC published **two documents describing the same adapter at different stages**: a
 research post on **Oasis** (600M Minecraft DiT, goal: rollout stability) and the shipped
 **Mischief 1** product on **Wan 2.2** (goal: ~5× faster, 80% cheaper). The parameter
@@ -247,23 +258,23 @@ directly onto TBC's unanswered placement question.
 
 ### Where that leaves the hypothesis
 
-The instrument now works end to end: a direction is captured from real Ovi rollouts,
-aligned by noise level, and projected onto real bfloat16 weights without loading the
-model. What it measured is a **weak** alignment. That is a real finding and it narrows the
-question rather than closing it:
+The instrument works end to end and, after the Stage 6e fixes, measures what it says: the
+conditional pass, under Ovi's real sampler settings, at exactly matched noise levels, in
+both streams. What it found:
 
-| Reading | Status |
+| Question | Answer |
 |---|---|
-| The drift-to-stable difference exists and is measurable | **yes**, 2.5–4.7% relative |
-| It concentrates in a few weight columns | **no** — the score distributions are plateaus (top 0.0621 vs second 0.0609) |
-| An edit aimed there could plausibly change the outcome | **not at these cosines** — a 0.02 damping would move the state 0.12–0.26%, against a 2.5–4.7% effect to chase |
-| Somewhere in Ovi is a stability-relevant direction | **weak evidence** — `ffn.2` aligns above `self_attn.o` at every layer, and block 4 is strongest in both |
+| Can Ovi be made faster without losing quality? | **yes, by configuration** ? 30 steps is 1.42? (5s) / 1.53? (10s) with quality held |
+| Does 20 vs 30 steps leave a measurable trace inside the model? | **yes** ? 2?8.5% relative residual difference, growing toward low noise |
+| Is that trace concentrated in a few weight columns (a WSP edit target)? | **no** ? best alignment 0.112 video / 0.077 audio vs 0.018 chance; flat plateaus |
+| Is it concentrated in a few attention heads? | **video: no** ? indistinguishable from a 30-vs-40 null. **audio: weakly** ? blocks 0, 3, 12 exceed the null 1.6?3?, one seed |
+| Did the captured 20-step rollout actually drift? | **no** ? the colour probe finds oscillation, not drift, at both 20 and 30 steps |
 
-The most likely explanation is that a residual-stream direction is a *sum* of every
-component's contribution, and the components that distinguish drifting from stable may be
-in the attention pattern itself — which no column of `o` or `ffn.2` represents. Testing
-that would need a different measurement (attention-map contrast rather than residual
-contrast), not a stronger edit.
+So the targeted-edit hypothesis is **not supported on Ovi's video stream** and **open but
+weak on audio**. The speed goal was met without it. The remaining test that could change
+that verdict is narrow: replicate the audio blocks 0/3/12 excess over 3 seeds on prompts
+that do drift at 20 steps, then train a small residual adapter at only those blocks to
+make 20 steps match 30 and measure whether it beats simply running 30 steps.
 
 ## License
 

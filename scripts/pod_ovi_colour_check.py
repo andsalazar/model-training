@@ -63,7 +63,12 @@ def _fit(y: np.ndarray) -> tuple[float, float]:
 
 
 def probe(path: Path, max_frames: int = 121) -> dict:
-    frames = load(path, max_frames)
+    return probe_frames(load(path, max_frames), path.name)
+
+
+def probe_frames(frames: np.ndarray, name: str) -> dict:
+    """The colour verdict for an ``[F, H, W, C]`` frame array."""
+    frames = np.asarray(frames, dtype=np.float64)
     # Per-frame mean colour, one value per channel.
     per_frame = frames.mean(axis=(1, 2))
 
@@ -91,7 +96,7 @@ def probe(path: Path, max_frames: int = 121) -> dict:
     monotone = mean_r2 > 0.5
 
     return {
-        "file": path.name,
+        "file": name,
         "frames": int(len(frames)),
         "colour_stability": round(spread, 3),
         "mean_r2": round(mean_r2, 3),

@@ -87,8 +87,8 @@ choice and would have silently discarded the strongest possible signal.
 
 ## What would count as a finding
 
-Three outcomes were possible and they mean different things. The v2 result, below,
-puts video on the middle row and audio closer to the first:
+Three outcomes were possible and they mean different things. After the null baseline,
+video lands on the third row and audio on a weak version of the first:
 
 | Outcome | Reading |
 |---|---|
@@ -205,25 +205,48 @@ at the same timestep, so their first-step states are identical.
 | video | 13?24 of 24 (blocks ?3) | 1.03?1.31 | **+ in 82 of 88** rows |
 | audio | 0?23 of 24, rising as t falls | 1.21?1.75 | mixed |
 
-The two streams give **different outcomes from the table in "What would count as a
-finding"**:
+Read alone, video looks like a whole-pattern shift (nearly every head moves, no head
+stands clear, the 20-step rollout's attention is more diffuse) and audio looks closer to
+the lead (larger, later, more head-concentrated effects; audio block 3 head 7, block 12
+head 21 and block 18 head 2 each top in 5 of 9 timesteps). The null baseline below shows
+how much of that survives.
 
-- **Video is the "many heads, one direction" outcome.** Nearly every head in every block
-  moves, no head stands clear of the next, and the drifting rollout's attention is *more
-  diffuse* (higher entropy) almost everywhere. That is a whole-pattern shift ? consistent
-  with a less-converged state ? not a small set of heads to target.
-- **Audio is closer to the lead.** Effects are larger (four blocks above 1.0), arrive
-  later in the trajectory (t ? 833), the top head stands further clear, and some heads
-  recur as the top head: audio block 3 head 7, block 12 head 21 and block 18 head 2 are
-  each top in 5 of 9 timesteps.
+### Null baseline: 30 vs 40 steps
+
+Both 30 and 40 steps were colour-stable in the sweeps, so a contrast between them
+measures what any change of step count does to attention, with no drift involved. Ovi's
+UniPC grid is a shifted linspace, so 40 steps at indices 0, 4, ?, 36 sits on the same ten
+timesteps. Same prompt, seed, settings and blocks; 200 of 200 pairs at gap 0.
+
+Per (stream, block, timestep) cell, t=999 excluded (90 cells per stream):
+
+| | 20 vs 30 median max effect | 30 vs 40 (null) | median ratio | 20v30 larger in |
+|---|---|---|---|---|
+| video | 0.358 | 0.331 | **1.02** | 46 / 90 |
+| audio | 0.415 | 0.285 | **1.31** | 58 / 90 |
+
+**Video: no signal above the null.** The 20-vs-30 contrast is indistinguishable from
+30-vs-40, and at low noise the null is *larger* (t=555: 0.37 vs 0.66). The null's top
+heads are also mostly more diffuse at the lower step count (69 of 90), so "fewer steps,
+more diffuse video attention" is what changing the step count does, not a signature of
+drift.
+
+**Audio: a modest excess, carried by three blocks.** Mean over timesteps:
+
+| audio block | 0 | 3 | 6 | 9 | 12 | 15 | 18 | 21 | 24 | 27 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 20 vs 30 | .24 | **.57** | .26 | .36 | **.56** | .65 | .41 | .56 | .44 | .60 |
+| 30 vs 40 | .10 | **.19** | .20 | .35 | **.34** | .67 | .48 | .56 | .44 | .50 |
+
+Blocks 0, 3 and 12 separate 20 from 30 by 1.6?3? more than the null does; the other seven
+blocks match it. That is the only part of the attention contrast that is not explained by
+step count, and it rests on one seed.
 
 ### What this does not establish
 
-- **That the difference is about drift.** There is no null baseline yet. Any two step
-  counts produce diverging trajectories; the contrast that would isolate drift is the
-  same measurement between two *stable* settings (30 vs 40 steps), or seed-to-seed
-  variation at 30 steps. Effects comparable to these would mean "trajectories differ",
-  not "drift lives here".
+- **That the audio excess is about drift.** The null removes step-count effects, but the
+  speed sweeps found audio unchanged between 20 and 30 steps, so there is no measured
+  audio defect for blocks 0/3/12 to explain.
 - **That this prompt and seed drift at 20 steps under the config's settings.** The colour
   verdict (2 of 3 seeds drift) came from the sweeps; this rollout's colour was not checked.
 - **Causality.** A head that separates may respond to drift rather than cause it. Only an
