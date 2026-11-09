@@ -113,7 +113,7 @@ it is **not** intercepted.
 
 `wsp.attention_hooks.AttentionHooks` installs that intercept and computes the summary from
 `q` and `k` directly, in query chunks. The intercept calls the original function and returns
-its result untouched ? a hook that altered the output would make every measurement a
+its result untouched — a hook that altered the output would make every measurement a
 measurement of the hook.
 
 Three structural facts the hook has to respect, all verified against the source:
@@ -126,20 +126,20 @@ Three structural facts the hook has to respect, all verified against the source:
   Calls are now labelled by forward pre/post hooks on every `blocks[i].self_attn` of both
   stacks; a call outside any `self_attn` is counted as `unlabelled`.
 - **CFG runs the model twice at each timestep**, conditional then unconditional (with
-  block `slg_layer` skipped). Both share a capture key, so the hook records one pass ?
-  the conditional one by default ? and counts the other as `other_pass_declined`.
+  block `slg_layer` skipped). Both share a capture key, so the hook records one pass —
+  the conditional one by default — and counts the other as `other_pass_declined`.
 
-## v1 result ? retracted
+## v1 result — retracted
 
 The first two runs (index-aligned, then nearest-timestep with a 50-unit tolerance)
 reported a peak of 0.680 and then 0.1286 at "layer 11 head 17". **Both are retracted.** A
 review ([stage6e-review-corrections.md](stage6e-review-corrections.md)) found that:
 
 - "layers 0, 2, 4, 8" were **audio** blocks 0, 1, 2, 4 and "layer 11" was **video** block
-  5 ? the label was a per-forward call counter over interleaved streams;
+  5 — the label was a per-forward call counter over interleaved streams;
 - every summary was of the **unconditional** CFG pass, which overwrote the conditional;
 - the rollout used `generate()`'s sampler defaults, not the config's;
-- `effect_size` was always the relative fallback `|?|/mean`, never a pooled-SD effect;
+- `effect_size` was always the relative fallback `|Δ|/mean`, never a pooled-SD effect;
 - only 4 of 10 requested timesteps were compared, the rest dropped silently;
 - the quoted schedule (t=233 vs 756) was Euler's; Ovi's UniPC gives 356 vs 768;
 - "exactly zero" meant "no head crossed the 0.05 reporting threshold".
@@ -150,8 +150,8 @@ The index-alignment confound itself was real and its removal stands.
 
 Same prompt and seed, 20 vs 30 steps, the config's sampler settings (guidance 4.0/3.0,
 `slg_layer` 11, the config's negative prompts), conditional pass, **both streams**, blocks
-0, 3, ?, 27 of each. Capture steps were chosen so both runs sit on the same ten UniPC
-timesteps ? the 20-step run's even indices and the 30-step run's every-third indices
+0, 3, …, 27 of each. Capture steps were chosen so both runs sit on the same ten UniPC
+timesteps — the 20-step run's even indices and the 30-step run's every-third indices
 coincide exactly:
 
 ```
@@ -160,7 +160,7 @@ coincide exactly:
 
 **200 of 200 pairs compared, every one at gap 0, none skipped.** 2,360 / 3,540 calls fired,
 none unlabelled or failed; 1,160 / 1,740 unconditional-pass calls declined; 200 summaries
-per rollout. Effects are pooled-SD (`|? entropy| / pooled per-query std`) unless a row had
+per rollout. Effects are pooled-SD (`|Δ entropy| / pooled per-query std`) unless a row had
 no head above 0.05.
 
 ### Max effect per block and timestep
@@ -200,10 +200,10 @@ at the same timestep, so their first-step states are identical.
 
 ### Concentration: few heads or the whole pattern?
 
-| | heads moving (?0.05) per block | top-1 / top-2 effect (median) | sign of ? entropy (top head) |
+| | heads moving (≥0.05) per block | top-1 / top-2 effect (median) | sign of Δ entropy (top head) |
 |---|---|---|---|
-| video | 13?24 of 24 (blocks ?3) | 1.03?1.31 | **+ in 82 of 88** rows |
-| audio | 0?23 of 24, rising as t falls | 1.21?1.75 | mixed |
+| video | 13–24 of 24 (blocks ≥3) | 1.03–1.31 | **+ in 82 of 88** rows |
+| audio | 0–23 of 24, rising as t falls | 1.21–1.75 | mixed |
 
 Read alone, video looks like a whole-pattern shift (nearly every head moves, no head
 stands clear, the 20-step rollout's attention is more diffuse) and audio looks closer to
@@ -215,7 +215,7 @@ how much of that survives.
 
 Both 30 and 40 steps were colour-stable in the sweeps, so a contrast between them
 measures what any change of step count does to attention, with no drift involved. Ovi's
-UniPC grid is a shifted linspace, so 40 steps at indices 0, 4, ?, 36 sits on the same ten
+UniPC grid is a shifted linspace, so 40 steps at indices 0, 4, …, 36 sits on the same ten
 timesteps. Same prompt, seed, settings and blocks; 200 of 200 pairs at gap 0.
 
 Per (stream, block, timestep) cell, t=999 excluded (90 cells per stream):
@@ -238,7 +238,7 @@ drift.
 | 20 vs 30 | .24 | **.57** | .26 | .36 | **.56** | .65 | .41 | .56 | .44 | .60 |
 | 30 vs 40 | .10 | **.19** | .20 | .35 | **.34** | .67 | .48 | .56 | .44 | .50 |
 
-Blocks 0, 3 and 12 separate 20 from 30 by 1.6?3? more than the null does; the other seven
+Blocks 0, 3 and 12 separate 20 from 30 by 1.6–3× more than the null does; the other seven
 blocks match it. That is the only part of the attention contrast that is not explained by
 step count, and it rests on one seed.
 
@@ -251,8 +251,8 @@ step count, and it rests on one seed.
   verdict (2 of 3 seeds drift) came from the sweeps; this rollout's colour was not checked.
 - **Causality.** A head that separates may respond to drift rather than cause it. Only an
   edit settles that.
-- **Stability across seeds** ? one seed pair. The colour verdict needed three.
-- **Prompt adherence** ? still unmeasured anywhere in the project.
+- **Stability across seeds** — one seed pair. The colour verdict needed three.
+- **Prompt adherence** — still unmeasured anywhere in the project.
 
 ## Tests
 

@@ -230,16 +230,38 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
   against a 0.018 chance level: above chance, but far too weak to justify an edit whose
   effect would be 0.1–0.3% of the state norm.
 
-- [docs/stage6d-attention-contrast.md](docs/stage6d-attention-contrast.md) ? **the
+- [docs/stage6d-attention-contrast.md](docs/stage6d-attention-contrast.md) — **the
   attention-map contrast.** Both streams, 10 blocks each, ten exactly matched timesteps,
   plus a 30-vs-40-step null baseline. Video attention differs between 20 and 30 steps
   **no more than between 30 and 40** (median ratio 1.02); audio shows a modest excess
   (1.31) confined to blocks 0, 3 and 12, on one seed.
-- [docs/stage6e-review-corrections.md](docs/stage6e-review-corrections.md) ? **nine
+- [docs/stage6e-review-corrections.md](docs/stage6e-review-corrections.md) — **nine
   defects found in review**, six of which changed what 6c/6d measured: mislabelled
   attention streams, the unconditional CFG pass overwriting the conditional one, capture
   drivers using `generate()` defaults instead of the config, a degenerate effect size,
   silent pairing drops, and Euler-solver timestep tables. All fixed and re-run.
+
+Stage 7 reverses the order: TBC-style adapter first, WSP second, to diagnose and fix what
+the adapter breaks.
+
+- [docs/stage7-adapter-step0.md](docs/stage7-adapter-step0.md) — adapter training fits on
+  one A100 (14 s/step at 5 s, 40 s at 10 s); the 10 s quality-loss curve: colour drift at
+  12–20 steps, audio 16–24% quieter at 12.
+- [docs/stage7-pilot5s.md](docs/stage7-pilot5s.md) — **the first positive result**: a
+  313k-parameter adapter halves 12-step's quality gap to a 48-step teacher in both
+  streams, 2.17× faster than 30 steps.
+- [docs/stage7-v2-5s.md](docs/stage7-v2-5s.md) — scaled up: on the river prompt 12 steps
+  + adapter is **closer to the teacher than 30 steps**; on an unseen prompt it produces an
+  end-of-clip brightness flash.
+- [docs/stage7-v2-10s.md](docs/stage7-v2-10s.md) — at 10 s: the 5 s adapter does not
+  transfer (blur); trained at 10 s it is 2.24× faster with audio level at 30-step parity
+  and softer video.
+- [docs/stage7-wsp-adapter.md](docs/stage7-wsp-adapter.md) — **WSP as the second step**:
+  the write map and attention read, then an ablation, localise the flash to a
+  cross-modal interaction created in the first two steps; a targeted fix removes it at
+  part of the gain.
+- [docs/stage7-long30.md](docs/stage7-long30.md) — 30 s by running the 10 s model at 3×
+  length: one steady scene with local motion; resolution is inherent to Ovi's VAE.
 
 TBC published **two documents describing the same adapter at different stages**: a
 research post on **Oasis** (600M Minecraft DiT, goal: rollout stability) and the shipped
@@ -264,17 +286,29 @@ both streams. What it found:
 
 | Question | Answer |
 |---|---|
-| Can Ovi be made faster without losing quality? | **yes, by configuration** ? 30 steps is 1.42? (5s) / 1.53? (10s) with quality held |
-| Does 20 vs 30 steps leave a measurable trace inside the model? | **yes** ? 2?8.5% relative residual difference, growing toward low noise |
-| Is that trace concentrated in a few weight columns (a WSP edit target)? | **no** ? best alignment 0.112 video / 0.077 audio vs 0.018 chance; flat plateaus |
-| Is it concentrated in a few attention heads? | **video: no** ? indistinguishable from a 30-vs-40 null. **audio: weakly** ? blocks 0, 3, 12 exceed the null 1.6?3?, one seed |
-| Did the captured 20-step rollout actually drift? | **no** ? the colour probe finds oscillation, not drift, at both 20 and 30 steps |
+| Can Ovi be made faster without losing quality? | **yes, by configuration** — 30 steps is 1.42× (5s) / 1.53× (10s) with quality held |
+| Does 20 vs 30 steps leave a measurable trace inside the model? | **yes** — 2–8.5% relative residual difference, growing toward low noise |
+| Is that trace concentrated in a few weight columns (a WSP edit target)? | **no** — best alignment 0.112 video / 0.077 audio vs 0.018 chance; flat plateaus |
+| Is it concentrated in a few attention heads? | **video: no** — indistinguishable from a 30-vs-40 null. **audio: weakly** — blocks 0, 3, 12 exceed the null 1.6–3×, one seed |
+| Did the captured 20-step rollout actually drift? | **no** — the colour probe finds oscillation, not drift, at both 20 and 30 steps |
 
-So the targeted-edit hypothesis is **not supported on Ovi's video stream** and **open but
-weak on audio**. The speed goal was met without it. The remaining test that could change
-that verdict is narrow: replicate the audio blocks 0/3/12 excess over 3 seeds on prompts
-that do drift at 20 steps, then train a small residual adapter at only those blocks to
-make 20 steps match 30 and measure whether it beats simply running 30 steps.
+So WSP-first targeting was **not supported on Ovi's video stream** and **open but weak on
+audio**: the speed goal was met by configuration without it.
+
+Stage 7 tested the reverse order, adapter first and WSP second:
+
+| Question | Answer |
+|---|---|
+| Does a TBC-style adapter speed Ovi up? | **yes**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30 |
+| At what quality, against a 48-step teacher? | 5 s, familiar prompt: **better than 30 steps** (0.193 vs 0.248); unseen prompt: an end-of-clip flash; 10 s: audio level at 30-step parity, video softer |
+| Can WSP find what the adapter breaks? | **partly**: the reads ruled out the obvious cause and flagged audio block 3 everywhere; an ablation they motivated localised the flash to a cross-modal interaction in the first two steps |
+| Can a targeted fix repair it? | **the artifact, yes**: holding the audio adapter off for two steps removes the flash on every clip, giving back part of the gain (river 0.252, back to 30-step level) |
+
+The hypothesis holds in a narrower form than the brief: the speed-up is real, and
+adapter + WSP can find and repair a specific defect. It does not yet beat 30 steps across
+prompts. Both defects found trace to teacher-forced, one-interval training, which never
+sees how early writes compound through a rollout or across streams. The next lever is
+rollout-aware training with a distribution-matching term, not placement.
 
 ## License
 

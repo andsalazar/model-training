@@ -60,7 +60,7 @@ the audio stream degrades less than the video stream.
 `scripts/pod_effective_resolution.py` measures the share of spectral power finer than a
 480-px frame can hold, and an *effective width*: the frame width whose Nyquist limit
 contains 99% of the spectral power. On synthetic frames upscaled from a known width it
-reads about 1.3? high (120 px reads as 155, 60 as 85), so read it as a ranking, not an
+reads about 1.3× high (120 px reads as 155, 60 as 85), so read it as a ranking, not an
 exact width.
 
 | video | effective width (of 960) | power finer than 480 px |
@@ -73,9 +73,9 @@ exact width.
 | 5 s, 12 steps + adapter (MP4) | 632 | 0.0258 |
 
 - **The softness is mostly Ovi's own output.** The raw VAE decode already holds detail
-  equivalent to roughly a 600-px frame (?450 px after calibration), not 960. That fits
-  the architecture: Ovi's video VAE (from Wan 2.2 TI2V-5B) compresses 16? spatially, so
-  a 960?960 frame is decoded from a 60?60 latent grid.
+  equivalent to roughly a 600-px frame (≈450 px after calibration), not 960. That fits
+  the architecture: Ovi's video VAE (from Wan 2.2 TI2V-5B) compresses 16× spatially, so
+  a 960–960 frame is decoded from a 60–60 latent grid.
 - **The MP4 encode takes a further ~17% of the fine detail** (PSNR raw vs MP4 32.4 dB).
   Ovi's `save_video` writes libx264 at ffmpeg's default quality (CRF 23). Saving at a
   higher quality setting is a free improvement.

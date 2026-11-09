@@ -142,10 +142,10 @@ identical" meant no head crossed 0.05, not that the states were identical. Corre
 
 ## What this means for the hypothesis
 
-The speed result (30 steps, 1.42?1.53? faster with quality held) stands: it came from the
+The speed result (30 steps, 1.42–1.53× faster with quality held) stands: it came from the
 sweeps, which used the correct settings. The re-measured contrasts:
 
-- **Residual (6c v2):** the conclusion survives ? best column alignment 0.112 video /
+- **Residual (6c v2):** the conclusion survives — best column alignment 0.112 video /
   0.077 audio against 0.018 chance, plateaus everywhere. But the captured 20-step rollout
   does **not** drift, so this is a step-count direction, not a drift direction.
 - **Attention (6d v2 + null):** video's 20-vs-30 contrast is indistinguishable from a
