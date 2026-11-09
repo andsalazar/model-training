@@ -62,7 +62,9 @@ class OviAdapters(nn.Module):
 
     ``enabled = False`` makes the wrapped forward call the original block untouched,
     which is how the same loaded model serves as both the adapted student and the
-    base-model baseline in one process.
+    base-model baseline in one process. ``video_enabled`` / ``audio_enabled`` switch one
+    stream off while the other stays on (the Stage 7 flash fix holds the audio adapter
+    off for the first sampling steps).
     """
 
     def __init__(self, video_dim: int, audio_dim: int, blocks: list[int], rank: int):
@@ -72,12 +74,69 @@ class OviAdapters(nn.Module):
         self.video = nn.ModuleDict({str(i): ResidualAdapter(video_dim, rank) for i in blocks})
         self.audio = nn.ModuleDict({str(i): ResidualAdapter(audio_dim, rank) for i in blocks})
         self.enabled = True
+        self.video_enabled = True
+        self.audio_enabled = True
 
     def apply(self, block: int, vid: torch.Tensor, audio: torch.Tensor):  # noqa: A003
         key = str(block)
         if not self.enabled or key not in self.video:
             return vid, audio
-        return self.video[key](vid), self.audio[key](audio)
+        if self.video_enabled:
+            vid = self.video[key](vid)
+        if self.audio_enabled:
+            audio = self.audio[key](audio)
+        return vid, audio
+
+    def reset(self) -> None:
+        """Return every adapter to its identity initialisation."""
+        for module in list(self.video.values()) + list(self.audio.values()):
+            nn.init.zeros_(module.up.weight)
+            nn.init.zeros_(module.up.bias)
+
+    def load_partial(self, state: dict) -> list[str]:
+        """Load a state dict that may cover only some blocks; the rest become identity.
+
+        Returns the blocks left at identity, so a caller can report them. Lets one
+        installed adapter set (e.g. blocks 0-3) evaluate a checkpoint trained on 0-2.
+        """
+        self.reset()
+        result = self.load_state_dict(state, strict=False)
+        if result.unexpected_keys:
+            raise KeyError(f"state has blocks this adapter set lacks: {result.unexpected_keys[:4]}")
+        return sorted({k.split(".")[1] for k in result.missing_keys if k.endswith("up.weight")})
+
+
+class StepGate:
+    """Switch the audio adapters off for chosen sampling steps.
+
+    Wraps ``model.forward`` and numbers steps by distinct timestep value, so the two CFG
+    passes at one timestep count as one step (the same convention as
+    ``wsp.hooks.StepTracker``). Call :meth:`start` before each generation.
+    """
+
+    def __init__(self, model: Any, adapters: OviAdapters) -> None:
+        self.adapters = adapters
+        self.audio_off_steps: set[int] = set()
+        self.step = -1
+        self._last_t: float | None = None
+        original = model.forward
+        gate = self
+
+        def forward(*args: Any, **kwargs: Any):
+            t = kwargs.get("t", args[2] if len(args) > 2 else None)
+            value = float(t.flatten()[0]) if t is not None else None
+            if value != gate._last_t:
+                gate.step += 1
+                gate._last_t = value
+            adapters.audio_enabled = gate.step not in gate.audio_off_steps
+            return original(*args, **kwargs)
+
+        model.forward = forward
+
+    def start(self, audio_off_steps: set[int] | None = None) -> None:
+        self.audio_off_steps = set(audio_off_steps or ())
+        self.step, self._last_t = -1, None
+        self.adapters.audio_enabled = True
 
     def describe(self) -> dict:
         return {

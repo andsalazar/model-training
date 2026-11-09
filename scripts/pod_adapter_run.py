@@ -47,7 +47,14 @@ P = {
     "market": "A crowded outdoor market at noon, vendors arranging fruit. Audio: haggling voices and rustling bags.",
     "rainforest": "Rain falling on leaves in a dense forest, close-up of dripping ferns. Audio: steady rain and distant thunder.",
     "violin": "A street musician playing violin in a sunny park. Audio: violin melody and distant chatter.",
+    # Unseen-prompt evaluation (v3). Never used for training or validation.
+    "kitchen": "A chef chopping vegetables on a wooden board in a bright kitchen. Audio: knife taps and a sizzling pan.",
+    "storm": "Lightning flashes over a dark city skyline during a thunderstorm. Audio: rolling thunder and heavy rain.",
+    "skater": "A skateboarder rolling down an empty street at sunset. Audio: wheels on asphalt and the clack of the board.",
+    "campfire": "A campfire at night with sparks rising, friends sitting around it. Audio: crackling fire and quiet conversation.",
+    "piano": "Close-up of hands playing a grand piano in a concert hall. Audio: a slow classical piano melody.",
 }
+UNSEEN = ["violin", "kitchen", "storm", "skater", "campfire", "piano"]
 
 #: The pilot's six trajectories come first so their teacher files are reused.
 _PILOT = [("river", 1), ("river", 2), ("fan", 1), ("coast", 1), ("fox", 1), ("city", 1)]
@@ -66,6 +73,13 @@ SETS = {
         "eval": [("river", 100), ("river", 200), ("river", 300)],
     },
 }
+#: v3: the same training/validation data, a broader evaluation (3 river seeds + 6 unseen
+#: prompts at 5 s; fewer at 10 s, where each teacher run is ~16 min).
+SETS["v3_5s"] = {**SETS["v2_5s"],
+                 "eval": [("river", 100), ("river", 200), ("river", 300)] + [(n, 100) for n in UNSEEN]}
+SETS["v3_10s"] = {**SETS["v2_10s"],
+                  "eval": [("river", 100), ("river", 200), ("violin", 100), ("piano", 100)]}
+SETS["v3_check"] = {"train": [("river", 1)], "val": [("market", 1)], "eval": [("violin", 100)]}
 TEACHER_STEPS = 48
 STUDENT_STEPS = 12
 
@@ -80,7 +94,7 @@ VARIANTS = {
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("stage", choices=["teacher", "train", "eval"])
+    p.add_argument("stage", choices=["teacher", "train", "onpolicy", "eval"])
     p.add_argument("--set", dest="data_set", choices=sorted(SETS), required=True)
     p.add_argument("--config", default=str(OVI_ROOT / "ovi/configs/inference/inference_fusion_wsp.yaml"))
     p.add_argument("--model-name", default=None, help="override the config's model_name")
@@ -99,6 +113,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--variants", nargs="+", default=list(VARIANTS), choices=list(VARIANTS))
     p.add_argument("--eval-dir", type=Path, default=None, help="default: WORK/eval")
     p.add_argument("--max-samples", type=int, default=None, help="cap samples per epoch (checks)")
+    p.add_argument("--only", choices=["all", "eval"], default="all",
+                   help="teacher: generate every item, or only the evaluation items")
+    p.add_argument("--substeps", type=int, default=4,
+                   help="onpolicy: base-model Euler substeps per student interval (divides 4)")
+    p.add_argument("--save-data", action="store_true", help="onpolicy: save each epoch's targets")
+    p.add_argument("--data-from", type=Path, default=None,
+                   help="onpolicy: reuse saved epoch-0 targets from this dir instead of rolling out")
+    p.add_argument("--max-items", type=int, default=None, help="onpolicy: cap training items (checks)")
+    p.add_argument("--adapters", nargs="+", default=[],
+                   help="eval: NAME=PATH[@blocks=0,1,2][@audio_off=0,1] ... (one variant each)")
     return p.parse_args(argv)
 
 
@@ -156,7 +180,8 @@ def stage_teacher(args) -> int:
     spec = SETS[args.data_set]
     log_path = args.work / "teacher_log.json"
     log = json.loads(log_path.read_text()) if log_path.exists() else []
-    for name, seed in spec["train"] + spec["val"] + spec["eval"]:
+    items = spec["eval"] if args.only == "eval" else spec["train"] + spec["val"] + spec["eval"]
+    for name, seed in items:
         path = out_dir / f"{tag(name, seed)}.pt"
         if path.exists():
             print(f"skip {path.name} (exists)", flush=True)
@@ -210,8 +235,12 @@ class Trainer:
         for p in self.model.parameters():
             p.requires_grad_(False)
         self.adapters = install_adapters(self.model, args.blocks, args.rank).to(self.device)
+        self.identity_blocks: list[str] = []
         if args.init_adapter:
-            self.adapters.load_state_dict(torch.load(args.init_adapter))
+            # Partial: a 0-3 adapter set can start from a 0-2 checkpoint; new blocks start
+            # at identity.
+            self.identity_blocks = self.adapters.load_partial(torch.load(args.init_adapter))
+            print(f"init from {args.init_adapter}; identity blocks: {self.identity_blocks}", flush=True)
         self.audio_weight = args.audio_weight
         self.sequential = args.cfg_grad == "sequential"
         self._emb: dict[str, list] = {}
@@ -245,10 +274,99 @@ class Trainer:
             "first_frame_is_clean": False,
         }
         t = torch.full((1,), traj["timesteps"][k], device=self.device)
-        sk, sn = traj["sigmas"][k], traj["sigmas"][k + 1]
-        tv = target_velocity(traj["video"][k], traj["video"][k + 1], sk, sn).to(self.device)
-        ta = target_velocity(traj["audio"][k], traj["audio"][k + 1], sk, sn).to(self.device)
+        if "video_vel" in traj:
+            # On-policy: the target velocity was computed from the student's own state.
+            tv = traj["video_vel"][k].to(self.device)
+            ta = traj["audio_vel"][k].to(self.device)
+        else:
+            sk, sn = traj["sigmas"][k], traj["sigmas"][k + 1]
+            tv = target_velocity(traj["video"][k], traj["video"][k + 1], sk, sn).to(self.device)
+            ta = target_velocity(traj["audio"][k], traj["audio"][k + 1], sk, sn).to(self.device)
         return xv, xa, t, common, tv, ta
+
+    def _common(self, xv, xa) -> dict:
+        patch = self.model.video_model.patch_size
+        return {
+            "vid_seq_len": xv.shape[1] * xv.shape[2] * xv.shape[3] // (patch[1] * patch[2]),
+            "audio_seq_len": xa.shape[0],
+            "first_frame_is_clean": False,
+        }
+
+    def initial_noise(self, seed: int, height_width: tuple[int, int] = (960, 960)):
+        """The exact starting noise ``engine.generate`` draws for ``seed`` (t2v)."""
+        torch = self.torch
+        e = self.engine
+        h, w = height_width[0] // 16, height_width[1] // 16
+        dev, dt = e.device, e.target_dtype
+        xv = torch.randn((e.video_latent_channel, e.video_latent_length, h, w), device=dev, dtype=dt,
+                         generator=torch.Generator(device=dev).manual_seed(seed))
+        xa = torch.randn((e.audio_latent_length, e.audio_latent_channel), device=dev, dtype=dt,
+                         generator=torch.Generator(device=dev).manual_seed(seed))
+        return xv, xa
+
+    def _velocity(self, prompt: str, xv, xa, timestep: float):
+        torch = self.torch
+        t = torch.full((1,), timestep, device=self.device)
+        return self._guided({"prompt": prompt}, xv, xa, t, self._common(xv, xa))
+
+    def collect(self, items, grid12, grid48, substeps: int) -> list[dict]:
+        """On-policy targets: roll the *current* adapter out, then ask the base model where
+        a fine sampler would go from each state the adapter actually reached.
+
+        For student interval k (sigma12[k] -> sigma12[k+1]) the frozen base model takes
+        ``substeps`` guided Euler steps on the 48-step grid between the same two sigmas.
+        The target velocity is the one that covers that displacement in one step. Unlike
+        teacher forcing, the states come from the student's own rollout, so errors that
+        compound through the rollout or across the two streams are in the loss.
+        """
+        torch = self.torch
+        t12, s12 = grid12
+        t48, s48 = grid48
+        every = len(t48) // len(t12)
+        if every * len(t12) != len(t48) or every % substeps:
+            raise ValueError(f"substeps {substeps} must divide {every} (48 / 12)")
+        stride = every // substeps
+        for k in range(len(t12)):
+            if abs(s12[k] - s48[every * k]) > 1e-4:
+                raise ValueError(f"12-step sigma {k} is not on the 48-step grid")
+        self.model.train(False)
+        self.model.gradient_checkpointing = False
+        out = []
+        for name, seed in items:
+            t0 = time.time()
+            prompt = P[name]
+            states_v, states_a, vel_v, vel_a = [], [], [], []
+            with torch.no_grad():
+                self.adapters.enabled = True
+                xv, xa = self.initial_noise(seed)
+                for k in range(len(t12)):
+                    states_v.append(xv.detach().cpu())
+                    states_a.append(xa.detach().cpu())
+                    gv, ga = self._velocity(prompt, xv, xa, t12[k])
+                    ds = s12[k + 1] - s12[k]
+                    xv = (xv.float() + ds * gv).to(xv.dtype)
+                    xa = (xa.float() + ds * ga).to(xa.dtype)
+                self.adapters.enabled = False
+                for k in range(len(t12)):
+                    fv = states_v[k].to(self.device).float()
+                    fa = states_a[k].to(self.device).float()
+                    for j in range(substeps):
+                        i = every * k + j * stride
+                        gv, ga = self._velocity(prompt, fv.to(torch.bfloat16), fa.to(torch.bfloat16), t48[i])
+                        ds = s48[i + stride] - s48[i]
+                        fv = fv + ds * gv
+                        fa = fa + ds * ga
+                    span = s12[k + 1] - s12[k]
+                    vel_v.append(((fv - states_v[k].to(self.device).float()) / span).cpu())
+                    vel_a.append(((fa - states_a[k].to(self.device).float()) / span).cpu())
+                self.adapters.enabled = True
+            out.append({
+                "name": name, "seed": seed, "prompt": prompt, "timesteps": t12, "sigmas": s12,
+                "video": torch.stack(states_v), "audio": torch.stack(states_a),
+                "video_vel": torch.stack(vel_v), "audio_vel": torch.stack(vel_a),
+            })
+            print(f"collect {tag(name, seed)}: {time.time() - t0:.0f}s", flush=True)
+        return out
 
     def _pass(self, traj, xv, xa, t, common, positive: bool):
         torch = self.torch
@@ -388,6 +506,105 @@ def stage_train(args) -> int:
     return 0
 
 
+def _grid(engine, steps: int) -> tuple[list[float], list[float]]:
+    sched, ts = engine.get_scheduler_time_steps(sampling_steps=steps, solver_name="unipc", device="cpu", shift=5.0)
+    return [float(t) for t in ts], [float(s) for s in sched.sigmas]
+
+
+def stage_onpolicy(args) -> int:
+    """Train on the adapter's own rollout states (see ``Trainer.collect``).
+
+    Each epoch: roll out the current adapter on every training item, compute base-model
+    fine-substep targets from those states, train one pass over them, then validate on
+    fresh rollouts of the validation items with the updated adapter.
+    """
+    import torch
+
+    spec = SETS[args.data_set]
+    engine, sampler = load_engine(args)
+    items = spec["train"][: args.max_items] if args.max_items else spec["train"]
+    prompts = sorted({P[n] for n, _ in spec["train"] + spec["val"]})
+    trainer = Trainer(engine, sampler, args, prompts)
+    grid12, grid48 = _grid(engine, STUDENT_STEPS), _grid(engine, TEACHER_STEPS)
+    params = list(trainer.adapters.parameters())
+    opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=0.0)
+    n_samples = len(items) * STUDENT_STEPS
+    if args.max_samples:
+        n_samples = min(n_samples, args.max_samples)
+    total = args.epochs * n_samples
+
+    def lr_at(step: int) -> float:
+        return args.lr_min + 0.5 * (args.lr - args.lr_min) * (1 + math.cos(math.pi * step / max(total, 1)))
+
+    out = args.work / "onpolicy"
+    out.mkdir(parents=True, exist_ok=True)
+    history: dict = {
+        "set": args.data_set, "adapter": trainer.adapters.describe(), "lr": args.lr, "lr_min": args.lr_min,
+        "audio_weight": args.audio_weight, "cfg_grad": args.cfg_grad, "substeps": args.substeps,
+        "init_adapter": str(args.init_adapter) if args.init_adapter else None,
+        "identity_blocks_at_init": trainer.identity_blocks,
+        "data_from": str(args.data_from) if args.data_from else None,
+        "n_train": len(items), "n_val": len(spec["val"]), "epochs": [],
+    }
+    started = time.time()
+    best = trainer.validate(trainer.collect(spec["val"], grid12, grid48, args.substeps))
+    history["val_start"] = best
+    history["best_epoch"] = -1
+    torch.save(trainer.adapters.state_dict(), out / "adapter_best.pt")
+    print(f"val start (on-policy): {json.dumps(best)}", flush=True)
+
+    rng = random.Random(0)
+    step = 0
+    for epoch in range(args.epochs):
+        t_collect = time.time()
+        data_dir = (args.data_from if args.data_from and epoch == 0 else out / "data" / f"epoch{epoch}")
+        cached = [data_dir / f"{tag(n, s)}.pt" for n, s in items]
+        if args.data_from and epoch == 0:
+            missing = [p for p in cached if not p.exists()]
+            if missing:
+                raise FileNotFoundError(f"--data-from lacks {len(missing)} items, e.g. {missing[0]}")
+            train = [torch.load(p) for p in cached]
+        else:
+            train = trainer.collect(items, grid12, grid48, args.substeps)
+            if args.save_data:
+                data_dir.mkdir(parents=True, exist_ok=True)
+                for traj, path in zip(train, cached):
+                    torch.save(traj, path)
+        t_collect = round(time.time() - t_collect, 1)
+        samples = [(i, k) for i in range(len(train)) for k in range(STUDENT_STEPS)]
+        rng.shuffle(samples)
+        samples = samples[:n_samples]
+        trainer.model.train(True)
+        trainer.model.gradient_checkpointing = True
+        steps = []
+        for n, (i, k) in enumerate(samples):
+            for group in opt.param_groups:
+                group["lr"] = lr_at(step)
+            t0 = time.time()
+            opt.zero_grad(set_to_none=True)
+            lv, la = trainer.train_step(train[i], k)
+            gnorm = float(torch.nn.utils.clip_grad_norm_(params, 1.0))
+            opt.step()
+            step += 1
+            steps.append({"traj": i, "k": k, "video": round(lv, 5), "audio": round(la, 5),
+                          "grad_norm": round(gnorm, 4), "lr": round(lr_at(step - 1), 7),
+                          "seconds": round(time.time() - t0, 1)})
+            if n % 24 == 0:
+                print(f"epoch {epoch} step {n}/{len(samples)} {steps[-1]}", flush=True)
+        del train
+        val_now = trainer.validate(trainer.collect(spec["val"], grid12, grid48, args.substeps))
+        history["epochs"].append({"epoch": epoch, "collect_seconds": t_collect, "steps": steps, "val": val_now})
+        torch.save(trainer.adapters.state_dict(), out / f"adapter_epoch{epoch}.pt")
+        if val_now["total"] < best["total"]:
+            best = val_now
+            history["best_epoch"] = epoch
+            torch.save(trainer.adapters.state_dict(), out / "adapter_best.pt")
+        print(f"epoch {epoch} val {json.dumps(val_now)} best_epoch {history['best_epoch']}", flush=True)
+        history["seconds"] = round(time.time() - started, 1)
+        write_json(out / "history.json", history)
+    return 0
+
+
 # --------------------------------------------------------------------------- eval
 
 
@@ -417,19 +634,50 @@ def _audio(audio) -> dict:
             "centroid_hz": round(float((spectrum * freqs).sum() / max(spectrum.sum(), 1e-12)), 1)}
 
 
+def parse_adapter_spec(text: str) -> dict:
+    """``NAME=PATH[@blocks=0,1,2][@audio_off=0,1]`` -> dict. ``@`` avoids clashing with paths."""
+    name, sep, rest = text.partition("=")
+    if not sep or not name or not rest:
+        raise ValueError(f"adapter spec must be NAME=PATH[@...]: {text!r}")
+    path, *options = rest.split("@")
+    spec = {"name": name, "path": Path(path), "blocks": None, "audio_off": set()}
+    for option in options:
+        key, _, value = option.partition("=")
+        values = [int(v) for v in value.split(",") if v != ""]
+        if key == "blocks":
+            spec["blocks"] = values
+        elif key == "audio_off":
+            spec["audio_off"] = set(values)
+        else:
+            raise ValueError(f"unknown adapter option {key!r} in {text!r}")
+    return spec
+
+
+def flash_stats(video) -> dict:
+    """End-of-clip brightness jump on Ovi's (C, F, H, W) output in [-1, 1]."""
+    import numpy as np
+
+    frames = (np.clip(video, -1, 1) + 1) * 127.5
+    luma = (frames[0] * 0.299 + frames[1] * 0.587 + frames[2] * 0.114).mean(axis=(1, 2))
+    jumps = np.abs(np.diff(luma))
+    return {"last8_max_jump": round(float(jumps[-8:].max()), 2), "body_max_jump": round(float(jumps[:-8].max()), 2)}
+
+
 def stage_eval(args) -> int:
     import torch
 
-    from wsp.adapter import EulerGridScheduler, RecordingScheduler, install_adapters, patched_schedulers
+    from wsp.adapter import EulerGridScheduler, RecordingScheduler, StepGate, install_adapters, patched_schedulers
 
     spec = SETS[args.data_set]
     engine, sampler = load_engine(args)
-    adapters = install_adapters(engine.model, args.blocks, args.rank).to(
-        next(engine.model.parameters()).device
-    )
-    state = args.adapter or args.work / "train" / "adapter_best.pt"
-    if "adapter_euler12" in args.variants:
-        adapters.load_state_dict(torch.load(state))
+    specs = [parse_adapter_spec(t) for t in args.adapters]
+    if not specs and "adapter_euler12" in args.variants:
+        specs = [{"name": "adapter", "path": args.adapter or args.work / "train" / "adapter_best.pt",
+                  "blocks": None, "audio_off": set()}]
+    blocks = sorted(set(args.blocks).union(*[set(s["blocks"] or args.blocks) for s in specs]))
+    adapters = install_adapters(engine.model, blocks, args.rank).to(next(engine.model.parameters()).device)
+    gate = StepGate(engine.model, adapters)
+    states = {s["name"]: torch.load(s["path"]) for s in specs}
     out = args.eval_dir or args.work / "eval"
     out.mkdir(parents=True, exist_ok=True)
     rows_path = out / "eval.json"
@@ -444,6 +692,11 @@ def stage_eval(args) -> int:
             return euler
         return lambda stream, s, t: RecordingScheduler(inner=s, record=[], n_steps=n)
 
+    # (label, adapter spec or None, steps, sampler)
+    plan = [(label, None, VARIANTS[label][1], VARIANTS[label][2])
+            for label in args.variants if label != "adapter_euler12"]
+    plan += [(f"{s['name']}_euler12", s, STUDENT_STEPS, "euler") for s in specs]
+
     for name, seed in spec["eval"]:
         tg = tag(name, seed)
         teacher = torch.load(teacher_dir(args) / f"{tg}.pt")
@@ -451,11 +704,17 @@ def stage_eval(args) -> int:
             rows.append({"tag": tg, "variant": "teacher48", "steps": TEACHER_STEPS,
                          "quality": _quality(teacher_dir(args) / f"{tg}.mp4")})
             write_json(rows_path, rows)
-        for label in args.variants:
+        for label, aspec, steps, kind in plan:
             if (tg, label) in done:
                 continue
-            enabled, steps, kind = VARIANTS[label]
-            adapters.enabled = enabled
+            identity = []
+            if aspec is None:
+                adapters.enabled = False
+                gate.start()
+            else:
+                identity = adapters.load_partial(states[aspec["name"]])
+                adapters.enabled = True
+                gate.start(aspec["audio_off"])
             t0 = time.time()
             with patched_schedulers(engine, factory(kind, steps)) as made:
                 result = engine.generate(
@@ -471,7 +730,9 @@ def stage_eval(args) -> int:
             mp4 = out / f"{label}_{tg}.mp4"
             save_mp4(mp4, video, audio)
             row = {"tag": tg, "variant": label, "steps": steps, "seconds": seconds,
-                   "adapter_state": str(state) if enabled else None, "audio": _audio(audio)}
+                   "adapter_state": str(aspec["path"]) if aspec else None,
+                   "audio_off_steps": sorted(aspec["audio_off"]) if aspec else None,
+                   "identity_blocks": identity, "audio": _audio(audio), **flash_stats(video)}
             for rec, stream in ((made[0], "video"), (made[1], "audio")):
                 ref = teacher[stream][-1].float()
                 row[f"{stream}_final_rel_err"] = round(float((rec.final.float() - ref).norm() / ref.norm()), 5)
@@ -480,13 +741,15 @@ def stage_eval(args) -> int:
             write_json(rows_path, rows)
             print(json.dumps(row), flush=True)
     adapters.enabled = True
+    gate.start()
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     args.work.mkdir(parents=True, exist_ok=True)
-    return {"teacher": stage_teacher, "train": stage_train, "eval": stage_eval}[args.stage](args)
+    stages = {"teacher": stage_teacher, "train": stage_train, "onpolicy": stage_onpolicy, "eval": stage_eval}
+    return stages[args.stage](args)
 
 
 if __name__ == "__main__":

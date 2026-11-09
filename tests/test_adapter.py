@@ -110,6 +110,63 @@ class TestInstall:
             install_adapters(Bare(), blocks=[0], rank=2)
 
 
+class TestStreamSwitchesAndPartialLoad:
+    def test_audio_switch_leaves_video_adapted(self):
+        model = _Fusion(n=1)
+        adapters = install_adapters(model, blocks=[0], rank=2)
+        with torch.no_grad():
+            adapters.video["0"].up.bias.fill_(3.0)
+            adapters.audio["0"].up.bias.fill_(3.0)
+        adapters.audio_enabled = False
+        vid, audio = model(torch.zeros(1, 2, 8), torch.zeros(1, 2, 6))
+        assert torch.all(vid == 4.0) and torch.all(audio == 1.0)
+
+    def test_partial_load_leaves_new_blocks_at_identity(self):
+        trained = install_adapters(_Fusion(n=4), blocks=[0, 1], rank=2)
+        with torch.no_grad():
+            trained.video["0"].up.bias.fill_(2.0)
+        target = install_adapters(_Fusion(n=4), blocks=[0, 1, 2, 3], rank=2)
+        with torch.no_grad():
+            target.video["3"].up.bias.fill_(9.0)
+        left = target.load_partial(trained.state_dict())
+        assert left == ["2", "3"]
+        assert torch.all(target.video["0"].up.bias == 2.0)
+        assert torch.all(target.video["3"].up.bias == 0.0)
+
+    def test_partial_load_rejects_blocks_it_cannot_hold(self):
+        trained = install_adapters(_Fusion(n=4), blocks=[3], rank=2)
+        target = install_adapters(_Fusion(n=4), blocks=[0], rank=2)
+        with pytest.raises(KeyError, match="lacks"):
+            target.load_partial(trained.state_dict())
+
+
+class TestStepGate:
+    def test_audio_off_for_chosen_steps_counting_cfg_pairs_once(self):
+        from wsp.adapter import StepGate
+
+        model = _Fusion(n=1)
+        adapters = install_adapters(model, blocks=[0], rank=2)
+        seen = []
+
+        class Wrapped:
+            def __init__(self):
+                self.forward = self._forward
+
+            def _forward(self, vid, audio, t):
+                seen.append(adapters.audio_enabled)
+                return model(vid, audio)
+
+        wrapped = Wrapped()
+        gate = StepGate(wrapped, adapters)
+        gate.start({0, 1})
+        for t in (999.0, 999.0, 700.0, 700.0, 400.0, 400.0):
+            wrapped.forward(torch.zeros(1, 2, 8), torch.zeros(1, 2, 6), torch.tensor([t]))
+        assert seen == [False, False, False, False, True, True]
+        gate.start()
+        wrapped.forward(torch.zeros(1, 2, 8), torch.zeros(1, 2, 6), torch.tensor([999.0]))
+        assert seen[-1] is True
+
+
 class TestTargets:
     def test_euler_step_with_target_velocity_lands_on_the_target(self):
         # The whole training objective rests on this identity.
