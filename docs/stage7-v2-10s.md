@@ -46,6 +46,40 @@ Two further observations:
 ## 2. Trained at 10 s (from the 5 s adapter)
 
 2 epochs over 96 samples, cosine 5e-4 → 5e-5, sequential CFG gradient (98 s per update,
-58 GB), T5 offloaded.
+58 GB), T5 offloaded. 5.6 h. Validation total 0.0577 → 0.0531 (epoch 0) → 0.0532
+(epoch 1); epoch 0 selected. Same-pod wall clock unchanged: 281 s for 12 steps, **2.24×
+faster than 30 steps** (630 s).
 
-*Pending.*
+| river × 3 seeds | teacher 48 | UniPC 30 | UniPC 12 | 5 s adapter (zero-shot) | **10 s-trained adapter** |
+|---|---|---|---|---|---|
+| sharpness | 14.06 | 18.56 | 22.38 | 2.94 | 6.74 |
+| flicker | 0.224 | 0.304 | 0.268 | 0.087 | 0.114 |
+| motion coherence | 0.662 | 0.688 | 0.567 | 0.805 | 0.700 |
+| colour stability | 3.36 | 4.69 | 4.89 | 2.80 | 2.70 |
+| **video metric distance from teacher** | 0 | **0.317** | 0.365 | 0.505 | 0.340 |
+| final video latent, rel. error (mean) | 0 | 0.734 | 0.828 | 0.760 | **0.666** |
+| final audio latent, rel. error (mean) | 0 | **0.058** | 0.115 | 0.134 | 0.101 |
+| audio loudness, mean \|rel diff\| (MP4) | 0 | 8.8% | 18.5% | — | **8.0%** |
+| audio brightness, mean \|rel diff\| (MP4) | 0 | **0.8%** | 2.9% | — | 2.7% |
+
+### Reading
+
+- **Training at 10 s halves the zero-shot blur but does not remove it.** Sharpness is
+  6.7 against the teacher's 14.1, and flicker stays low. On the four-metric distance the
+  trained adapter (0.340) beats UniPC-12 (0.365) but not UniPC-30 (0.317).
+- **Its final video latent is the closest to the teacher of any 12- or 30-step variant**
+  (0.666 vs 0.734 for UniPC-30, better on 2 of 3 seeds). Together with the blur, this is
+  the signature of an MSE-trained sampler: it lands near the *average* of the plausible
+  outcomes, which is close in L2 and visibly soft. At 5 s the same objective did not blur
+  (v2 adapter sharpness 13.0 vs teacher 11.6); at 10 s it does.
+- **Audio loudness reaches 30-step parity** (8.0% vs 8.8%, UniPC-12 18.5%). Brightness is
+  still not corrected (2.7% vs 0.8%), the same as at 5 s.
+- **Validation loss was flat after epoch 0** and barely separated the epochs, consistent
+  with the zero-shot finding that one-step loss does not see compounding rollout blur.
+
+So at the target horizon: **2.24× faster than 30 steps, audio level as good as 30 steps,
+video close in latent space but softer than 30 steps.** The blur is the defect to target
+next. It is a known failure mode of pure-MSE step distillation, which suggests the fix is
+in the objective (a sharpness- or distribution-matching term) as much as in placement.
+WSP's job is to show whether the blur is written by specific blocks or spread across
+them.
