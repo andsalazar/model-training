@@ -105,6 +105,13 @@ class OviAdapters(nn.Module):
             raise KeyError(f"state has blocks this adapter set lacks: {result.unexpected_keys[:4]}")
         return sorted({k.split(".")[1] for k in result.missing_keys if k.endswith("up.weight")})
 
+    def describe(self) -> dict:
+        return {
+            "blocks": self.blocks,
+            "rank": self.rank,
+            "params": sum(p.numel() for p in self.parameters()),
+        }
+
 
 class StepGate:
     """Switch the audio adapters off for chosen sampling steps.
@@ -137,13 +144,6 @@ class StepGate:
         self.audio_off_steps = set(audio_off_steps or ())
         self.step, self._last_t = -1, None
         self.adapters.audio_enabled = True
-
-    def describe(self) -> dict:
-        return {
-            "blocks": self.blocks,
-            "rank": self.rank,
-            "params": sum(p.numel() for p in self.parameters()),
-        }
 
 
 def install_adapters(model: Any, blocks: list[int], rank: int) -> OviAdapters:

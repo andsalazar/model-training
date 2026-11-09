@@ -133,6 +133,14 @@ class TestStreamSwitchesAndPartialLoad:
         assert torch.all(target.video["0"].up.bias == 2.0)
         assert torch.all(target.video["3"].up.bias == 0.0)
 
+    def test_describe_reports_blocks_and_parameter_count(self):
+        # Regression: an edit once left describe() on StepGate, so the training driver
+        # crashed the moment it logged the adapter.
+        adapters = install_adapters(_Fusion(n=4, vdim=8, adim=6), blocks=[0, 2], rank=2)
+        d = adapters.describe()
+        per = lambda dim: 2 * dim + 2 + 2 * dim + dim  # noqa: E731  down (w+b) + up (w+b)
+        assert d == {"blocks": [0, 2], "rank": 2, "params": 2 * (per(8) + per(6))}
+
     def test_partial_load_rejects_blocks_it_cannot_hold(self):
         trained = install_adapters(_Fusion(n=4), blocks=[3], rank=2)
         target = install_adapters(_Fusion(n=4), blocks=[0], rank=2)
