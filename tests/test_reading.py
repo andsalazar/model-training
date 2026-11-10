@@ -203,6 +203,16 @@ class TestScoring:
         assert score["guess"] == "missing" and score["correct"] is False and score["confidence"] is None
 
 
+class TestCutOff:
+    def test_only_a_reply_that_hit_the_limit_without_an_answer_is_retried(self):
+        script = _load_script()
+        assert script.cut_off({"finish_reason": "length", "answer": ""}) is True
+        assert script.cut_off({"finish_reason": "length", "answer": "Observations: rows"}) is True
+        assert script.cut_off({"finish_reason": "length", "answer": "Images: a circle\nExample:"}) is False
+        assert script.cut_off({"finish_reason": "stop", "answer": ""}) is False
+        assert script.RETRY_MAX_TOKENS > script.MAX_TOKENS
+
+
 class TestBudget:
     def test_refuses_a_call_that_would_cross_the_limit(self):
         script = _load_script()

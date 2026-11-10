@@ -76,6 +76,14 @@ completions API with reasoning effort `high`, no temperature set, a 16,000-token
 limit, and no tools offered. `muse` is left out: its 131,072-token context is too close to
 the size of the prompt.
 
+**Protocol change before any scored reply (2026-11-09).** A single plumbing check
+(DeepSeek, one network) spent the whole 16,000-token limit on reasoning, much of it
+copying weight rows, and returned an empty answer. An empty answer says nothing about the
+shape, so the rule was extended before the run: a reply that hits the limit before it
+reaches its `Images:` section is asked for once more with a 64,000-token limit. The
+cut-off reply is kept (`answers/<reader>/<id>.truncated.json`) and its cost is counted. A
+reply that is still cut off at 64,000 is scored `missing`, which is incorrect.
+
 **Differences from the paper's run.** The paper called Astra through the Codex CLI with
 every tool switched off; this goes through OpenRouter's API, where no tools are offered.
 The reasoning effort (`high`), the system line and the prompt are the same. The paper's

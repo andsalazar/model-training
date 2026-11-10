@@ -44,6 +44,9 @@ QUALITY_SAMPLES = 1000
 #: Readers, cheapest first, so a fault shows up before the expensive calls.
 DEFAULT_EDITORS = ["deepseek", "glm", "qwen", "kimi", "astra"]
 MAX_TOKENS = 16_000
+#: A reply cut off by the limit before it reaches its ``Images:`` section is asked for
+#: once more with this limit. The cut-off reply is kept as ``<id>.truncated.json``.
+RETRY_MAX_TOKENS = 64_000
 REASONING = {"effort": "high"}
 
 
@@ -219,44 +222,62 @@ class Budget:
         self.spent += actual
 
 
+def cut_off(record: dict) -> bool:
+    """Whether a reply hit the output limit before giving an ``Images:`` section."""
+    return (record.get("finish_reason") == "length"
+            and reading.answer_section(record.get("answer") or "", "Images") is None)
+
+
 async def ask_one(editor, alias: str, trial_id: str, prompt: str, price: tuple[float, float],
                   budget: Budget, out_path: Path) -> str:
-    # About 1.6 characters per token for these prompts (the paper: 99,800 tokens for
-    # 158,000 characters). 1.2 leaves room for a tokenizer that splits numbers further.
-    worst = len(prompt) / 1.2 * price[0] + MAX_TOKENS * price[1]
-    if not budget.reserve(worst):
-        return "skipped (spend limit)"
-    started = time.time()
-    try:
-        response = await editor.complete(
-            reading.SYSTEM, prompt, temperature=None, max_tokens=MAX_TOKENS,
-            extra={"reasoning": REASONING, "usage": {"include": True}},
-        )
-    except Exception as error:  # noqa: BLE001 - record the failure, do not lose the run
-        budget.settle(worst, 0.0)
-        write_json(out_path.with_suffix(".error.json"),
-                   {"editor": alias, "id": trial_id, "error": f"{type(error).__name__}: {error}"[:2000]})
-        return f"error: {type(error).__name__}"
-    body = response.raw or {}
-    usage = body.get("usage") or {}
-    choice = (body.get("choices") or [{}])[0]
-    message = choice.get("message") or {}
-    computed = response.usage.prompt_tokens * price[0] + response.usage.completion_tokens * price[1]
-    cost = usage.get("cost")
-    actual = float(cost) if isinstance(cost, (int, float)) else computed
-    budget.settle(worst, actual)
-    write_json(out_path, {
-        "editor": alias, "id": trial_id, "model_requested": editor.model_id, "model": response.model,
-        "answer": message.get("content") or "", "reasoning": message.get("reasoning"),
-        "finish_reason": choice.get("finish_reason"),
-        "tool_calls": message.get("tool_calls"),
-        "usage": usage, "cost_usd": actual, "cost_source": "api" if isinstance(cost, (int, float)) else "computed",
-        "seconds": round(time.time() - started, 1), "prompt_sha256": sha256(prompt),
-        "request": {"max_tokens": MAX_TOKENS, "reasoning": REASONING, "temperature": None,
-                    "system": reading.SYSTEM},
-        "asked_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-    })
-    return f"ok, ${actual:.3f}, {round(time.time() - started)}s"
+    truncated_path = out_path.with_suffix(".truncated.json")
+    attempts = [RETRY_MAX_TOKENS] if truncated_path.exists() else [MAX_TOKENS, RETRY_MAX_TOKENS]
+    total = 0.0
+    for max_tokens in attempts:
+        # About 1.6 characters per token for these prompts (the paper: 99,800 tokens for
+        # 158,000 characters). 1.2 leaves room for a tokenizer that splits numbers further.
+        worst = len(prompt) / 1.2 * price[0] + max_tokens * price[1]
+        if not budget.reserve(worst):
+            return "skipped (spend limit)"
+        started = time.time()
+        try:
+            response = await editor.complete(
+                reading.SYSTEM, prompt, temperature=None, max_tokens=max_tokens,
+                extra={"reasoning": REASONING, "usage": {"include": True}},
+            )
+        except Exception as error:  # noqa: BLE001 - record the failure, do not lose the run
+            budget.settle(worst, 0.0)
+            write_json(out_path.with_suffix(".error.json"),
+                       {"editor": alias, "id": trial_id, "error": f"{type(error).__name__}: {error}"[:2000]})
+            return f"error: {type(error).__name__}"
+        body = response.raw or {}
+        usage = body.get("usage") or {}
+        choice = (body.get("choices") or [{}])[0]
+        message = choice.get("message") or {}
+        computed = response.usage.prompt_tokens * price[0] + response.usage.completion_tokens * price[1]
+        cost = usage.get("cost")
+        actual = float(cost) if isinstance(cost, (int, float)) else computed
+        budget.settle(worst, actual)
+        total += actual
+        record = {
+            "editor": alias, "id": trial_id, "model_requested": editor.model_id, "model": response.model,
+            "answer": message.get("content") or "", "reasoning": message.get("reasoning"),
+            "finish_reason": choice.get("finish_reason"),
+            "tool_calls": message.get("tool_calls"),
+            "usage": usage, "cost_usd": actual,
+            "cost_source": "api" if isinstance(cost, (int, float)) else "computed",
+            "seconds": round(time.time() - started, 1), "prompt_sha256": sha256(prompt),
+            "request": {"max_tokens": max_tokens, "reasoning": REASONING, "temperature": None,
+                        "system": reading.SYSTEM},
+            "asked_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        }
+        if cut_off(record) and max_tokens != RETRY_MAX_TOKENS:
+            write_json(truncated_path, record)
+            continue
+        record["retried_after_cut_off"] = truncated_path.exists()
+        write_json(out_path, record)
+        return f"ok, ${total:.3f}, {record['seconds']:.0f}s" + (" (retried)" if record["retried_after_cut_off"] else "")
+    return "unreachable"
 
 
 async def run_ask(args) -> int:
@@ -315,10 +336,14 @@ def stage_score(args) -> int:
             reply = json.loads(path.read_text(encoding="utf-8"))
             score = reading.score_answer(reply["answer"], trial["truth"])
             cost += reply.get("cost_usd") or 0.0
+            first = path.with_suffix(".truncated.json")
+            if first.exists():
+                cost += json.loads(first.read_text(encoding="utf-8")).get("cost_usd") or 0.0
             group = ("control" if trial["source"] == "control" else "paper" if trial["source"] == "paper"
                      else "fresh_same" if trial["truth"] in reading.PAPER_SHAPES else "fresh_novel")
             rows.append({"editor": alias, "id": trial_id, "group": group, "truth": trial["truth"], **score,
                          "finish_reason": reply.get("finish_reason"), "tool_free": not reply.get("tool_calls"),
+                         "retried_after_cut_off": bool(reply.get("retried_after_cut_off")),
                          "prompt_tokens": (reply.get("usage") or {}).get("prompt_tokens"),
                          "completion_tokens": (reply.get("usage") or {}).get("completion_tokens"),
                          "cost_usd": reply.get("cost_usd")})
