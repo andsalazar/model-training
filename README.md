@@ -1,28 +1,57 @@
 # Weight-Space Programming experiments: Qwen3.5-0.8B and Ovi
 
-Two connected experiments on open-weight models, run on rented GPUs. Every result was
-re-measured, and the ones that did not hold are kept in, with correction banners.
+Can one model read and edit another model's weights, and can a tiny adapter make a large
+video model faster? This repository tests two published claims on open-weight models, on
+rented GPUs: MIT's [Sparks of Weight-Space Programming](https://rikiyat.github.io/blog/weight-space-programming/)
+(Takehi, Teoh, Zhang, Khattab — MIT CSAIL, November 2026), in which a language model
+reads and writes another network's weights with no gradients, and TBC's
+[neural dynamics adapter](https://www.tbc.co/post/the-neural-dynamics-adapter), a tiny
+module said to make video generation cheaper.
 
-1. **Text (Stages 0–5).** Reproduce a published **Weight-Space Programming** edit on
-   Qwen3.5-0.8B (a language model reading and writing another network's weights
-   directly, with no gradients and no training loop), then try to derive such edits from
-   measurement instead of copying them.
-2. **Video + audio (Stages 6–7).** Port the tooling to **Ovi**, an 11.66B joint
-   video-and-audio diffusion transformer, and test whether a tiny trained adapter, sized
-   and placed like TBC's "neural dynamics adapter", together with WSP-style reads of the
-   model's internals, can make generation faster without losing quality.
-3. **Reading weights (Stage 8).** Repeat the paper's most direct "reading" experiment, a
-   language model told to say what a small network does from its raw weights alone, with
-   the paper's networks, fresh ones, a control, and five different readers.
+One claim repeated. The attempts to extend both did not work, and the record of why is
+most of what is here. It is published as a replication and a set of negative results, not
+as a new method or a model to use.
 
-Based on [Sparks of Weight-Space Programming: LLMs can natively read & write
-neural network weights](https://rikiyat.github.io/blog/weight-space-programming/)
-(Takehi, Teoh, Zhang, Khattab — MIT CSAIL, November 2026) and on TBC's
-[neural dynamics adapter post](https://www.tbc.co/post/the-neural-dynamics-adapter).
+## Results
 
-Most of what this repository found is negative, or narrower than hoped. It is published
-as a record of how the claims were tested and where early results turned out to be
-measurement error, not as a new method or a recommended model.
+**1. A language model can say what a small network does from its raw weights. Only the
+frontier one could.** The paper's Experiment 2, repeated: all 23,824 weights of a small
+diffusion model as text, no tools, "what images does it generate?". GPT-6 Astra named the
+right shape for the paper's three networks, for three networks trained fresh here, and
+for a plus-shaped cross the paper never used; given a network with its weights shuffled,
+it declined to name anything. Kimi, GLM, DeepSeek and Qwen were right on 4, 2, 0 and 0 of
+8, and Kimi confidently described the shuffled network as a digit. One reply per
+network. → [docs/stage8-reading-weights.md](docs/stage8-reading-weights.md)
+
+**2. A tiny adapter did not make Ovi faster. More plain steps did the work.** A
+313k-parameter adapter (0.003% of the 11.66B model) was trained so 12 sampling steps
+would follow a 48-step run. Across 210 clips (10 unseen prompts × 3 seeds, one H100), 12
+steps with the adapter is level with plain 12 steps, cannot be told from plain 16, and is
+behind plain 20 (p = 0.020). 30 plain steps is closest to the reference on every prompt.
+→ [docs/stage7-v4-decide.md](docs/stage7-v4-decide.md)
+
+**3. Early results kept failing re-measurement, and the checks that caught them are the
+reusable part.** The adapter looked better than plain 12 steps at 9 clips and not at 30.
+Three earlier Stage 7 findings disappeared when re-run on other hardware. On the text
+model, a "top 12 columns" selection sat inside a 0.0012 tie and gave the opposite verdict
+on another GPU, and the LLM doing the editing reported numbers it had not measured. A
+review of the Ovi instrumentation found nine defects, six of which changed what had been
+measured. → [docs/stage7-v3-5s.md](docs/stage7-v3-5s.md),
+[docs/WRITEUP.md](docs/WRITEUP.md),
+[docs/stage6e-review-corrections.md](docs/stage6e-review-corrections.md)
+
+## How the results were checked
+
+- **Designs before data.** For results 1 and 2 the design, the scoring rule and how the
+  outcome would be read were committed and pushed before any model was called or any pod
+  created (commits `ddc7f68`, `a71b9e4`, `8bcb23f`).
+- **Numbers tied to evidence.** The JSON behind the tables is in `artifacts/`, and the
+  figures quoted for Stages 7 and 8 are recomputed from it by the test suite.
+- **Corrections left visible.** Superseded documents carry banners saying what changed.
+  One scorer bug found after a run is disclosed with the verdicts it altered.
+- **Stated limits.** Small numbers throughout (one reply per network; ten prompts). The
+  video measures are signal statistics and CLIP/CLAP scores, not a perceptual score, and
+  the clips have not been compared by eye.
 
 > **Picking this project up?** Start with [docs/HANDOFF.md](docs/HANDOFF.md).
 
@@ -61,9 +90,11 @@ replicated with a different, cheaper model as the reader?
 but not replicated: there are two public documents, no code, no weights and no
 bibliography, and the product is API-only ([scoping](docs/stage6-scoping.md),
 [literature](docs/stage6-literature.md)). What could be tested is an adapter of TBC's
-size and placement, trained by a standard method. See Part 2.
+size and placement, trained by a standard method. On Ovi that adapter did not make
+generation faster at equal quality (result 2 above, and Part 2). This says nothing about
+TBC's own module, which was built and trained differently.
 
-## Findings at a glance
+## All findings
 
 | Finding | Evidence | Where |
 |---|---|---|
