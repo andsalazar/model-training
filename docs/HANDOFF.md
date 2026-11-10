@@ -165,7 +165,8 @@ In order of value for the owner's goal:
 5. **Publish.** The original aim: a write-up (README + docs/stage6*–7*) to GitHub, and
    optionally the v2 adapter + inference script to Hugging Face with an honest model card
    (2.17× faster than 30 steps, better than plain 12 steps, below 30-step quality).
-   **93 local commits are not pushed to `origin/main`** (github.com/andsalazar/model-training).
+   **About 95 local commits are not pushed to `origin/main`**
+   (github.com/andsalazar/model-training; check with `git log origin/main..HEAD`).
    Ask the owner before pushing.
 
 ## 8. Account state and spend
