@@ -1,0 +1,2330 @@
+{
+ "clips": [
+  "campfire_s100",
+  "campfire_s200",
+  "campfire_s300",
+  "fountain_s100",
+  "fountain_s200",
+  "fountain_s300",
+  "harbor_s100",
+  "harbor_s200",
+  "harbor_s300",
+  "horse_s100",
+  "horse_s200",
+  "horse_s300",
+  "kitchen_s100",
+  "kitchen_s200",
+  "kitchen_s300",
+  "piano_s100",
+  "piano_s200",
+  "piano_s300",
+  "skater_s100",
+  "skater_s200",
+  "skater_s300",
+  "storm_s100",
+  "storm_s200",
+  "storm_s300",
+  "typist_s100",
+  "typist_s200",
+  "typist_s300",
+  "violin_s100",
+  "violin_s200",
+  "violin_s300"
+ ],
+ "prompts": [
+  "campfire",
+  "fountain",
+  "harbor",
+  "horse",
+  "kitchen",
+  "piano",
+  "skater",
+  "storm",
+  "typist",
+  "violin"
+ ],
+ "variants": {
+  "base_euler12": {
+   "clips": 30,
+   "seconds": 56.44333333333334,
+   "log": 0.5695233101810939,
+   "relative": 0.49440726926490886,
+   "pooled": 0.5130304977133309
+  },
+  "base_unipc12": {
+   "clips": 30,
+   "seconds": 56.519999999999996,
+   "log": 0.47124478724273394,
+   "relative": 0.4584544487690347,
+   "pooled": 0.38069732793059385
+  },
+  "base_unipc16": {
+   "clips": 30,
+   "seconds": 71.07666666666665,
+   "log": 0.4493378794733265,
+   "relative": 0.4406751062183833,
+   "pooled": 0.3733090581756367
+  },
+  "base_unipc20": {
+   "clips": 30,
+   "seconds": 85.69999999999999,
+   "log": 0.3776661354532661,
+   "relative": 0.33866335574528117,
+   "pooled": 0.33816880339051425
+  },
+  "base_unipc30": {
+   "clips": 30,
+   "seconds": 122.3,
+   "log": 0.23790693568531118,
+   "relative": 0.23814466006749715,
+   "pooled": 0.17355212098374578
+  },
+  "teacher48": {
+   "clips": 30,
+   "seconds": null
+  },
+  "v2_euler12": {
+   "clips": 30,
+   "seconds": 56.51333333333333,
+   "log": 0.4776826747190972,
+   "relative": 0.40556586437212355,
+   "pooled": 0.45687738367236996
+  }
+ },
+ "paired": {
+  "log": {
+   "v2_euler12 - base_unipc12": {
+    "n": 10,
+    "mean": 0.006437887476363258,
+    "median": -0.005248461354147804,
+    "ci95": [
+     -0.07801439000034487,
+     0.0891008039450545
+    ],
+    "negative": 5,
+    "positive": 5,
+    "sign_flip_p": 0.888671875,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_euler12": {
+    "n": 10,
+    "mean": -0.09184063546199664,
+    "median": -0.0943654299471337,
+    "ci95": [
+     -0.17421214363769127,
+     -0.008456002621072264
+    ],
+    "negative": 7,
+    "positive": 3,
+    "sign_flip_p": 0.076171875,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc16": {
+    "n": 10,
+    "mean": 0.02834479524577066,
+    "median": 0.050076276619081345,
+    "ci95": [
+     -0.06436400723814911,
+     0.11062790438708789
+    ],
+    "negative": 2,
+    "positive": 8,
+    "sign_flip_p": 0.564453125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc20": {
+    "n": 10,
+    "mean": 0.10001653926583107,
+    "median": 0.10305696644967732,
+    "ci95": [
+     0.03617526593987552,
+     0.1593326505491919
+    ],
+    "negative": 1,
+    "positive": 9,
+    "sign_flip_p": 0.01953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc30": {
+    "n": 10,
+    "mean": 0.23977573903378593,
+    "median": 0.23710260335369213,
+    "ci95": [
+     0.16996932887293864,
+     0.31098231261922316
+    ],
+    "negative": 0,
+    "positive": 10,
+    "sign_flip_p": 0.001953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc16 - base_unipc12": {
+    "n": 10,
+    "mean": -0.021906907769407395,
+    "median": -0.010386369173019522,
+    "ci95": [
+     -0.06073914862892775,
+     0.013856185408360285
+    ],
+    "negative": 6,
+    "positive": 4,
+    "sign_flip_p": 0.3125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc20 - base_unipc16": {
+    "n": 10,
+    "mean": -0.07167174402006041,
+    "median": -0.051297199317804756,
+    "ci95": [
+     -0.13013089012214027,
+     -0.022575747348848915
+    ],
+    "negative": 7,
+    "positive": 3,
+    "sign_flip_p": 0.0234375,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc30 - base_unipc20": {
+    "n": 10,
+    "mean": -0.13975919976795487,
+    "median": -0.1209572042629515,
+    "ci95": [
+     -0.19729850497510823,
+     -0.08721220306718898
+    ],
+    "negative": 10,
+    "positive": 0,
+    "sign_flip_p": 0.001953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   }
+  },
+  "relative": {
+   "v2_euler12 - base_unipc12": {
+    "n": 10,
+    "mean": -0.05288858439691111,
+    "median": -0.02356713947903924,
+    "ci95": [
+     -0.1319190000112092,
+     0.019992766431889908
+    ],
+    "negative": 7,
+    "positive": 3,
+    "sign_flip_p": 0.24609375,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_euler12": {
+    "n": 10,
+    "mean": -0.08884140489278523,
+    "median": -0.08132608596674926,
+    "ci95": [
+     -0.14410790793215375,
+     -0.0341907209422631
+    ],
+    "negative": 8,
+    "positive": 2,
+    "sign_flip_p": 0.01953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc16": {
+    "n": 10,
+    "mean": -0.03510924184625969,
+    "median": 0.0014502212488172184,
+    "ci95": [
+     -0.16096211843055505,
+     0.0655247023441469
+    ],
+    "negative": 5,
+    "positive": 5,
+    "sign_flip_p": 0.716796875,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc20": {
+    "n": 10,
+    "mean": 0.06690250862684242,
+    "median": 0.043937016481309266,
+    "ci95": [
+     0.007855163551600205,
+     0.13419480860784397
+    ],
+    "negative": 3,
+    "positive": 7,
+    "sign_flip_p": 0.07421875,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc30": {
+    "n": 10,
+    "mean": 0.16742120430462645,
+    "median": 0.1729404413774446,
+    "ci95": [
+     0.10638717124102487,
+     0.24098016554703475
+    ],
+    "negative": 0,
+    "positive": 10,
+    "sign_flip_p": 0.001953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc16 - base_unipc12": {
+    "n": 10,
+    "mean": -0.017779342550651424,
+    "median": -0.020414215500503874,
+    "ci95": [
+     -0.07855398824786083,
+     0.05696338338202399
+    ],
+    "negative": 7,
+    "positive": 3,
+    "sign_flip_p": 0.669921875,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc20 - base_unipc16": {
+    "n": 10,
+    "mean": -0.10201175047310211,
+    "median": -0.04621371687624361,
+    "ci95": [
+     -0.22610748954768434,
+     -0.020181181444451232
+    ],
+    "negative": 9,
+    "positive": 1,
+    "sign_flip_p": 0.021484375,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc30 - base_unipc20": {
+    "n": 10,
+    "mean": -0.10051869567778401,
+    "median": -0.08774873438207789,
+    "ci95": [
+     -0.1375179757638045,
+     -0.06737826462033723
+    ],
+    "negative": 10,
+    "positive": 0,
+    "sign_flip_p": 0.001953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   }
+  },
+  "pooled": {
+   "v2_euler12 - base_unipc12": {
+    "n": 10,
+    "mean": 0.07618005574177607,
+    "median": 0.06550108066571962,
+    "ci95": [
+     0.019042601179501403,
+     0.13341729171099592
+    ],
+    "negative": 3,
+    "positive": 7,
+    "sign_flip_p": 0.041015625,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_euler12": {
+    "n": 10,
+    "mean": -0.056153114040960996,
+    "median": -0.06460098506123801,
+    "ci95": [
+     -0.13152625172967478,
+     0.022216032825294104
+    ],
+    "negative": 7,
+    "positive": 3,
+    "sign_flip_p": 0.205078125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc16": {
+    "n": 10,
+    "mean": 0.08356832549673318,
+    "median": 0.10604253267997185,
+    "ci95": [
+     -0.006746056689504104,
+     0.15695593572183605
+    ],
+    "negative": 1,
+    "positive": 9,
+    "sign_flip_p": 0.095703125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc20": {
+    "n": 10,
+    "mean": 0.11870858028185563,
+    "median": 0.13382833425801394,
+    "ci95": [
+     0.04169442131017402,
+     0.1871044296127206
+    ],
+    "negative": 1,
+    "positive": 9,
+    "sign_flip_p": 0.017578125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "v2_euler12 - base_unipc30": {
+    "n": 10,
+    "mean": 0.2833252626886241,
+    "median": 0.26273429449795227,
+    "ci95": [
+     0.20449590127609737,
+     0.3653781946425271
+    ],
+    "negative": 0,
+    "positive": 10,
+    "sign_flip_p": 0.001953125,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc16 - base_unipc12": {
+    "n": 10,
+    "mean": -0.007388269754957133,
+    "median": -0.03355844327799645,
+    "ci95": [
+     -0.06841642959397767,
+     0.07086453547059919
+    ],
+    "negative": 7,
+    "positive": 3,
+    "sign_flip_p": 0.875,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc20 - base_unipc16": {
+    "n": 10,
+    "mean": -0.035140254785122435,
+    "median": -0.0638332822160914,
+    "ci95": [
+     -0.07704443569579032,
+     0.024694176934910182
+    ],
+    "negative": 9,
+    "positive": 1,
+    "sign_flip_p": 0.255859375,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   },
+   "base_unipc30 - base_unipc20": {
+    "n": 10,
+    "mean": -0.16461668240676847,
+    "median": -0.11982190321257866,
+    "ci95": [
+     -0.24662151138903074,
+     -0.08851106508728822
+    ],
+    "negative": 9,
+    "positive": 1,
+    "sign_flip_p": 0.00390625,
+    "prompts": [
+     "campfire",
+     "fountain",
+     "harbor",
+     "horse",
+     "kitchen",
+     "piano",
+     "skater",
+     "storm",
+     "typist",
+     "violin"
+    ]
+   }
+  }
+ },
+ "placement": {
+  "log": {
+   "curve": {
+    "12": 0.47124478724273394,
+    "16": 0.4493378794733265,
+    "20": 0.3776661354532661,
+    "30": 0.23790693568531118
+   },
+   "adapter": 0.4776826747190972,
+   "steps": null,
+   "note": "no better than 12 steps"
+  },
+  "relative": {
+   "curve": {
+    "12": 0.4584544487690347,
+    "16": 0.4406751062183833,
+    "20": 0.33866335574528117,
+    "30": 0.23814466006749715
+   },
+   "adapter": 0.40556586437212355,
+   "steps": 17.376674419699018,
+   "note": "interpolated"
+  },
+  "pooled": {
+   "curve": {
+    "12": 0.38069732793059385,
+    "16": 0.3733090581756367,
+    "20": 0.33816880339051425,
+    "30": 0.17355212098374578
+   },
+   "adapter": 0.45687738367236996,
+   "steps": null,
+   "note": "no better than 12 steps"
+  }
+ },
+ "decomposition": {
+  "base_euler12": {
+   "sharpness": {
+    "mean_abs": 0.7432497231505798,
+    "mean_signed": 0.03850477543328961,
+    "below_teacher": 18,
+    "n": 30
+   },
+   "temporal_flicker": {
+    "mean_abs": 0.4203186853240271,
+    "mean_signed": -0.09238508475900122,
+    "below_teacher": 22,
+    "n": 30
+   },
+   "motion_coherence": {
+    "mean_abs": 0.18740924638327924,
+    "mean_signed": -0.08765213859399729,
+    "below_teacher": 19,
+    "n": 30
+   },
+   "colour_stability": {
+    "mean_abs": 0.6266514222017491,
+    "mean_signed": -0.0047334743464957545,
+    "below_teacher": 19,
+    "n": 30
+   }
+  },
+  "base_unipc12": {
+   "sharpness": {
+    "mean_abs": 0.6200292174124888,
+    "mean_signed": 0.007950384829671723,
+    "below_teacher": 18,
+    "n": 30
+   },
+   "temporal_flicker": {
+    "mean_abs": 0.4083697443428333,
+    "mean_signed": 0.028859089115787013,
+    "below_teacher": 15,
+    "n": 30
+   },
+   "motion_coherence": {
+    "mean_abs": 0.16185352332920935,
+    "mean_signed": -0.03144680776554603,
+    "below_teacher": 17,
+    "n": 30
+   },
+   "colour_stability": {
+    "mean_abs": 0.6435653099916071,
+    "mean_signed": 0.14364153097577562,
+    "below_teacher": 20,
+    "n": 30
+   }
+  },
+  "base_unipc16": {
+   "sharpness": {
+    "mean_abs": 0.5552105540884357,
+    "mean_signed": 0.02086562129425864,
+    "below_teacher": 18,
+    "n": 30
+   },
+   "temporal_flicker": {
+    "mean_abs": 0.4137955448555371,
+    "mean_signed": 0.00886747803958811,
+    "below_teacher": 15,
+    "n": 30
+   },
+   "motion_coherence": {
+    "mean_abs": 0.138424116933227,
+    "mean_signed": -0.037848164383312725,
+    "below_teacher": 18,
+    "n": 30
+   },
+   "colour_stability": {
+    "mean_abs": 0.6552702089963336,
+    "mean_signed": 0.09492704622342522,
+    "below_teacher": 20,
+    "n": 30
+   }
+  },
+  "base_unipc20": {
+   "sharpness": {
+    "mean_abs": 0.4594502871445274,
+    "mean_signed": -0.0082532129957959,
+    "below_teacher": 20,
+    "n": 30
+   },
+   "temporal_flicker": {
+    "mean_abs": 0.3038555644277378,
+    "mean_signed": -0.07610725704340272,
+    "below_teacher": 18,
+    "n": 30
+   },
+   "motion_coherence": {
+    "mean_abs": 0.10010652220591601,
+    "mean_signed": -0.03628277276759952,
+    "below_teacher": 19,
+    "n": 30
+   },
+   "colour_stability": {
+    "mean_abs": 0.49124104920294337,
+    "mean_signed": -0.10338876127083572,
+    "below_teacher": 19,
+    "n": 30
+   }
+  },
+  "base_unipc30": {
+   "sharpness": {
+    "mean_abs": 0.300803303903676,
+    "mean_signed": -0.01636133768470032,
+    "below_teacher": 21,
+    "n": 30
+   },
+   "temporal_flicker": {
+    "mean_abs": 0.21182289947536492,
+    "mean_signed": -0.016993035542232495,
+    "below_teacher": 17,
+    "n": 30
+   },
+   "motion_coherence": {
+    "mean_abs": 0.0660043979201095,
+    "mean_signed": -0.01712909310291072,
+    "below_teacher": 20,
+    "n": 30
+   },
+   "colour_stability": {
+    "mean_abs": 0.373948038970838,
+    "mean_signed": 0.05316379267598346,
+    "below_teacher": 15,
+    "n": 30
+   }
+  },
+  "v2_euler12": {
+   "sharpness": {
+    "mean_abs": 0.3906533113737695,
+    "mean_signed": -0.19878415118001697,
+    "below_teacher": 24,
+    "n": 30
+   },
+   "temporal_flicker": {
+    "mean_abs": 0.5033472889153807,
+    "mean_signed": -0.13574766765553542,
+    "below_teacher": 23,
+    "n": 30
+   },
+   "motion_coherence": {
+    "mean_abs": 0.13075075423161853,
+    "mean_signed": -0.006020664188366302,
+    "below_teacher": 16,
+    "n": 30
+   },
+   "colour_stability": {
+    "mean_abs": 0.5975121029677257,
+    "mean_signed": -0.09733960074162464,
+    "below_teacher": 21,
+    "n": 30
+   }
+  }
+ },
+ "adherence": {
+  "clip_margin": {
+   "mean": {
+    "teacher48": 19.298433333333335,
+    "base_unipc12": 17.963666666666665,
+    "base_unipc16": 19.03023333333333,
+    "base_unipc20": 19.37623333333333,
+    "base_unipc30": 19.211733333333335,
+    "base_euler12": 17.873766666666665,
+    "v2_euler12": 18.587266666666668
+   },
+   "paired": {
+    "v2_euler12 - base_unipc12": {
+     "n": 10,
+     "mean": 0.6236000000000003,
+     "median": 0.7768333333333306,
+     "ci95": [
+      -0.5248349999999998,
+      1.8414033333333326
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.3515625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_euler12": {
+     "n": 10,
+     "mean": 0.7135000000000004,
+     "median": 0.4410000000000007,
+     "ci95": [
+      -0.36964249999999826,
+      2.0832041666666656
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.361328125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc16": {
+     "n": 10,
+     "mean": -0.44296666666666573,
+     "median": -0.22783333333333022,
+     "ci95": [
+      -1.3189191666666638,
+      0.4230124999999979
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.359375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc20": {
+     "n": 10,
+     "mean": -0.7889666666666659,
+     "median": -1.0955000000000021,
+     "ci95": [
+      -1.6094041666666645,
+      0.09116833333333495
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.123046875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc30": {
+     "n": 10,
+     "mean": -0.6244666666666664,
+     "median": -0.7551666666666677,
+     "ci95": [
+      -1.7375791666666667,
+      0.4694433333333322
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.314453125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - base_unipc12": {
+     "n": 10,
+     "mean": 1.066566666666666,
+     "median": 0.6986666666666643,
+     "ci95": [
+      0.3324991666666664,
+      1.8945374999999984
+     ],
+     "negative": 2,
+     "positive": 8,
+     "sign_flip_p": 0.021484375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - base_unipc16": {
+     "n": 10,
+     "mean": 0.34600000000000025,
+     "median": 0.19716666666666782,
+     "ci95": [
+      -0.09124249999999715,
+      0.8248349999999994
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.20703125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - base_unipc20": {
+     "n": 10,
+     "mean": -0.1644999999999996,
+     "median": 0.07550000000000168,
+     "ci95": [
+      -0.8019716666666654,
+      0.4334491666666653
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.630859375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc12 - teacher48": {
+     "n": 10,
+     "mean": -1.3347666666666669,
+     "median": -1.0714999999999986,
+     "ci95": [
+      -2.0553700000000004,
+      -0.6366500000000017
+     ],
+     "negative": 8,
+     "positive": 2,
+     "sign_flip_p": 0.0078125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - teacher48": {
+     "n": 10,
+     "mean": -0.26820000000000094,
+     "median": 0.048833333333329065,
+     "ci95": [
+      -1.12442,
+      0.5037683333333314
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.55078125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - teacher48": {
+     "n": 10,
+     "mean": 0.07779999999999934,
+     "median": -0.04666666666666508,
+     "ci95": [
+      -0.5792016666666684,
+      0.7212341666666662
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.822265625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - teacher48": {
+     "n": 10,
+     "mean": -0.08670000000000026,
+     "median": -0.3160000000000025,
+     "ci95": [
+      -0.34860250000000076,
+      0.22476750000000034
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.580078125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_euler12 - teacher48": {
+     "n": 10,
+     "mean": -1.424666666666667,
+     "median": -1.053166666666666,
+     "ci95": [
+      -2.642120833333333,
+      -0.27970000000000006
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.048828125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - teacher48": {
+     "n": 10,
+     "mean": -0.7111666666666666,
+     "median": -1.2134999999999998,
+     "ci95": [
+      -1.8178441666666647,
+      0.44271833333333205
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.26953125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    }
+   }
+  },
+  "clip": {
+   "mean": {
+    "teacher48": 25.18,
+    "base_unipc12": 25.0485,
+    "base_unipc16": 25.646066666666666,
+    "base_unipc20": 25.85023333333333,
+    "base_unipc30": 25.498366666666666,
+    "base_euler12": 25.0212,
+    "v2_euler12": 24.795099999999998
+   },
+   "paired": {
+    "v2_euler12 - base_unipc12": {
+     "n": 10,
+     "mean": -0.25340000000000024,
+     "median": -0.5655000000000001,
+     "ci95": [
+      -1.1751333333333331,
+      0.7240474999999994
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_euler12": {
+     "n": 10,
+     "mean": -0.22610000000000027,
+     "median": -0.8418333333333337,
+     "ci95": [
+      -1.2089333333333336,
+      0.9497999999999983
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.716796875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc16": {
+     "n": 10,
+     "mean": -0.8509666666666675,
+     "median": -1.2783333333333324,
+     "ci95": [
+      -1.5608741666666663,
+      -0.06629916666666678
+     ],
+     "negative": 8,
+     "positive": 2,
+     "sign_flip_p": 0.068359375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc20": {
+     "n": 10,
+     "mean": -1.0551333333333333,
+     "median": -1.3203333333333322,
+     "ci95": [
+      -1.7267333333333337,
+      -0.36292583333333517
+     ],
+     "negative": 8,
+     "positive": 2,
+     "sign_flip_p": 0.01953125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc30": {
+     "n": 10,
+     "mean": -0.7032666666666672,
+     "median": -0.6350000000000016,
+     "ci95": [
+      -1.8143874999999994,
+      0.3791166666666649
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.265625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - base_unipc12": {
+     "n": 10,
+     "mean": 0.5975666666666672,
+     "median": 0.040500000000001535,
+     "ci95": [
+      -0.09547416666666679,
+      1.378867500000001
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.2109375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - base_unipc16": {
+     "n": 10,
+     "mean": 0.20416666666666572,
+     "median": 0.14783333333333282,
+     "ci95": [
+      -0.08474416666666823,
+      0.5193383333333337
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.234375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - base_unipc20": {
+     "n": 10,
+     "mean": -0.3518666666666661,
+     "median": -0.3351666666666677,
+     "ci95": [
+      -0.9787008333333332,
+      0.27120000000000033
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.33203125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc12 - teacher48": {
+     "n": 10,
+     "mean": -0.13150000000000084,
+     "median": -0.23216666666666974,
+     "ci95": [
+      -0.6257425000000009,
+      0.36353749999999846
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.6328125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - teacher48": {
+     "n": 10,
+     "mean": 0.4660666666666664,
+     "median": 0.039499999999998536,
+     "ci95": [
+      -0.37620000000000076,
+      1.4235391666666672
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.38671875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - teacher48": {
+     "n": 10,
+     "mean": 0.6702333333333321,
+     "median": 0.29183333333333117,
+     "ci95": [
+      0.007892499999998977,
+      1.4843516666666636
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.12890625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - teacher48": {
+     "n": 10,
+     "mean": 0.318366666666666,
+     "median": 0.1708333333333325,
+     "ci95": [
+      -0.10283583333333501,
+      0.741469166666665
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.201171875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_euler12 - teacher48": {
+     "n": 10,
+     "mean": -0.1588000000000008,
+     "median": -0.18283333333333474,
+     "ci95": [
+      -0.7257333333333339,
+      0.4071366666666658
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.619140625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - teacher48": {
+     "n": 10,
+     "mean": -0.3849000000000011,
+     "median": -0.9226666666666681,
+     "ci95": [
+      -1.450838333333336,
+      0.8135058333333319
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.533203125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    }
+   }
+  },
+  "clap_margin": {
+   "mean": {
+    "teacher48": 26.779133333333334,
+    "base_unipc12": 27.751066666666667,
+    "base_unipc16": 31.985233333333337,
+    "base_unipc20": 27.028933333333335,
+    "base_unipc30": 26.704366666666665,
+    "base_euler12": 27.07033333333333,
+    "v2_euler12": 27.98386666666667
+   },
+   "paired": {
+    "v2_euler12 - base_unipc12": {
+     "n": 10,
+     "mean": 0.23279999999999834,
+     "median": 0.14066666666666272,
+     "ci95": [
+      -4.074723333333335,
+      5.592665833333325
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.943359375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_euler12": {
+     "n": 10,
+     "mean": 0.9135333333333321,
+     "median": 0.5481666666666674,
+     "ci95": [
+      -2.6238725000000014,
+      4.431961666666654
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.638671875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc16": {
+     "n": 10,
+     "mean": -4.0013666666666685,
+     "median": -4.467000000000002,
+     "ci95": [
+      -6.651400000000001,
+      -1.3930666666666702
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.02734375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc20": {
+     "n": 10,
+     "mean": 0.9549333333333326,
+     "median": 0.8310000000000013,
+     "ci95": [
+      -4.706413333333333,
+      6.686779166666658
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.763671875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc30": {
+     "n": 10,
+     "mean": 1.2794999999999994,
+     "median": 0.2283333333333335,
+     "ci95": [
+      -2.6050966666666664,
+      6.176294166666661
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.708984375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - base_unipc12": {
+     "n": 10,
+     "mean": 4.234166666666668,
+     "median": 1.2786666666666662,
+     "ci95": [
+      0.11073333333333402,
+      10.002390833333315
+     ],
+     "negative": 2,
+     "positive": 8,
+     "sign_flip_p": 0.1171875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - base_unipc16": {
+     "n": 10,
+     "mean": -4.9563000000000015,
+     "median": -1.9551666666666674,
+     "ci95": [
+      -11.442747500000001,
+      0.5328449999999965
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.169921875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - base_unipc20": {
+     "n": 10,
+     "mean": -0.3245666666666672,
+     "median": -0.5245000000000015,
+     "ci95": [
+      -3.4189191666666674,
+      3.5492766666666618
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.92578125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc12 - teacher48": {
+     "n": 10,
+     "mean": 0.9719333333333344,
+     "median": 0.6498333333333353,
+     "ci95": [
+      -4.112017499999999,
+      5.449956666666667
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.79296875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - teacher48": {
+     "n": 10,
+     "mean": 5.206100000000001,
+     "median": 2.892666666666665,
+     "ci95": [
+      0.5435433333333337,
+      10.899990833333323
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.087890625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - teacher48": {
+     "n": 10,
+     "mean": 0.2498000000000001,
+     "median": 0.6636666666666677,
+     "ci95": [
+      -6.4115625,
+      5.160389166666665
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.921875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - teacher48": {
+     "n": 10,
+     "mean": -0.07476666666666718,
+     "median": 0.18333333333333357,
+     "ci95": [
+      -3.1475183333333328,
+      2.4015708333333325
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.95703125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_euler12 - teacher48": {
+     "n": 10,
+     "mean": 0.29120000000000046,
+     "median": 2.3405000000000022,
+     "ci95": [
+      -5.7982916666666675,
+      5.6560000000000015
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.9296875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - teacher48": {
+     "n": 10,
+     "mean": 1.2047333333333323,
+     "median": 0.28316666666666546,
+     "ci95": [
+      -4.201474166666667,
+      7.040699999999998
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.73046875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    }
+   }
+  }
+ },
+ "audio": {
+  "loudness": {
+   "mean": {
+    "base_euler12": 0.42546456258315074,
+    "base_unipc12": 0.253943719262711,
+    "base_unipc16": 0.22314370688846358,
+    "base_unipc20": 0.2556262161662003,
+    "base_unipc30": 0.19032447410033784,
+    "v2_euler12": 0.3657240520340441
+   },
+   "paired": {
+    "v2_euler12 - base_unipc12": {
+     "n": 10,
+     "mean": 0.11178033277133317,
+     "median": 0.10935814054386822,
+     "ci95": [
+      0.0019658156089681993,
+      0.23238342429146114
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.103515625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_euler12": {
+     "n": 10,
+     "mean": -0.0597405105491066,
+     "median": -0.037773350345871155,
+     "ci95": [
+      -0.13591275843738648,
+      0.015790280721435093
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.173828125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc16": {
+     "n": 10,
+     "mean": 0.14258034514558054,
+     "median": 0.1443163983035281,
+     "ci95": [
+      0.00899796028419286,
+      0.29117232622338735
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.08984375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc20": {
+     "n": 10,
+     "mean": 0.1100978358678438,
+     "median": 0.1421514930821626,
+     "ci95": [
+      -0.06747093651147411,
+      0.266544832099909
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.25390625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc30": {
+     "n": 10,
+     "mean": 0.17539957793370628,
+     "median": 0.20109304653987295,
+     "ci95": [
+      0.0705740843351681,
+      0.2809590713279629
+     ],
+     "negative": 2,
+     "positive": 8,
+     "sign_flip_p": 0.017578125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - base_unipc12": {
+     "n": 10,
+     "mean": -0.03080001237424735,
+     "median": -0.07763492067498304,
+     "ci95": [
+      -0.10512763137102421,
+      0.07276835196384307
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.59375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - base_unipc16": {
+     "n": 10,
+     "mean": 0.032482509277736694,
+     "median": -0.0032150292486528564,
+     "ci95": [
+      -0.04959808773368892,
+      0.12582579717890235
+     ],
+     "negative": 6,
+     "positive": 4,
+     "sign_flip_p": 0.51953125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - base_unipc20": {
+     "n": 10,
+     "mean": -0.06530174206586245,
+     "median": -0.05470452928009785,
+     "ci95": [
+      -0.16429625525842972,
+      0.011753441860897258
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.1953125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    }
+   }
+  },
+  "brightness": {
+   "mean": {
+    "base_euler12": 0.07051913969038756,
+    "base_unipc12": 0.04090362296357392,
+    "base_unipc16": 0.04458827961156782,
+    "base_unipc20": 0.05324972542894291,
+    "base_unipc30": 0.027255187985733502,
+    "v2_euler12": 0.06556929819854408
+   },
+   "paired": {
+    "v2_euler12 - base_unipc12": {
+     "n": 10,
+     "mean": 0.02466567523497017,
+     "median": 0.012847932005507434,
+     "ci95": [
+      -0.011503649878709615,
+      0.08011496688633685
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.505859375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_euler12": {
+     "n": 10,
+     "mean": -0.0049498414918434696,
+     "median": -0.009795053498672357,
+     "ci95": [
+      -0.024328028480232616,
+      0.020734955087665125
+     ],
+     "negative": 7,
+     "positive": 3,
+     "sign_flip_p": 0.724609375,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc16": {
+     "n": 10,
+     "mean": 0.02098101858697627,
+     "median": 0.005025745149965483,
+     "ci95": [
+      -0.010268880484837636,
+      0.06665012397812281
+     ],
+     "negative": 3,
+     "positive": 7,
+     "sign_flip_p": 0.4765625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc20": {
+     "n": 10,
+     "mean": 0.012319572769601175,
+     "median": 0.008755565574487947,
+     "ci95": [
+      -0.01406803002704417,
+      0.04499897215312544
+     ],
+     "negative": 4,
+     "positive": 6,
+     "sign_flip_p": 0.546875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "v2_euler12 - base_unipc30": {
+     "n": 10,
+     "mean": 0.0383141102128106,
+     "median": 0.01888183226937592,
+     "ci95": [
+      0.010238263660921943,
+      0.07884601406463435
+     ],
+     "negative": 1,
+     "positive": 9,
+     "sign_flip_p": 0.017578125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc16 - base_unipc12": {
+     "n": 10,
+     "mean": 0.0036846566479938987,
+     "median": -0.0002870257745937396,
+     "ci95": [
+      -0.00824447852571854,
+      0.01643120003209363
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.603515625,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc20 - base_unipc16": {
+     "n": 10,
+     "mean": 0.008661445817375091,
+     "median": -0.0014271846015778515,
+     "ci95": [
+      -0.007328159756373032,
+      0.027917880744255108
+     ],
+     "negative": 5,
+     "positive": 5,
+     "sign_flip_p": 0.421875,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    },
+    "base_unipc30 - base_unipc20": {
+     "n": 10,
+     "mean": -0.02599453744320942,
+     "median": -0.02217985447925316,
+     "ci95": [
+      -0.038541017791051256,
+      -0.01510965411340238
+     ],
+     "negative": 10,
+     "positive": 0,
+     "sign_flip_p": 0.001953125,
+     "prompts": [
+      "campfire",
+      "fountain",
+      "harbor",
+      "horse",
+      "kitchen",
+      "piano",
+      "skater",
+      "storm",
+      "typist",
+      "violin"
+     ]
+    }
+   }
+  }
+ }
+}

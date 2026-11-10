@@ -1,0 +1,5042 @@
+[
+  {
+    "file": "campfire_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 809 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00099,
+      "peak": 0.0243,
+      "centroid_mean_hz": 3019.9,
+      "centroid_slope_hz_per_frame": 2.068,
+      "centroid_r2": 0.011,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "campfire_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 703 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00144,
+      "peak": 0.0101,
+      "centroid_mean_hz": 3243.9,
+      "centroid_slope_hz_per_frame": -0.192,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "campfire_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 723 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05088,
+      "peak": 0.6663,
+      "centroid_mean_hz": 2120.5,
+      "centroid_slope_hz_per_frame": 4.681,
+      "centroid_r2": 0.012,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "fountain_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3660 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01732,
+      "peak": 0.1923,
+      "centroid_mean_hz": 2656.2,
+      "centroid_slope_hz_per_frame": 0.46,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "fountain_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3093 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.06991,
+      "peak": 0.5094,
+      "centroid_mean_hz": 2418.0,
+      "centroid_slope_hz_per_frame": -6.256,
+      "centroid_r2": 0.525,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "fountain_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4425 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05457,
+      "peak": 0.327,
+      "centroid_mean_hz": 2417.6,
+      "centroid_slope_hz_per_frame": 0.321,
+      "centroid_r2": 0.012,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "harbor_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3447 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00342,
+      "peak": 0.0391,
+      "centroid_mean_hz": 2207.1,
+      "centroid_slope_hz_per_frame": 0.643,
+      "centroid_r2": 0.014,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "harbor_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2365 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00451,
+      "peak": 0.0472,
+      "centroid_mean_hz": 1935.5,
+      "centroid_slope_hz_per_frame": -0.379,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "harbor_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3788 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01685,
+      "peak": 0.1772,
+      "centroid_mean_hz": 1678.8,
+      "centroid_slope_hz_per_frame": -0.529,
+      "centroid_r2": 0.02,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "horse_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1450 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00615,
+      "peak": 0.0929,
+      "centroid_mean_hz": 2120.9,
+      "centroid_slope_hz_per_frame": 0.717,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "horse_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1726 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0732,
+      "peak": 0.4478,
+      "centroid_mean_hz": 1096.1,
+      "centroid_slope_hz_per_frame": -0.914,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "horse_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1947 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09277,
+      "peak": 0.8499,
+      "centroid_mean_hz": 1195.5,
+      "centroid_slope_hz_per_frame": 1.632,
+      "centroid_r2": 0.037,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "kitchen_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 826 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00275,
+      "peak": 0.0913,
+      "centroid_mean_hz": 3059.2,
+      "centroid_slope_hz_per_frame": 2.598,
+      "centroid_r2": 0.043,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "kitchen_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 830 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01717,
+      "peak": 0.5297,
+      "centroid_mean_hz": 2053.7,
+      "centroid_slope_hz_per_frame": 4.774,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "kitchen_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 614 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01478,
+      "peak": 0.6516,
+      "centroid_mean_hz": 2816.6,
+      "centroid_slope_hz_per_frame": 3.178,
+      "centroid_r2": 0.028,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "piano_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 819 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01683,
+      "peak": 0.0973,
+      "centroid_mean_hz": 710.4,
+      "centroid_slope_hz_per_frame": 2.204,
+      "centroid_r2": 0.092,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "piano_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 599 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03028,
+      "peak": 0.2219,
+      "centroid_mean_hz": 671.3,
+      "centroid_slope_hz_per_frame": 1.412,
+      "centroid_r2": 0.031,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "piano_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 490 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05537,
+      "peak": 0.5195,
+      "centroid_mean_hz": 603.8,
+      "centroid_slope_hz_per_frame": -2.355,
+      "centroid_r2": 0.452,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "skater_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1979 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09596,
+      "peak": 0.8008,
+      "centroid_mean_hz": 1660.6,
+      "centroid_slope_hz_per_frame": 4.931,
+      "centroid_r2": 0.016,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "skater_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2232 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.12266,
+      "peak": 0.9345,
+      "centroid_mean_hz": 1499.9,
+      "centroid_slope_hz_per_frame": -3.95,
+      "centroid_r2": 0.011,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "skater_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2166 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09311,
+      "peak": 0.8621,
+      "centroid_mean_hz": 1160.9,
+      "centroid_slope_hz_per_frame": -2.048,
+      "centroid_r2": 0.117,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "storm_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 491 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00534,
+      "peak": 0.0241,
+      "centroid_mean_hz": 1876.1,
+      "centroid_slope_hz_per_frame": 0.673,
+      "centroid_r2": 0.034,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "storm_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 410 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02665,
+      "peak": 0.2172,
+      "centroid_mean_hz": 972.0,
+      "centroid_slope_hz_per_frame": -4.538,
+      "centroid_r2": 0.21,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "storm_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 779 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02874,
+      "peak": 0.1608,
+      "centroid_mean_hz": 1454.6,
+      "centroid_slope_hz_per_frame": -0.726,
+      "centroid_r2": 0.025,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "typist_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 716 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00206,
+      "peak": 0.068,
+      "centroid_mean_hz": 2173.1,
+      "centroid_slope_hz_per_frame": 0.359,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "typist_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 627 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00303,
+      "peak": 0.0753,
+      "centroid_mean_hz": 2230.4,
+      "centroid_slope_hz_per_frame": 3.032,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "typist_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 744 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00097,
+      "peak": 0.0091,
+      "centroid_mean_hz": 2009.2,
+      "centroid_slope_hz_per_frame": 2.402,
+      "centroid_r2": 0.014,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "violin_s100.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4020 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0882,
+      "peak": 0.3883,
+      "centroid_mean_hz": 1695.0,
+      "centroid_slope_hz_per_frame": -1.633,
+      "centroid_r2": 0.034,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "violin_s200.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2699 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.24597,
+      "peak": 0.9313,
+      "centroid_mean_hz": 1379.4,
+      "centroid_slope_hz_per_frame": 1.026,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "violin_s300.mp4",
+    "dir": "teacher",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3551 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.17642,
+      "peak": 0.9025,
+      "centroid_mean_hz": 1342.9,
+      "centroid_slope_hz_per_frame": 7.077,
+      "centroid_r2": 0.403,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_campfire_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 324 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00091,
+      "peak": 0.0162,
+      "centroid_mean_hz": 2932.0,
+      "centroid_slope_hz_per_frame": 1.542,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_campfire_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 345 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00141,
+      "peak": 0.0183,
+      "centroid_mean_hz": 3240.9,
+      "centroid_slope_hz_per_frame": -0.907,
+      "centroid_r2": 0.05,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_campfire_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 312 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02619,
+      "peak": 0.3453,
+      "centroid_mean_hz": 2159.9,
+      "centroid_slope_hz_per_frame": 7.277,
+      "centroid_r2": 0.031,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_fountain_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 9491 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01355,
+      "peak": 0.1131,
+      "centroid_mean_hz": 2707.9,
+      "centroid_slope_hz_per_frame": 0.087,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_fountain_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 5702 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02616,
+      "peak": 0.1437,
+      "centroid_mean_hz": 2720.8,
+      "centroid_slope_hz_per_frame": -2.843,
+      "centroid_r2": 0.35,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_fountain_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 9485 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03977,
+      "peak": 0.2461,
+      "centroid_mean_hz": 2545.0,
+      "centroid_slope_hz_per_frame": 0.339,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_harbor_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4949 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00328,
+      "peak": 0.0203,
+      "centroid_mean_hz": 2226.1,
+      "centroid_slope_hz_per_frame": 0.747,
+      "centroid_r2": 0.031,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_harbor_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4127 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00441,
+      "peak": 0.0332,
+      "centroid_mean_hz": 2102.6,
+      "centroid_slope_hz_per_frame": -0.298,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_harbor_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4352 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01123,
+      "peak": 0.1666,
+      "centroid_mean_hz": 1940.7,
+      "centroid_slope_hz_per_frame": 0.107,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_horse_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1945 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00686,
+      "peak": 0.149,
+      "centroid_mean_hz": 2045.8,
+      "centroid_slope_hz_per_frame": 0.455,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_horse_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1583 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05104,
+      "peak": 0.3783,
+      "centroid_mean_hz": 1178.2,
+      "centroid_slope_hz_per_frame": -0.297,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_horse_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1750 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.06114,
+      "peak": 0.896,
+      "centroid_mean_hz": 1342.6,
+      "centroid_slope_hz_per_frame": -1.429,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_kitchen_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 369 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00182,
+      "peak": 0.0772,
+      "centroid_mean_hz": 3181.0,
+      "centroid_slope_hz_per_frame": -0.468,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_kitchen_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 416 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00179,
+      "peak": 0.0262,
+      "centroid_mean_hz": 2933.4,
+      "centroid_slope_hz_per_frame": -0.591,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_kitchen_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 451 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01279,
+      "peak": 0.4649,
+      "centroid_mean_hz": 3260.7,
+      "centroid_slope_hz_per_frame": 0.532,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_piano_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 453 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00835,
+      "peak": 0.0492,
+      "centroid_mean_hz": 647.1,
+      "centroid_slope_hz_per_frame": 2.743,
+      "centroid_r2": 0.175,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_piano_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 286 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01132,
+      "peak": 0.0638,
+      "centroid_mean_hz": 626.0,
+      "centroid_slope_hz_per_frame": -0.18,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_piano_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 386 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03953,
+      "peak": 0.2494,
+      "centroid_mean_hz": 554.0,
+      "centroid_slope_hz_per_frame": -1.271,
+      "centroid_r2": 0.127,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_skater_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2274 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.08019,
+      "peak": 0.8847,
+      "centroid_mean_hz": 1609.6,
+      "centroid_slope_hz_per_frame": 2.581,
+      "centroid_r2": 0.008,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_skater_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1901 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10742,
+      "peak": 0.967,
+      "centroid_mean_hz": 1177.2,
+      "centroid_slope_hz_per_frame": -2.02,
+      "centroid_r2": 0.007,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_skater_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2490 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.08275,
+      "peak": 0.9529,
+      "centroid_mean_hz": 1170.7,
+      "centroid_slope_hz_per_frame": -2.155,
+      "centroid_r2": 0.141,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_storm_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 696 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00546,
+      "peak": 0.0278,
+      "centroid_mean_hz": 1843.9,
+      "centroid_slope_hz_per_frame": 0.423,
+      "centroid_r2": 0.023,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_storm_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 660 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02954,
+      "peak": 0.1901,
+      "centroid_mean_hz": 939.5,
+      "centroid_slope_hz_per_frame": -4.036,
+      "centroid_r2": 0.188,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_storm_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 754 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02846,
+      "peak": 0.1754,
+      "centroid_mean_hz": 1299.7,
+      "centroid_slope_hz_per_frame": 1.139,
+      "centroid_r2": 0.092,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_typist_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 489 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0007,
+      "peak": 0.0227,
+      "centroid_mean_hz": 2254.7,
+      "centroid_slope_hz_per_frame": -1.982,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_typist_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 494 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0008,
+      "peak": 0.0271,
+      "centroid_mean_hz": 2120.1,
+      "centroid_slope_hz_per_frame": 1.438,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_typist_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 475 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00053,
+      "peak": 0.0047,
+      "centroid_mean_hz": 2051.2,
+      "centroid_slope_hz_per_frame": -0.38,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_violin_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 10423 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.06739,
+      "peak": 0.3875,
+      "centroid_mean_hz": 1743.0,
+      "centroid_slope_hz_per_frame": 2.156,
+      "centroid_r2": 0.084,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_violin_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 9381 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.20279,
+      "peak": 0.8149,
+      "centroid_mean_hz": 1362.9,
+      "centroid_slope_hz_per_frame": -2.119,
+      "centroid_r2": 0.023,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_euler12_violin_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 11009 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.143,
+      "peak": 0.6952,
+      "centroid_mean_hz": 1300.4,
+      "centroid_slope_hz_per_frame": 5.458,
+      "centroid_r2": 0.392,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_campfire_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 461 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00102,
+      "peak": 0.0298,
+      "centroid_mean_hz": 3005.3,
+      "centroid_slope_hz_per_frame": 1.84,
+      "centroid_r2": 0.007,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_campfire_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 408 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00187,
+      "peak": 0.0515,
+      "centroid_mean_hz": 3250.8,
+      "centroid_slope_hz_per_frame": -1.129,
+      "centroid_r2": 0.02,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_campfire_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 411 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03973,
+      "peak": 0.4185,
+      "centroid_mean_hz": 2131.7,
+      "centroid_slope_hz_per_frame": 6.32,
+      "centroid_r2": 0.019,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_fountain_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 9155 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01354,
+      "peak": 0.0977,
+      "centroid_mean_hz": 2697.8,
+      "centroid_slope_hz_per_frame": 0.265,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_fountain_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4984 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03121,
+      "peak": 0.1986,
+      "centroid_mean_hz": 2648.9,
+      "centroid_slope_hz_per_frame": -2.687,
+      "centroid_r2": 0.309,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_fountain_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7401 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04924,
+      "peak": 0.2522,
+      "centroid_mean_hz": 2410.5,
+      "centroid_slope_hz_per_frame": 0.341,
+      "centroid_r2": 0.016,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_harbor_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4475 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00296,
+      "peak": 0.0314,
+      "centroid_mean_hz": 2242.4,
+      "centroid_slope_hz_per_frame": 0.865,
+      "centroid_r2": 0.025,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_harbor_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3401 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00448,
+      "peak": 0.0459,
+      "centroid_mean_hz": 2076.5,
+      "centroid_slope_hz_per_frame": -0.841,
+      "centroid_r2": 0.029,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_harbor_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3822 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01422,
+      "peak": 0.2213,
+      "centroid_mean_hz": 1865.2,
+      "centroid_slope_hz_per_frame": -0.002,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_horse_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1778 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00881,
+      "peak": 0.2186,
+      "centroid_mean_hz": 2064.1,
+      "centroid_slope_hz_per_frame": 0.296,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_horse_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1624 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05923,
+      "peak": 0.3528,
+      "centroid_mean_hz": 1124.2,
+      "centroid_slope_hz_per_frame": -1.007,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_horse_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1877 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10631,
+      "peak": 0.9824,
+      "centroid_mean_hz": 1308.3,
+      "centroid_slope_hz_per_frame": -1.498,
+      "centroid_r2": 0.014,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_kitchen_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 426 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00273,
+      "peak": 0.1166,
+      "centroid_mean_hz": 3033.0,
+      "centroid_slope_hz_per_frame": 2.116,
+      "centroid_r2": 0.029,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_kitchen_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 491 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00444,
+      "peak": 0.0347,
+      "centroid_mean_hz": 2079.7,
+      "centroid_slope_hz_per_frame": -3.984,
+      "centroid_r2": 0.024,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_kitchen_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 481 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01516,
+      "peak": 0.5503,
+      "centroid_mean_hz": 2970.5,
+      "centroid_slope_hz_per_frame": 1.28,
+      "centroid_r2": 0.003,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_piano_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 468 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01211,
+      "peak": 0.0875,
+      "centroid_mean_hz": 726.9,
+      "centroid_slope_hz_per_frame": 3.855,
+      "centroid_r2": 0.163,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_piano_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 302 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02011,
+      "peak": 0.1028,
+      "centroid_mean_hz": 678.6,
+      "centroid_slope_hz_per_frame": -0.628,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_piano_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 415 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.08127,
+      "peak": 0.524,
+      "centroid_mean_hz": 590.7,
+      "centroid_slope_hz_per_frame": -1.187,
+      "centroid_r2": 0.076,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_skater_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2253 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.11781,
+      "peak": 0.9162,
+      "centroid_mean_hz": 1681.8,
+      "centroid_slope_hz_per_frame": 5.611,
+      "centroid_r2": 0.021,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_skater_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1819 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.15323,
+      "peak": 0.9511,
+      "centroid_mean_hz": 1258.9,
+      "centroid_slope_hz_per_frame": -2.355,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_skater_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2481 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10504,
+      "peak": 0.9829,
+      "centroid_mean_hz": 1140.6,
+      "centroid_slope_hz_per_frame": -2.388,
+      "centroid_r2": 0.14,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_storm_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 763 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00451,
+      "peak": 0.0205,
+      "centroid_mean_hz": 1988.1,
+      "centroid_slope_hz_per_frame": 0.346,
+      "centroid_r2": 0.015,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_storm_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 696 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03716,
+      "peak": 0.2807,
+      "centroid_mean_hz": 907.6,
+      "centroid_slope_hz_per_frame": -4.371,
+      "centroid_r2": 0.153,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_storm_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 864 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03319,
+      "peak": 0.205,
+      "centroid_mean_hz": 1316.7,
+      "centroid_slope_hz_per_frame": 0.878,
+      "centroid_r2": 0.031,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_typist_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 529 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00138,
+      "peak": 0.0366,
+      "centroid_mean_hz": 2197.9,
+      "centroid_slope_hz_per_frame": -2.403,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_typist_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 534 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00238,
+      "peak": 0.0615,
+      "centroid_mean_hz": 2369.7,
+      "centroid_slope_hz_per_frame": 3.315,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_typist_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 519 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00079,
+      "peak": 0.0122,
+      "centroid_mean_hz": 2015.8,
+      "centroid_slope_hz_per_frame": 7.569,
+      "centroid_r2": 0.057,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_violin_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8926 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0973,
+      "peak": 0.4829,
+      "centroid_mean_hz": 1872.5,
+      "centroid_slope_hz_per_frame": -0.792,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_violin_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7969 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.25445,
+      "peak": 0.9411,
+      "centroid_mean_hz": 1399.1,
+      "centroid_slope_hz_per_frame": 0.52,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc12_violin_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 9929 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.2189,
+      "peak": 0.917,
+      "centroid_mean_hz": 1315.8,
+      "centroid_slope_hz_per_frame": 6.5,
+      "centroid_r2": 0.298,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_campfire_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 532 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00094,
+      "peak": 0.0264,
+      "centroid_mean_hz": 3022.7,
+      "centroid_slope_hz_per_frame": 2.456,
+      "centroid_r2": 0.014,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_campfire_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 396 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00155,
+      "peak": 0.0174,
+      "centroid_mean_hz": 3308.3,
+      "centroid_slope_hz_per_frame": -0.967,
+      "centroid_r2": 0.03,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_campfire_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 479 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04719,
+      "peak": 0.6382,
+      "centroid_mean_hz": 2023.5,
+      "centroid_slope_hz_per_frame": 4.358,
+      "centroid_r2": 0.012,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_fountain_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8853 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01781,
+      "peak": 0.14,
+      "centroid_mean_hz": 2710.7,
+      "centroid_slope_hz_per_frame": 0.852,
+      "centroid_r2": 0.025,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_fountain_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4723 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04078,
+      "peak": 0.2187,
+      "centroid_mean_hz": 2644.3,
+      "centroid_slope_hz_per_frame": -1.876,
+      "centroid_r2": 0.289,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_fountain_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7460 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05301,
+      "peak": 0.2902,
+      "centroid_mean_hz": 2415.8,
+      "centroid_slope_hz_per_frame": 0.166,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_harbor_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3914 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00293,
+      "peak": 0.0317,
+      "centroid_mean_hz": 2213.3,
+      "centroid_slope_hz_per_frame": 0.776,
+      "centroid_r2": 0.02,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_harbor_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3143 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0044,
+      "peak": 0.046,
+      "centroid_mean_hz": 2025.8,
+      "centroid_slope_hz_per_frame": -0.665,
+      "centroid_r2": 0.019,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_harbor_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3693 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01443,
+      "peak": 0.1881,
+      "centroid_mean_hz": 1817.4,
+      "centroid_slope_hz_per_frame": -0.085,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_horse_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1548 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00801,
+      "peak": 0.1826,
+      "centroid_mean_hz": 1985.8,
+      "centroid_slope_hz_per_frame": 0.24,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_horse_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1715 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.08018,
+      "peak": 0.5731,
+      "centroid_mean_hz": 1034.4,
+      "centroid_slope_hz_per_frame": -1.992,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_horse_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1672 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10013,
+      "peak": 0.9358,
+      "centroid_mean_hz": 1263.0,
+      "centroid_slope_hz_per_frame": -1.038,
+      "centroid_r2": 0.007,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_kitchen_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 494 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00709,
+      "peak": 0.3821,
+      "centroid_mean_hz": 2958.3,
+      "centroid_slope_hz_per_frame": 0.482,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_kitchen_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 455 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0048,
+      "peak": 0.1909,
+      "centroid_mean_hz": 2429.1,
+      "centroid_slope_hz_per_frame": -1.627,
+      "centroid_r2": 0.012,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_kitchen_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 544 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01971,
+      "peak": 0.8138,
+      "centroid_mean_hz": 2823.5,
+      "centroid_slope_hz_per_frame": 0.169,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_piano_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 374 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01153,
+      "peak": 0.0852,
+      "centroid_mean_hz": 733.5,
+      "centroid_slope_hz_per_frame": 2.948,
+      "centroid_r2": 0.103,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_piano_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 288 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02236,
+      "peak": 0.1365,
+      "centroid_mean_hz": 666.9,
+      "centroid_slope_hz_per_frame": -0.087,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_piano_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 416 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.06783,
+      "peak": 0.4553,
+      "centroid_mean_hz": 597.2,
+      "centroid_slope_hz_per_frame": -0.756,
+      "centroid_r2": 0.046,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_skater_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2283 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.11507,
+      "peak": 0.879,
+      "centroid_mean_hz": 1653.3,
+      "centroid_slope_hz_per_frame": 4.769,
+      "centroid_r2": 0.014,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_skater_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1555 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.13204,
+      "peak": 0.9288,
+      "centroid_mean_hz": 1401.3,
+      "centroid_slope_hz_per_frame": -3.321,
+      "centroid_r2": 0.01,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_skater_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2467 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09935,
+      "peak": 0.9596,
+      "centroid_mean_hz": 1216.1,
+      "centroid_slope_hz_per_frame": -1.6,
+      "centroid_r2": 0.06,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_storm_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 722 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00463,
+      "peak": 0.02,
+      "centroid_mean_hz": 2016.5,
+      "centroid_slope_hz_per_frame": 0.082,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_storm_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 659 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03707,
+      "peak": 0.3355,
+      "centroid_mean_hz": 917.7,
+      "centroid_slope_hz_per_frame": -4.65,
+      "centroid_r2": 0.176,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_storm_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 790 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03457,
+      "peak": 0.2258,
+      "centroid_mean_hz": 1340.0,
+      "centroid_slope_hz_per_frame": 0.395,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_typist_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 540 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00159,
+      "peak": 0.0413,
+      "centroid_mean_hz": 2259.1,
+      "centroid_slope_hz_per_frame": -0.563,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_typist_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 526 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00274,
+      "peak": 0.1205,
+      "centroid_mean_hz": 2424.5,
+      "centroid_slope_hz_per_frame": 0.591,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_typist_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 499 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00091,
+      "peak": 0.0094,
+      "centroid_mean_hz": 1978.4,
+      "centroid_slope_hz_per_frame": 5.776,
+      "centroid_r2": 0.04,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_violin_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8654 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09966,
+      "peak": 0.591,
+      "centroid_mean_hz": 1829.2,
+      "centroid_slope_hz_per_frame": -1.306,
+      "centroid_r2": 0.012,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_violin_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 6607 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.26311,
+      "peak": 0.9454,
+      "centroid_mean_hz": 1419.3,
+      "centroid_slope_hz_per_frame": 1.716,
+      "centroid_r2": 0.016,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc16_violin_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8265 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.20441,
+      "peak": 0.9478,
+      "centroid_mean_hz": 1379.5,
+      "centroid_slope_hz_per_frame": 6.903,
+      "centroid_r2": 0.309,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_campfire_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 576 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00096,
+      "peak": 0.0263,
+      "centroid_mean_hz": 3045.1,
+      "centroid_slope_hz_per_frame": 1.883,
+      "centroid_r2": 0.008,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_campfire_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 494 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00161,
+      "peak": 0.0108,
+      "centroid_mean_hz": 3295.9,
+      "centroid_slope_hz_per_frame": -0.226,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_campfire_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 447 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05125,
+      "peak": 0.7039,
+      "centroid_mean_hz": 1993.9,
+      "centroid_slope_hz_per_frame": 3.028,
+      "centroid_r2": 0.007,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_fountain_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7842 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01837,
+      "peak": 0.1247,
+      "centroid_mean_hz": 2687.4,
+      "centroid_slope_hz_per_frame": 0.094,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_fountain_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4432 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04009,
+      "peak": 0.224,
+      "centroid_mean_hz": 2601.1,
+      "centroid_slope_hz_per_frame": -1.034,
+      "centroid_r2": 0.111,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_fountain_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 6795 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05394,
+      "peak": 0.29,
+      "centroid_mean_hz": 2423.0,
+      "centroid_slope_hz_per_frame": 0.536,
+      "centroid_r2": 0.044,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_harbor_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3575 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00303,
+      "peak": 0.0317,
+      "centroid_mean_hz": 2197.7,
+      "centroid_slope_hz_per_frame": 0.788,
+      "centroid_r2": 0.021,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_harbor_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2838 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00432,
+      "peak": 0.0445,
+      "centroid_mean_hz": 1997.6,
+      "centroid_slope_hz_per_frame": -0.715,
+      "centroid_r2": 0.023,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_harbor_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3670 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01508,
+      "peak": 0.2897,
+      "centroid_mean_hz": 1799.2,
+      "centroid_slope_hz_per_frame": -1.04,
+      "centroid_r2": 0.041,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_horse_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1316 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0075,
+      "peak": 0.1593,
+      "centroid_mean_hz": 2000.2,
+      "centroid_slope_hz_per_frame": -0.141,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_horse_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1570 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0878,
+      "peak": 0.5112,
+      "centroid_mean_hz": 1016.6,
+      "centroid_slope_hz_per_frame": -1.522,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_horse_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1758 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09595,
+      "peak": 0.9021,
+      "centroid_mean_hz": 1161.0,
+      "centroid_slope_hz_per_frame": 0.856,
+      "centroid_r2": 0.013,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_kitchen_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 480 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01821,
+      "peak": 0.6903,
+      "centroid_mean_hz": 3010.5,
+      "centroid_slope_hz_per_frame": -0.545,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_kitchen_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 663 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.06459,
+      "peak": 0.5825,
+      "centroid_mean_hz": 1432.9,
+      "centroid_slope_hz_per_frame": -11.745,
+      "centroid_r2": 0.08,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_kitchen_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 565 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0196,
+      "peak": 0.666,
+      "centroid_mean_hz": 2939.4,
+      "centroid_slope_hz_per_frame": -1.94,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_piano_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 533 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01918,
+      "peak": 0.1223,
+      "centroid_mean_hz": 678.2,
+      "centroid_slope_hz_per_frame": 0.748,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_piano_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 249 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0298,
+      "peak": 0.1631,
+      "centroid_mean_hz": 672.4,
+      "centroid_slope_hz_per_frame": 1.248,
+      "centroid_r2": 0.024,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_piano_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 410 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0597,
+      "peak": 0.4377,
+      "centroid_mean_hz": 585.4,
+      "centroid_slope_hz_per_frame": -1.001,
+      "centroid_r2": 0.082,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_skater_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1977 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10682,
+      "peak": 0.9394,
+      "centroid_mean_hz": 1583.4,
+      "centroid_slope_hz_per_frame": 4.754,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_skater_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1458 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09446,
+      "peak": 0.9379,
+      "centroid_mean_hz": 1212.0,
+      "centroid_slope_hz_per_frame": -5.139,
+      "centroid_r2": 0.143,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_skater_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2161 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0944,
+      "peak": 0.9035,
+      "centroid_mean_hz": 1143.6,
+      "centroid_slope_hz_per_frame": -1.575,
+      "centroid_r2": 0.099,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_storm_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 414 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00462,
+      "peak": 0.0209,
+      "centroid_mean_hz": 2036.7,
+      "centroid_slope_hz_per_frame": 0.326,
+      "centroid_r2": 0.012,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_storm_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 641 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03746,
+      "peak": 0.3109,
+      "centroid_mean_hz": 913.2,
+      "centroid_slope_hz_per_frame": -5.456,
+      "centroid_r2": 0.225,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_storm_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 777 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03408,
+      "peak": 0.2001,
+      "centroid_mean_hz": 1384.2,
+      "centroid_slope_hz_per_frame": 0.327,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_typist_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 583 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00106,
+      "peak": 0.0343,
+      "centroid_mean_hz": 2330.0,
+      "centroid_slope_hz_per_frame": -0.112,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_typist_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 559 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00256,
+      "peak": 0.0792,
+      "centroid_mean_hz": 2125.5,
+      "centroid_slope_hz_per_frame": 1.106,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_typist_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 530 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00071,
+      "peak": 0.0088,
+      "centroid_mean_hz": 2063.7,
+      "centroid_slope_hz_per_frame": 1.155,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_violin_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7657 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10203,
+      "peak": 0.5116,
+      "centroid_mean_hz": 1743.6,
+      "centroid_slope_hz_per_frame": -2.025,
+      "centroid_r2": 0.054,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_violin_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 5344 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.26307,
+      "peak": 0.9281,
+      "centroid_mean_hz": 1381.2,
+      "centroid_slope_hz_per_frame": 0.989,
+      "centroid_r2": 0.005,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc20_violin_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 6765 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.19268,
+      "peak": 0.8689,
+      "centroid_mean_hz": 1362.9,
+      "centroid_slope_hz_per_frame": 7.919,
+      "centroid_r2": 0.401,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_campfire_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 684 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.001,
+      "peak": 0.0244,
+      "centroid_mean_hz": 3013.6,
+      "centroid_slope_hz_per_frame": 2.325,
+      "centroid_r2": 0.014,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_campfire_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 539 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0016,
+      "peak": 0.011,
+      "centroid_mean_hz": 3302.0,
+      "centroid_slope_hz_per_frame": -0.111,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_campfire_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 521 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04592,
+      "peak": 0.6208,
+      "centroid_mean_hz": 2048.2,
+      "centroid_slope_hz_per_frame": 5.599,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_fountain_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 5093 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01936,
+      "peak": 0.1335,
+      "centroid_mean_hz": 2670.1,
+      "centroid_slope_hz_per_frame": 0.149,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_fountain_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4015 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05843,
+      "peak": 0.4323,
+      "centroid_mean_hz": 2489.0,
+      "centroid_slope_hz_per_frame": -7.185,
+      "centroid_r2": 0.536,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_fountain_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 5558 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.05604,
+      "peak": 0.3291,
+      "centroid_mean_hz": 2399.5,
+      "centroid_slope_hz_per_frame": 0.482,
+      "centroid_r2": 0.035,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_harbor_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3521 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00324,
+      "peak": 0.03,
+      "centroid_mean_hz": 2207.5,
+      "centroid_slope_hz_per_frame": 0.445,
+      "centroid_r2": 0.007,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_harbor_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2711 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00451,
+      "peak": 0.0459,
+      "centroid_mean_hz": 1931.9,
+      "centroid_slope_hz_per_frame": -0.667,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_harbor_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3572 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01604,
+      "peak": 0.258,
+      "centroid_mean_hz": 1720.6,
+      "centroid_slope_hz_per_frame": -0.581,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_horse_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1317 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00727,
+      "peak": 0.1535,
+      "centroid_mean_hz": 2076.1,
+      "centroid_slope_hz_per_frame": -0.102,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_horse_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1519 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0782,
+      "peak": 0.4957,
+      "centroid_mean_hz": 1047.3,
+      "centroid_slope_hz_per_frame": -1.489,
+      "centroid_r2": 0.01,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_horse_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1872 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.10631,
+      "peak": 0.971,
+      "centroid_mean_hz": 1173.3,
+      "centroid_slope_hz_per_frame": 0.097,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_kitchen_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 601 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00886,
+      "peak": 0.125,
+      "centroid_mean_hz": 2973.5,
+      "centroid_slope_hz_per_frame": -1.484,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_kitchen_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 774 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04684,
+      "peak": 0.4334,
+      "centroid_mean_hz": 1693.7,
+      "centroid_slope_hz_per_frame": -12.987,
+      "centroid_r2": 0.067,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_kitchen_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 513 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01472,
+      "peak": 0.6521,
+      "centroid_mean_hz": 2803.0,
+      "centroid_slope_hz_per_frame": -5.593,
+      "centroid_r2": 0.046,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_piano_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 625 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01771,
+      "peak": 0.1234,
+      "centroid_mean_hz": 691.5,
+      "centroid_slope_hz_per_frame": 1.591,
+      "centroid_r2": 0.044,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_piano_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 394 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04323,
+      "peak": 0.2863,
+      "centroid_mean_hz": 676.7,
+      "centroid_slope_hz_per_frame": 2.378,
+      "centroid_r2": 0.072,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_piano_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 366 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.07191,
+      "peak": 0.6728,
+      "centroid_mean_hz": 591.6,
+      "centroid_slope_hz_per_frame": -3.869,
+      "centroid_r2": 0.633,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_skater_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2033 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09222,
+      "peak": 0.9002,
+      "centroid_mean_hz": 1733.0,
+      "centroid_slope_hz_per_frame": 5.955,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_skater_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1578 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.12104,
+      "peak": 0.9824,
+      "centroid_mean_hz": 1406.6,
+      "centroid_slope_hz_per_frame": -1.952,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_skater_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2000 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0878,
+      "peak": 0.8262,
+      "centroid_mean_hz": 1161.7,
+      "centroid_slope_hz_per_frame": -1.702,
+      "centroid_r2": 0.131,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_storm_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 370 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00497,
+      "peak": 0.0222,
+      "centroid_mean_hz": 1975.2,
+      "centroid_slope_hz_per_frame": 0.52,
+      "centroid_r2": 0.026,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_storm_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 549 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03573,
+      "peak": 0.3092,
+      "centroid_mean_hz": 919.6,
+      "centroid_slope_hz_per_frame": -4.693,
+      "centroid_r2": 0.182,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_storm_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 749 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03287,
+      "peak": 0.1919,
+      "centroid_mean_hz": 1409.2,
+      "centroid_slope_hz_per_frame": -1.034,
+      "centroid_r2": 0.046,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_typist_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 613 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00131,
+      "peak": 0.0403,
+      "centroid_mean_hz": 2189.2,
+      "centroid_slope_hz_per_frame": -1.251,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_typist_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 598 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00363,
+      "peak": 0.1157,
+      "centroid_mean_hz": 2156.4,
+      "centroid_slope_hz_per_frame": 0.281,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_typist_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 623 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00072,
+      "peak": 0.0077,
+      "centroid_mean_hz": 1993.6,
+      "centroid_slope_hz_per_frame": 1.743,
+      "centroid_r2": 0.006,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_violin_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 6565 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.1048,
+      "peak": 0.4417,
+      "centroid_mean_hz": 1719.1,
+      "centroid_slope_hz_per_frame": -1.974,
+      "centroid_r2": 0.041,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_violin_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 4430 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.27537,
+      "peak": 0.9539,
+      "centroid_mean_hz": 1365.8,
+      "centroid_slope_hz_per_frame": 1.327,
+      "centroid_r2": 0.01,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "base_unipc30_violin_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 5329 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.18138,
+      "peak": 0.9621,
+      "centroid_mean_hz": 1331.3,
+      "centroid_slope_hz_per_frame": 7.031,
+      "centroid_r2": 0.458,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_campfire_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 451 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00085,
+      "peak": 0.0157,
+      "centroid_mean_hz": 3067.1,
+      "centroid_slope_hz_per_frame": 2.7,
+      "centroid_r2": 0.027,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_campfire_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 444 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00116,
+      "peak": 0.0222,
+      "centroid_mean_hz": 3109.7,
+      "centroid_slope_hz_per_frame": -1.015,
+      "centroid_r2": 0.029,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_campfire_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 419 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02527,
+      "peak": 0.3263,
+      "centroid_mean_hz": 2166.6,
+      "centroid_slope_hz_per_frame": 5.628,
+      "centroid_r2": 0.019,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_fountain_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 9125 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01611,
+      "peak": 0.1091,
+      "centroid_mean_hz": 2667.8,
+      "centroid_slope_hz_per_frame": 0.004,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_fountain_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3938 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03675,
+      "peak": 0.2985,
+      "centroid_mean_hz": 2712.8,
+      "centroid_slope_hz_per_frame": -3.858,
+      "centroid_r2": 0.34,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_fountain_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 6395 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03951,
+      "peak": 0.2055,
+      "centroid_mean_hz": 2459.5,
+      "centroid_slope_hz_per_frame": 0.369,
+      "centroid_r2": 0.016,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_harbor_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3926 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00386,
+      "peak": 0.0293,
+      "centroid_mean_hz": 2222.4,
+      "centroid_slope_hz_per_frame": 0.96,
+      "centroid_r2": 0.045,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_harbor_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2348 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00475,
+      "peak": 0.0376,
+      "centroid_mean_hz": 2110.8,
+      "centroid_slope_hz_per_frame": -0.664,
+      "centroid_r2": 0.022,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_harbor_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 3021 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01232,
+      "peak": 0.1689,
+      "centroid_mean_hz": 1946.7,
+      "centroid_slope_hz_per_frame": 0.262,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_horse_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1758 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00796,
+      "peak": 0.2123,
+      "centroid_mean_hz": 2136.2,
+      "centroid_slope_hz_per_frame": 1.438,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_horse_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1460 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.04831,
+      "peak": 0.3156,
+      "centroid_mean_hz": 1177.2,
+      "centroid_slope_hz_per_frame": -1.19,
+      "centroid_r2": 0.007,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_horse_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1688 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.07737,
+      "peak": 0.9707,
+      "centroid_mean_hz": 1343.0,
+      "centroid_slope_hz_per_frame": -2.432,
+      "centroid_r2": 0.04,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_kitchen_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 477 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00245,
+      "peak": 0.0805,
+      "centroid_mean_hz": 3418.5,
+      "centroid_slope_hz_per_frame": 0.373,
+      "centroid_r2": 0.003,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_kitchen_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 518 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00283,
+      "peak": 0.0926,
+      "centroid_mean_hz": 3497.9,
+      "centroid_slope_hz_per_frame": -2.076,
+      "centroid_r2": 0.018,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_kitchen_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 550 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01685,
+      "peak": 0.508,
+      "centroid_mean_hz": 3355.7,
+      "centroid_slope_hz_per_frame": 0.22,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_piano_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 668 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01028,
+      "peak": 0.0795,
+      "centroid_mean_hz": 653.7,
+      "centroid_slope_hz_per_frame": 2.979,
+      "centroid_r2": 0.151,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_piano_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 478 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01424,
+      "peak": 0.083,
+      "centroid_mean_hz": 646.9,
+      "centroid_slope_hz_per_frame": 0.678,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_piano_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 557 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.03841,
+      "peak": 0.2374,
+      "centroid_mean_hz": 594.2,
+      "centroid_slope_hz_per_frame": -1.429,
+      "centroid_r2": 0.167,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_skater_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2398 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.1038,
+      "peak": 0.9299,
+      "centroid_mean_hz": 1624.2,
+      "centroid_slope_hz_per_frame": 5.866,
+      "centroid_r2": 0.022,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_skater_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 1893 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.11326,
+      "peak": 0.9103,
+      "centroid_mean_hz": 1346.3,
+      "centroid_slope_hz_per_frame": -1.874,
+      "centroid_r2": 0.004,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_skater_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 2391 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.08621,
+      "peak": 0.9131,
+      "centroid_mean_hz": 1163.9,
+      "centroid_slope_hz_per_frame": -2.302,
+      "centroid_r2": 0.164,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_storm_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 615 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00562,
+      "peak": 0.0268,
+      "centroid_mean_hz": 1903.7,
+      "centroid_slope_hz_per_frame": 0.692,
+      "centroid_r2": 0.05,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_storm_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 695 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02843,
+      "peak": 0.2055,
+      "centroid_mean_hz": 972.0,
+      "centroid_slope_hz_per_frame": -5.513,
+      "centroid_r2": 0.293,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_storm_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 710 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.02946,
+      "peak": 0.1832,
+      "centroid_mean_hz": 1358.6,
+      "centroid_slope_hz_per_frame": 1.002,
+      "centroid_r2": 0.046,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_typist_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 512 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0012,
+      "peak": 0.0591,
+      "centroid_mean_hz": 2180.7,
+      "centroid_slope_hz_per_frame": -1.534,
+      "centroid_r2": 0.003,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_typist_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 532 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00061,
+      "peak": 0.0238,
+      "centroid_mean_hz": 2087.0,
+      "centroid_slope_hz_per_frame": 1.193,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_typist_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 506 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 127 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00074,
+      "peak": 0.0166,
+      "centroid_mean_hz": 2027.3,
+      "centroid_slope_hz_per_frame": 1.729,
+      "centroid_r2": 0.009,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_violin_s100.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 6883 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.0778,
+      "peak": 0.3758,
+      "centroid_mean_hz": 1696.8,
+      "centroid_slope_hz_per_frame": 1.064,
+      "centroid_r2": 0.047,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_violin_s200.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 5205 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.17296,
+      "peak": 0.8504,
+      "centroid_mean_hz": 1393.3,
+      "centroid_slope_hz_per_frame": -2.847,
+      "centroid_r2": 0.049,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "v2_euler12_violin_s300.mp4",
+    "dir": "eval",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7717 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.09742,
+      "peak": 0.6087,
+      "centroid_mean_hz": 1417.5,
+      "centroid_slope_hz_per_frame": 4.488,
+      "centroid_r2": 0.339,
+      "n_spectral_frames": 77
+    }
+  }
+]

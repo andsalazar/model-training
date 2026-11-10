@@ -41,39 +41,15 @@ TBC-*placed* adapter helps few-step sampling on Ovi. It does not reproduce TBC's
 and there is no parameter-matched control (a LoRA or an adapter at other blocks), so
 nothing here says the early-layer residual design matters in itself.
 
-## 1a. In flight: the deciding experiment (started 2026-11-09 20:45 local)
-
-**Read this first if `docs/stage7-v4-decide.md` still says "Not yet run".**
-
-- Pod `wsp-stage7-v4` (H100 SXM, $3.99/hour, recorded in `runs/pods.json`) is running
-  `scripts/pod_decide.sh`: 10 unseen prompts × 3 seeds × 7 variants. The real run started
-  at 21:23 local and should take about 5.5 hours. Design and decision rule:
-  [stage7-v4-decide.md](stage7-v4-decide.md), pushed before the pod was created.
-- **A local watchdog** (`scripts/pod_watchdog.py`, log in `runs/watchdog.log`) copies the
-  small result files to `artifacts/v4_decide/` every 5 minutes, and when the run finishes
-  it copies the seed-100 clips and terminates the pod. It terminates the pod at
-  **07:10 local on 2026-11-10** regardless (about $42 in total; the owner's limit is $45).
-  It only runs while this machine is on.
-- **A pod-side backstop** (`scripts/pod_backstop.sh`) is set to remove the pod at 15:25
-  UTC (07:25 local). It is unverified: the pod's own key could not read the pod, so the
-  removal may be refused.
-- **When picking this up:** check `runs/watchdog.log` for `TERMINATED ... read back 404`.
-  If it is missing, read the pod with the Runpod MCP `get-pod`, copy
-  `/local/v4_decide/eval/eval.json`, `adherence.json` and `audio_mp4.json` if the pod
-  still exists, and terminate it. Then run
-  `python scripts/analyse_decide.py artifacts/v4_decide --out artifacts/v4_decide/decide.json`,
-  fill in the Results section of the stage document against the rule written there, and
-  delete this section.
-
 ## 2. Where things stand: the answers so far
 
 | Question | Answer | Evidence |
 |---|---|---|
 | Can Ovi be sped up without losing quality? | **yes, by configuration**: 30 steps instead of 50 is 1.42× (5 s) / 1.53× (10 s). On 9 clips 30 steps is within re-draw noise of a 48-step teacher and matches its prompt adherence. Ovi's README documents the same knob | [stage6-speed-findings.md](stage6-speed-findings.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
 | Does WSP find a concentrated target to edit? | **no**: step-count differences are spread across weights (best column alignment 0.11 vs 0.018 chance) and attention (video: no more than a null contrast) | [stage6c](stage6c-direction-measured.md), [6d](stage6d-attention-contrast.md) |
-| Does a TBC-style adapter speed Ovi up further? | **the speed comes from the step count, not the adapter**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30 with or without it. The adapter costs nothing measurable per step and recovers part of the quality 12 steps loses. Its speed-up at *equal quality* is unknown: UniPC at 16–20 steps was never run on the same pod | [stage7-pilot5s.md](stage7-pilot5s.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
-| Is it better than plain 12 steps? | **in direction, not settled**: closer to a 48-step teacher on 6 of 9 clips (exact test p = 0.074; 7 of 9, p = 0.016 on a symmetric distance), but on only 3–4 of the 6 unseen prompts, and most of the gain is the sharpness term. CLIP margin 18.7 vs 16.4 (teacher 19.5), 8 of 9 clips; raw CLIP does not separate them | [stage7-v3-5s.md](stage7-v3-5s.md#statistical-recheck) |
-| Is it as good as 30 steps? | **no**: 30 steps wins on all 6 unseen prompts; the adapter's video is softer than the teacher's at 10 s (sharpness 6.7 vs 14.1) and, less so, at 5 s (7 of 9 clips) | [stage7-v3-5s.md](stage7-v3-5s.md), [stage7-v2-10s.md](stage7-v2-10s.md) |
+| Does a TBC-style adapter speed Ovi up further? | **no** (the deciding experiment, 10 unseen prompts × 3 seeds, rule fixed in advance): 12 steps with the adapter is level with plain UniPC at 12 steps (+0.006, five prompts each way), not separable from 16, and behind plain 20 steps (p = 0.020). The speed comes from the step count alone | [stage7-v4-decide.md](stage7-v4-decide.md) |
+| What does the adapter do, then? | it makes up most of what its own sampler (Euler, 12 steps) loses to UniPC (7 of 10 prompts, p = 0.076), at the price of video softer than the reference on 24 of 30 clips and a larger audio level error. Its v3 gains over plain 12 steps (distance, prompt adherence) did not survive 30 clips | [stage7-v4-decide.md](stage7-v4-decide.md) |
+| Which step count should be used? | plain UniPC: **30** (122 s per 5 s clip on an H100) is closest to a 48-step reference on 10 of 10 prompts; **20** (86 s) is measurably closer than 16 and keeps prompt adherence; 12 loses adherence (p = 0.008) and 16 recovers it | [stage7-v4-decide.md](stage7-v4-decide.md) |
 | Can WSP diagnose and fix the adapter's defects? | **inconclusive**: it localised an end-of-clip flash to a cross-modal interaction, but the flash did not reproduce on other hardware (0 of 54 clips) | [stage7-wsp-adapter.md](stage7-wsp-adapter.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
 | Audio? | 12 steps makes audio slightly quieter/brighter; adapters help loudness somewhat but never fix brightness; audio prompt adherence (CLAP) is unaffected by any variant | v2 and v3 docs |
 | 30 s? | Ovi has no 30 s model; the 10 s model at 3× length gives one steady scene with local motion; resolution is ~600 px of 960 even at 10 s (inherent to the VAE) | [stage7-long30.md](stage7-long30.md) |
@@ -82,10 +58,13 @@ nothing here says the early-layer residual design matters in itself.
 **The most important methodological finding:** the same prompt + seed + settings gives a
 *different clip* on an A100 vs an H100, and re-drawing a clip moves the four-metric
 quality distance by **~0.2**, which is as large as most differences reported from 3–4 clips.
-Any further claim needs several seeds per prompt. Two A100 pods reproduced each other
-exactly, so the difference tracks the GPU type, but **its cause is untested**: slightly
-different bf16 kernels amplified by sampling, or different starting noise (it is drawn on
-the GPU). Compare the starting-noise tensors across GPU types before explaining it.
+Any further claim needs several seeds per prompt: the adapter's apparent gain at 9 clips
+was gone at 30. Two A100 pods reproduced each other exactly, and 24 clips regenerated on
+a second H100 pod matched the first to the last digit, so the difference tracks the GPU
+type and a clip can be regenerated exactly on the same type. **Its cause is untested**:
+slightly different bf16 kernels amplified by sampling, or different starting noise (it
+is drawn on the GPU). The H100's starting noise is recorded in
+`artifacts/v4_decide/noise.json` for that comparison.
 
 ## 3. Chronology (one line per stage)
 
@@ -110,6 +89,10 @@ the GPU). Compare the starting-noise tensors across GPU types before explaining 
   released networks and prompts, five fresh networks, a shuffled control and five
   readers. Design and scoring were pushed before any model was called. Astra reads the
   shapes; the cheaper readers do not.
+- **Stage 7 v4, the deciding experiment** (2026-11-09/10, one H100, about $27): 210
+  clips, design and decision rule pushed before the pod existed, run unattended under a
+  watchdog. The adapter is not a speed-up. This closes the Ovi + adapter question for
+  the adapter that exists.
 
 ## 4. Repository map
 
@@ -146,7 +129,7 @@ scripts/          pod_* run on the GPU pod; analyse_* / create_pod_retry run loc
   pod_backstop.sh      on the pod: self-removal at a deadline (run from a file, never inline)
   read_weights.py      Stage 8, local: build | ask | score | quality. `ask` needs the
                        OpenRouter key and a --max-usd limit; it skips replies it has
-tests/            806 tests, all passing (pytest -q, ~15 s, no GPU needed; 2 need
+tests/            845 tests, all passing (pytest -q, ~15 s, no GPU needed; 2 need
                   runs/paper-logs and are skipped without it)
 docs/             one doc per stage; correction banners on superseded results
 artifacts/        the evidence JSON is tracked (3 MB); adapters (*.pt), clips (*.mp4),
@@ -164,6 +147,8 @@ runs/pods.json    pod registry (ownership guard; gitignored)
 | `artifacts/v3_5s/eval.json`, `adherence.json`, `audio_mp4.json`, `summary.json`, `paired.json` | the v3 evaluation and its paired statistics |
 | `artifacts/v3_5s/clips/` | storm + violin: teacher / 12-step / v2 / 30-step, for viewing |
 | `artifacts/long30/` | 10 s and 30 s clips, resolution measurements |
+| `artifacts/v4_decide/eval.json`, `adherence.json`, `audio_mp4.json`, `decide.json`, `noise.json`, `run_info.json` | the deciding experiment: 210 clips' metrics, the analysis output, the starting-noise record |
+| `artifacts/v4_decide/clips/` | 70 clips (local only): ten prompts at seed 100, teacher / UniPC 12, 16, 20, 30 / Euler-12 / adapter, for viewing |
 
 ## 5. How to run things
 
@@ -234,47 +219,49 @@ on-policy collect 224 s per clip; training step 14.5 s. The A100 is ~1.9× slowe
 
 In order of value for the owner's goal:
 
-1. **Run the deciding experiment first.** 10 prompts × 3 seeds on one pod, each with the
-   48-step teacher, UniPC at 12 / 16 / 20 / 30 steps, base Euler-12 and the v2 adapter.
-   By the H100 timings (3.7 s per step plus ~13 s fixed) that is about 650 s per
-   prompt-seed, **5–6 GPU-hours** in all. It answers what v3 left open: does the adapter
-   beat simply running 16–20 steps? It needs `base_unipc16` / `base_unipc20` added to
-   `VARIANTS` in `pod_adapter_run.py`, an evaluation set with seeds, and the new names in
-   `analyse_v3_paired.py`'s `COMPARISONS`. Average the seeds of a prompt before testing
-   (prompts, not clips, are the independent unit) and prefer the symmetric distance.
-   Consider a distribution-level video metric (feature statistics over many clips)
-   instead of distance to one teacher sample. Check the starting noise across GPU types
-   while the pod is up (see section 2).
-2. **Scale training data.** 10 prompts let on-policy fine-tuning overfit. Generate a
-   few hundred diverse prompts (e.g. with an LLM via OpenRouter), generate teachers
-   (~197 s each on H100) and retrain; that is the most likely way to beat 30 steps.
-3. **Re-test the 10 s blur** under the new protocol, and only then add the planned
-   fine-detail / spectral term to the loss.
-4. **Audio brightness**: never fixed by any variant; WSP flagged audio block 3 once
-   (one A100 read). Worth one clean multi-seed test.
+1. **Look at the clips.** Every Stage 7 conclusion rests on signal measures and CLIP/CLAP
+   scores; nobody has compared clips by eye. The 70 seed-100 clips of the deciding
+   experiment are in `artifacts/v4_decide/clips/` on the owner's machine (teacher, UniPC
+   12/16/20/30, Euler-12 and the adapter for ten prompts). Piano and storm are where the
+   adapter did best, typist and harbor where it did worst.
+2. **Only if the adapter idea is to be pursued: retrain it properly.** The deciding
+   experiment found the v2 adapter level with plain UniPC at 12 steps and behind plain 20
+   ([stage7-v4-decide.md](stage7-v4-decide.md)), so more evaluation of it is pointless.
+   What is untested is a better-trained one: a few hundred diverse prompts (teachers cost
+   ~193 s each on an H100), an objective that does not reward the average (the adapter is
+   softer than the reference on 24 of 30 clips), and training against UniPC rather than
+   Euler, since most of what the adapter learned was to make up Euler's loss. Judge it
+   with `scripts/pod_decide.sh` and `scripts/analyse_decide.py` unchanged; the 30
+   teachers and the base-model clips reproduce exactly on an H100 SXM.
+3. **The cross-GPU difference.** The starting noise per seed is recorded for an H100
+   (`artifacts/v4_decide/noise.json`). Run `scripts/pod_noise_hash.py` on an A100 against
+   one teacher file at seed 100 to see whether the noise already differs.
+4. **Guidance cost.** Every Ovi step runs two passes (with and without the prompt).
+   Skipping or distilling the second pass is a speed lever this project never tried, and
+   it stacks with the step count.
 5. **Make the reading result sturdier** (API only, no GPU). Stage 8 has one reply per
    network. Three more Astra replies per network would cost about $45 at the observed
    $1.67 per reply and would say how stable 7–8 of 8 is. The paper's Experiment 1 (which
    game a policy network plays; networks and prompts are in `runs/paper-logs`) is the
    next closest test and needs no training to repeat with its released networks.
-6. **Publish.** The repository is public as a negative-results and methodology case
+6. **Publishing.** The repository is public as a negative-results and methodology case
    study, and `origin/main` (github.com/andsalazar/model-training) is level with local
-   work. **Hold the Hugging
-   Face adapter release until item 1 is done.** If the adapter goes up, label it a
-   research artifact, not a recommended model: 12 steps with it is 2.17× faster than 30
-   steps, better than plain 12 steps in direction, and below 30-step quality on every
-   unseen prompt.
+   work. **The adapter is not to be published as a model**: the deciding experiment found
+   nothing to recommend it over plain sampling. Nothing is on Hugging Face.
 
 ## 8. Account state and spend
 
 - **No pod or volume created by this project's recent sessions is running.** The last
-  two pods (an A100, $57.57, and an H100, $29.09) are terminated.
+  three pods (an A100, $57.57; an H100, $29.09; and the v4 H100, about $27.40) are
+  terminated. The v4 pod's termination was confirmed by a read that returned 404.
 - The account still holds stopped older pods and a network volume that this project's
   recent sessions did not create. They may bill for storage; leave them to the owner.
   Their IDs are in `runs/account-state.md`, which is local only (`runs/` is gitignored).
-- Approximate total GPU spend for the project: ~$120 through Stage 6, plus ~$87 for
-  Stage 7's last two pods, roughly **$207**. Earlier figures come from session notes;
-  Stage 7's from billing reads.
+- Approximate total GPU spend for the project: ~$120 through Stage 6, ~$87 for Stage 7
+  through v3, and ~$27 for the v4 deciding experiment (6 h 52 min at $3.99), roughly
+  **$234**. Earlier figures come from session notes; v2/v3 from billing reads; v4 from
+  price × time (the billing read taken at the end showed $23.58 of GPU through the last
+  complete hour). The owner approved a $45 limit for v4.
 - Stage 8 spent **$21.09** on OpenRouter (45 replies plus cut-off first attempts), from
   the costs the API reported. The owner approved a $25 limit.
 

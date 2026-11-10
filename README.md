@@ -74,15 +74,17 @@ size and placement, trained by a standard method. See Part 2.
 | LLM editors reported verification numbers they had not measured | a sign-inverted similarity, unmeasured token counts; the reason `wsp.verify` re-measures every edit | [WRITEUP](docs/WRITEUP.md) |
 | Ovi at 30 steps instead of 50 is 1.42× (5 s) / 1.53× (10 s) faster with quality held | 9 clips: within re-draw noise of a 48-step reference, same prompt adherence. Ovi's README documents this knob; the measurement is what is added | [stage6-speed](docs/stage6-speed-findings.md), [stage7-v3](docs/stage7-v3-5s.md) |
 | WSP-style reads find no concentrated edit target for step count in Ovi | best weight-column alignment 0.11 against 0.018 by chance; video attention differs no more than a null contrast | [6c](docs/stage6c-direction-measured.md), [6d](docs/stage6d-attention-contrast.md) |
-| A 313k-parameter adapter (0.003% of Ovi) recovers part of what 12-step sampling loses | closer to the reference on 6–7 of 9 clips; not settled on unseen prompts; below 30 steps on all 6 of them | [stage7-v3](docs/stage7-v3-5s.md#statistical-recheck) |
-| One generated clip is too noisy a measurement for the differences first reported | re-drawing a clip moves the quality distance by ~0.2; three earlier findings were overturned | [stage7-v3](docs/stage7-v3-5s.md) |
+| A 313k-parameter adapter (0.003% of Ovi) does not make Ovi faster at equal quality | 10 unseen prompts × 3 seeds on one pod, design fixed in advance: 12 steps with the adapter is level with plain UniPC at 12 steps (five prompts each way) and behind plain 20 steps (p = 0.020). It only makes up what its own Euler sampler loses to UniPC | [stage7-v4](docs/stage7-v4-decide.md) |
+| For Ovi, more plain steps are the reliable quality lever | 30 steps is closer to a 48-step reference than 20 on 10 of 10 prompts, and 20 closer than 16 (p = 0.023); 12 steps loses prompt adherence (p = 0.008) and 16 recovers it | [stage7-v4](docs/stage7-v4-decide.md) |
+| A handful of clips is too little for the differences first reported | three early findings were overturned at 9 clips, and the adapter's apparent gain at 9 clips was gone at 30. The same clip differs between an A100 and an H100 (~0.2 on the quality distance) but is reproduced exactly on a second pod of the same GPU type | [stage7-v3](docs/stage7-v3-5s.md), [stage7-v4](docs/stage7-v4-decide.md) |
 | One-step training loss does not predict rollout quality | it missed a blur at 10 s and overfitting in on-policy training | [stage7-v2-10s](docs/stage7-v2-10s.md), [stage7-v3](docs/stage7-v3-5s.md) |
 
 ## What was run: compute and training
 
 Everything ran on rented Runpod GPU pods, driven from a Windows machine over SSH. Total
-GPU spend was roughly **$207** (about $120 through Stage 6 from session notes, $87 for
-Stage 7 from billing reads). Stage 8 used no GPU: its networks train on a CPU, and its 45
+GPU spend was roughly **$234** (about $120 through Stage 6 from session notes, $87 for
+Stage 7 through v3 from billing reads, and about $27 for the v4 deciding experiment at
+$3.99 an hour for 6 h 52 min). Stage 8 used no GPU: its networks train on a CPU, and its 45
 model calls cost $21.09 through OpenRouter.
 
 | | |
@@ -90,13 +92,14 @@ model calls cost $21.09 through OpenRouter.
 | **Hardware** | A100 80 GB (Ovi sweeps, captures, adapter training), H100 SXM (the v3 evaluation and on-policy training), RTX PRO 4500 Blackwell 32 GB (first Ovi bring-up), smaller pods such as an RTX 4000 Ada for the Qwen stages |
 | **Adapter training on Ovi** | 313,392 trainable parameters on a frozen 11.66B model; each update is a full forward and backward pass through the model with gradient checkpointing. 5 s clips: 52 GB peak (out of memory above 79 GB without checkpointing). 10 s clips: 58–67 GB, made to fit by back-propagating the two guidance passes one at a time and moving the T5 text encoder to the CPU |
 | **Training runs** | Pilot: 144 updates, 80 min. v2 at 5 s: 576 AdamW updates with cosine decay, 4.6 h. v2 at 10 s: 5.6 h at 98 s per update. On-policy fine-tuning on the adapter's own rollouts (224 s per clip to collect targets on the H100) |
-| **Generation at scale** | 48-step reference runs as distillation targets (197 s per 5 s clip on the H100; 986 s per 10 s clip); a 30 s clip from the 10 s model in 62 min at 66 GB |
+| **Generation at scale** | 48-step reference runs as distillation targets (197 s per 5 s clip on the H100; 986 s per 10 s clip); a 30 s clip from the 10 s model in 62 min at 66 GB; 210 clips in one unattended 6-hour run for the deciding experiment |
+| **Unattended runs** | the deciding experiment ran overnight under a local watchdog that copied results every five minutes, then terminated the pod and confirmed it was gone; a deadline bounded the cost whatever happened |
 | **Instrumenting an 11.66B DiT** | residual-stream and per-head attention captures in both streams at matched noise levels, with a null baseline; nine capture defects found in review and fixed ([6e](docs/stage6e-review-corrections.md)) |
 | **Text model work** | LoRA fine-tuning of Qwen3.5-0.8B; vLLM serving at 1,539 tokens/s against 36 with `transformers` on the same GPU |
 | **Environment work** | pinned torch 2.6.0 with a prebuilt FlashAttention 2.7.4 wheel on Ampere and Hopper; torch 2.7.1+cu128 with a source build on Blackwell ([pod setup](docs/stage6-pod-setup.md)) |
-| **Pod lifecycle** | a REST client that refuses to touch pods this project did not create, a create-with-fallback script for tight GPU stock, and 190 scripts (155 of them `pod_*` drivers and checks run on the GPU) kept as the working record |
+| **Pod lifecycle** | a REST client that refuses to touch pods this project did not create, a create-with-fallback script for tight GPU stock, and 198 scripts (160 of them `pod_*` drivers and checks run on the GPU) kept as the working record |
 | **Small diffusion models (Stage 8)** | five DDPMs (an MLP of 23,824 weights, 40,000 Adam steps each, about 2.5 minutes on a CPU), each checked by generating 1,000 images and classifying them; prompts rebuilt byte for byte from the paper's released weights |
-| **Tests** | 806 tests, no GPU needed (`pytest -q`; 2 of them need the paper's log release checked out and are skipped otherwise); the statistics quoted for Stages 7 and 8 are pinned to the committed evidence in `artifacts/` |
+| **Tests** | 845 tests, no GPU needed (`pytest -q`; 2 of them need the paper's log release checked out and are skipped otherwise); the statistics quoted for Stages 7 and 8 are pinned to the committed evidence in `artifacts/` |
 
 ## Repository layout
 
@@ -341,6 +344,10 @@ the adapter breaks.
   findings; the adapter's gain over plain 12 steps and its adherence recovery hold in
   direction. A statistical recheck (exact tests, a symmetric distance, a per-metric
   breakdown) narrows that further: it is not settled on unseen prompts.
+- [docs/stage7-v4-decide.md](docs/stage7-v4-decide.md) — **the deciding experiment**: ten
+  unseen prompts at three seeds, plain UniPC at 12, 16, 20 and 30 steps against the
+  adapter, all on one pod, with the decision rule pushed before the pod was created. The
+  adapter is level with plain 12 steps and behind plain 20. It is not a speed-up.
 - [docs/stage7-long30.md](docs/stage7-long30.md) — 30 s by running the 10 s model at 3×
   length: one steady scene with local motion; resolution is inherent to Ovi's VAE.
 
@@ -378,37 +385,54 @@ audio**: the speed goal was met by configuration without it.
 
 Stage 7 tested the reverse order, adapter first and WSP second:
 
-The final answers, after the v3 re-evaluation on 9 clips (3 river seeds + 6 unseen
-prompts) with a measured noise floor:
+The final answers, after the v3 re-evaluation (9 clips) and the v4 deciding experiment
+(10 unseen prompts × 3 seeds, 210 clips on one pod, design and decision rule fixed
+beforehand):
 
 | Question | Answer |
 |---|---|
-| Does a TBC-style adapter speed Ovi up? | **the speed comes from the step count**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30, with or without the adapter. The adapter adds no measurable cost per step; what it can add is quality at 12 steps |
-| Is 12 steps + adapter better than plain 12 steps? | **in direction, not settled**: closer to the 48-step teacher on 6 of 9 clips (exact test p = 0.074; 7 of 9, p = 0.016 on a symmetric distance), on 3–4 of the 6 unseen prompts, and most of the gain is one metric (sharpness). It recovers most of the CLIP prompt-adherence margin 12 steps loses (18.7 vs 16.4; teacher 19.5) |
-| Is it as good as 30 steps? | **no**: 30 steps is closer to the teacher on all 6 unseen prompts, and the adapter's video is softer than the teacher's (on 7 of 9 clips at 5 s; more at 10 s) |
-| Does it beat simply running a few more steps? | **not measured**: UniPC at 16–20 steps was never run on the same pod, so the adapter's speed-up at equal quality is unknown |
+| Does a TBC-style adapter speed Ovi up? | **no.** The speed comes from the step count: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30 with or without the adapter, and the adapter does not buy back the quality that costs |
+| Is 12 steps + adapter better than plain 12 steps? | **no**: on ten unseen prompts the two are level (+0.006 on the symmetric distance, five prompts each way, p = 0.89). The adapter is better than plain *Euler* at 12 steps, the sampler it must run with (7 of 10 prompts, p = 0.076), which brings it back to where plain UniPC already is. v3's "in direction" result on 9 clips did not survive |
+| Does it beat simply running a few more steps? | **no**: not separable from plain 16 steps, and plain 20 steps is closer to the reference (p = 0.020) for 29 s more per clip |
+| Is it as good as 30 steps? | **no**: 30 steps is closer on all 10 prompts, and the adapter's video is softer than the reference's on 24 of 30 clips |
+| Does it restore prompt adherence? | **not confirmed** (+0.62 CLIP margin over plain 12 steps, p = 0.35). Plain 12 steps does lose adherence (p = 0.008); 16 plain steps recover it |
 | Did training on the adapter's own outputs help? | **no**: better on the training prompt, worse on unseen prompts (it overfits 10 training prompts) |
 | Can WSP find and fix what the adapter breaks? | **inconclusive**: the defect it localised (an end-of-clip flash) did not reproduce in 54 re-run clips on other hardware, so it was a property of particular samples |
 | Audio? | 12 steps does not hurt audio adherence (CLAP); no adapter fixed the slight brightening at 12 steps |
 
-The hypothesis holds in a narrower form than the brief: cutting steps gives a real
-speed-up, and an adapter appears to keep part of the quality that costs, but it does not
-match the slow setting, and the WSP-guided fix could not be confirmed. The project's last
-lesson is methodological: a single generated clip moves by ~0.2 on the quality distance
-when it is merely re-drawn, so differences smaller than that need several seeds per
-prompt and many more training prompts ([stage7-v3-5s.md](docs/stage7-v3-5s.md)). The
-re-draw difference was seen between an A100 and an H100; its cause (kernel differences
-amplified by sampling, or different starting noise) was not tested.
+**The hypothesis did not hold.** Cutting steps gives a real speed-up; the TBC-sized
+adapter trained here does not recover the quality that costs, and the WSP-guided fix
+could not be confirmed. The adapter weights are not published as a model: there is
+nothing to recommend them over plain sampling. What the adapter does show is that 313k
+parameters on a frozen 11.66B model can move a 12-step Euler sampler most of the way to
+a 12-step UniPC one. A better-trained adapter (hundreds of prompts, an objective that
+does not reward the average) is untested.
 
-**What would settle it:** 10 prompts × 3 seeds on one pod, comparing a 48-step reference,
-UniPC at 12 / 16 / 20 / 30 steps and the adapter, about 5–6 H100-hours by this project's
-timings. No adapter weights are published until that is run.
+**What to use when generating with Ovi** (5 s, 960×960, seconds per clip on an H100):
+
+| steps (UniPC) | seconds | against the 48-step reference |
+|---|---|---|
+| 30 | 122 | closest on every prompt; prompt adherence at the reference's level |
+| 20 | 86 | measurably closer than 16; adherence at the reference's level |
+| 16 | 71 | adherence kept; video statistics no closer than 12 steps' |
+| 12 | 57 | loses prompt adherence |
+
+These are distances to a 48-step reference on four signal measures plus CLIP and CLAP
+adherence. They are not a perceptual score, and the clips have not been compared by eye.
+
+The methodological lesson stands and is sharper: the adapter's apparent gain at 9 clips
+was gone at 30. The same clip differs between an A100 and an H100 by about 0.2 on the
+quality distance, yet 24 clips regenerated on a second H100 pod matched the first to the
+last digit, so that difference belongs to the GPU type, not to chance. Its cause (kernel
+differences amplified by sampling, or different starting noise) is still untested; the
+starting noise is now recorded for that comparison.
 
 ### Reproducing the Stage 7 statistics
 
 ```bash
-python scripts/analyse_v3.py artifacts/v3_5s          # per-variant means
-python scripts/analyse_v3_paired.py artifacts/v3_5s   # paired tests, symmetric distance, per-metric breakdown
+python scripts/analyse_v3.py artifacts/v3_5s          # v3: per-variant means
+python scripts/analyse_v3_paired.py artifacts/v3_5s   # v3: paired tests, symmetric distance, per-metric breakdown
+python scripts/analyse_decide.py artifacts/v4_decide  # v4: prompt-level tests, placement on the base curve
 ```
 
 ## Part 3: reading a network from its weights (Stage 8)

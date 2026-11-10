@@ -6,6 +6,14 @@ broaden the evaluation to 6 unseen prompts with a prompt-adherence score. The mo
 important result is none of those: it is that a single generated clip is too noisy a
 measurement for the differences this project has been reporting.*
 
+> **Superseded on the adapter's value by [stage7-v4-decide.md](stage7-v4-decide.md)
+> (2026-11-10).** On ten unseen prompts at three seeds, 12 steps with the adapter is level
+> with plain UniPC at 12 steps and behind plain 20 steps, and its prompt-adherence gain is
+> not confirmed. "The adapter improves on plain 12 steps", reported below in direction,
+> did not survive. "30 steps is better than every adapter" did. The ~0.2 "re-draw"
+> difference below is between GPU types: 24 of these clips were regenerated on a second
+> H100 pod and matched exactly.
+>
 > **Recheck, 2026-11-09.** The paired statistics were recomputed from the committed JSON
 > with an exact test, a symmetric distance and a per-metric breakdown; see
 > [Statistical recheck](#statistical-recheck). Two readings changed: "the adapter is

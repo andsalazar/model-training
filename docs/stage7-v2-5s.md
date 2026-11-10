@@ -1,5 +1,9 @@
 # Stage 7 v2 at 5 s: a scaled-up adapter matches 30 steps on the river prompt
 
+> **Overturned by [stage7-v4-decide.md](stage7-v4-decide.md).** On ten unseen prompts at
+> three seeds this adapter is level with plain UniPC at 12 steps and behind plain 20
+> steps; 30 steps is closer to the reference on every prompt.
+
 > **Read with [stage7-v3-5s.md](stage7-v3-5s.md).** A re-run on different hardware showed
 > that re-drawing the same clip moves the quality distance by ~0.2, as large as most
 > differences reported here from 3–4 single clips. The "closer to the teacher than 30 steps" result and the end-of-clip flash did not reproduce (0 of 54 clips showed a flash); "better than plain 12 steps" did.

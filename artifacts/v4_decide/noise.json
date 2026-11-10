@@ -1,0 +1,168 @@
+{
+ "torch": "2.6.0+cu124",
+ "gpu": "NVIDIA H100 80GB HBM3",
+ "by_seed": {
+  "100": {
+   "files": [
+    "campfire_s100.pt",
+    "fountain_s100.pt",
+    "harbor_s100.pt",
+    "horse_s100.pt",
+    "kitchen_s100.pt",
+    "piano_s100.pt",
+    "skater_s100.pt",
+    "storm_s100.pt",
+    "typist_s100.pt",
+    "violin_s100.pt"
+   ],
+   "video": {
+    "shape": [
+     48,
+     31,
+     60,
+     60
+    ],
+    "sha256": "e55b2c63ab21799deaccfd66b9d2a6f15c22062020f2a6cfa2cc71e75de2ca27",
+    "first": [
+     1.4375,
+     -1.5,
+     -0.808594,
+     -1.179688,
+     -2.640625,
+     -0.023193
+    ],
+    "std": 1.000186,
+    "same_for_every_prompt": true,
+    "redraw_cpu_matches": false,
+    "redraw_cuda_matches": true
+   },
+   "audio": {
+    "shape": [
+     157,
+     20
+    ],
+    "sha256": "af50217919205b48064eccd77055a1df16b283bf1bc3307b2893101632b663ec",
+    "first": [
+     1.4375,
+     -1.5,
+     -0.808594,
+     -1.179688,
+     -2.640625,
+     -0.023193
+    ],
+    "std": 0.996297,
+    "same_for_every_prompt": true,
+    "redraw_cpu_matches": false,
+    "redraw_cuda_matches": true
+   }
+  },
+  "200": {
+   "files": [
+    "campfire_s200.pt",
+    "fountain_s200.pt",
+    "harbor_s200.pt",
+    "horse_s200.pt",
+    "kitchen_s200.pt",
+    "piano_s200.pt",
+    "skater_s200.pt",
+    "storm_s200.pt",
+    "typist_s200.pt",
+    "violin_s200.pt"
+   ],
+   "video": {
+    "shape": [
+     48,
+     31,
+     60,
+     60
+    ],
+    "sha256": "462dbfeedf770e9454c5188183e47def94a159787f34cfe4d9794635acdf105f",
+    "first": [
+     0.111816,
+     1.328125,
+     -0.933594,
+     0.421875,
+     -0.621094,
+     0.255859
+    ],
+    "std": 1.000005,
+    "same_for_every_prompt": true,
+    "redraw_cpu_matches": false,
+    "redraw_cuda_matches": true
+   },
+   "audio": {
+    "shape": [
+     157,
+     20
+    ],
+    "sha256": "e3299e7ede5ffb57f445d4a943fe984f96f57ff892a3e987f5b33c9bf4e58b4b",
+    "first": [
+     0.111816,
+     1.328125,
+     -0.933594,
+     0.421875,
+     -0.621094,
+     0.255859
+    ],
+    "std": 0.990699,
+    "same_for_every_prompt": true,
+    "redraw_cpu_matches": false,
+    "redraw_cuda_matches": true
+   }
+  },
+  "300": {
+   "files": [
+    "campfire_s300.pt",
+    "fountain_s300.pt",
+    "harbor_s300.pt",
+    "horse_s300.pt",
+    "kitchen_s300.pt",
+    "piano_s300.pt",
+    "skater_s300.pt",
+    "storm_s300.pt",
+    "typist_s300.pt",
+    "violin_s300.pt"
+   ],
+   "video": {
+    "shape": [
+     48,
+     31,
+     60,
+     60
+    ],
+    "sha256": "0fd60d71baa6fa187e593ec0ea25ca0bae3c4db19b28ca6bef3ec172d7cfc451",
+    "first": [
+     -0.257812,
+     -1.625,
+     -0.019531,
+     -0.289062,
+     0.664062,
+     0.648438
+    ],
+    "std": 0.999892,
+    "same_for_every_prompt": true,
+    "redraw_cpu_matches": false,
+    "redraw_cuda_matches": true
+   },
+   "audio": {
+    "shape": [
+     157,
+     20
+    ],
+    "sha256": "2552448583dc66b7befab7c7909b3aaca6d88f2de67963850ff49ad551521d34",
+    "first": [
+     -0.257812,
+     -1.625,
+     -0.019531,
+     -0.289062,
+     0.664062,
+     0.648438
+    ],
+    "std": 1.012797,
+    "same_for_every_prompt": true,
+    "redraw_cpu_matches": false,
+    "redraw_cuda_matches": true
+   }
+  }
+ }
+}

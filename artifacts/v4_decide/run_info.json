@@ -1,0 +1,19 @@
+{
+ "pod_name": "wsp-stage7-v4",
+ "gpu": "NVIDIA H100 80GB HBM3, 595.91.07, 81559 MiB",
+ "price_per_hour_usd": 3.99,
+ "data_center": "US-MO-1",
+ "ovi_commit": "5b69b25a4b3115216e9ea53a37a04410be6ad39a",
+ "pod_created_utc": "2026-11-10T04:44:59Z",
+ "run_started_utc": "2026-11-10T05:22:48Z",
+ "run_finished_utc": "2026-11-10T11:32:13Z",
+ "pod_terminated_local": "2026-11-10T03:37:07-08:00",
+ "seed_blocks_finished_utc": [
+  "2026-11-10T07:16:19Z",
+  "2026-11-10T09:21:47Z",
+  "2026-11-10T11:32:13Z"
+ ],
+ "first_clip_from_smoke_test": "harbor_s100 (same script and settings; finished 2026-11-10T05:20:48Z)",
+ "design_commit": "8bcb23f",
+ "torch": "2.6.0+cu124"
+}

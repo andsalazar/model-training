@@ -1,0 +1,122 @@
+[
+  {
+    "tag": "harbor_s100",
+    "seconds": 193.8
+  },
+  {
+    "tag": "violin_s100",
+    "seconds": 194.2
+  },
+  {
+    "tag": "kitchen_s100",
+    "seconds": 192.8
+  },
+  {
+    "tag": "storm_s100",
+    "seconds": 192.5
+  },
+  {
+    "tag": "skater_s100",
+    "seconds": 192.7
+  },
+  {
+    "tag": "campfire_s100",
+    "seconds": 193.1
+  },
+  {
+    "tag": "piano_s100",
+    "seconds": 193.1
+  },
+  {
+    "tag": "horse_s100",
+    "seconds": 192.5
+  },
+  {
+    "tag": "typist_s100",
+    "seconds": 192.8
+  },
+  {
+    "tag": "fountain_s100",
+    "seconds": 192.8
+  },
+  {
+    "tag": "violin_s200",
+    "seconds": 193.7
+  },
+  {
+    "tag": "kitchen_s200",
+    "seconds": 192.4
+  },
+  {
+    "tag": "storm_s200",
+    "seconds": 192.4
+  },
+  {
+    "tag": "skater_s200",
+    "seconds": 192.8
+  },
+  {
+    "tag": "campfire_s200",
+    "seconds": 192.2
+  },
+  {
+    "tag": "piano_s200",
+    "seconds": 192.6
+  },
+  {
+    "tag": "harbor_s200",
+    "seconds": 193.1
+  },
+  {
+    "tag": "horse_s200",
+    "seconds": 192.0
+  },
+  {
+    "tag": "typist_s200",
+    "seconds": 192.3
+  },
+  {
+    "tag": "fountain_s200",
+    "seconds": 192.8
+  },
+  {
+    "tag": "violin_s300",
+    "seconds": 192.8
+  },
+  {
+    "tag": "kitchen_s300",
+    "seconds": 192.0
+  },
+  {
+    "tag": "storm_s300",
+    "seconds": 191.8
+  },
+  {
+    "tag": "skater_s300",
+    "seconds": 192.3
+  },
+  {
+    "tag": "campfire_s300",
+    "seconds": 192.1
+  },
+  {
+    "tag": "piano_s300",
+    "seconds": 191.8
+  },
+  {
+    "tag": "harbor_s300",
+    "seconds": 192.6
+  },
+  {
+    "tag": "horse_s300",
+    "seconds": 192.3
+  },
+  {
+    "tag": "typist_s300",
+    "seconds": 192.4
+  },
+  {
+    "tag": "fountain_s300",
+    "seconds": 198.8
+  }
+]

@@ -1,5 +1,10 @@
 # Stage 7 pilot: a TBC-style adapter on Ovi 5 s, 12 steps
 
+> **Overturned by [stage7-v4-decide.md](stage7-v4-decide.md).** On ten unseen prompts at
+> three seeds the adapter is level with plain UniPC at 12 steps and behind plain 20 steps.
+> The gain reported here holds only against base Euler at 12 steps, the sampler the
+> adapter runs with.
+
 > **Read with [stage7-v3-5s.md](stage7-v3-5s.md).** A re-run on different hardware showed
 > that re-drawing the same clip moves the quality distance by ~0.2, as large as most
 > differences reported here from 3–4 single clips. The direction of the result (the adapter improves on plain 12 steps) held up on 9 clips; the size is smaller.

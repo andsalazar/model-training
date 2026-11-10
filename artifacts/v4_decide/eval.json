@@ -1,0 +1,5102 @@
+[
+  {
+    "tag": "harbor_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 6.569839340573926,
+      "temporal_flicker": 0.051658458419048474,
+      "motion_coherence": 0.5092836005298791,
+      "colour_stability": 0.5491918083059977,
+      "n_frames": 48,
+      "colour_r2": 0.465,
+      "colour_drift": 0.95
+    }
+  },
+  {
+    "tag": "harbor_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.8,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.003,
+      "centroid_hz": 2235.0
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 0.63,
+    "video_final_rel_err": 0.62189,
+    "audio_final_rel_err": 0.08869,
+    "quality": {
+      "sharpness": 9.853862954124594,
+      "temporal_flicker": 0.04440925642822553,
+      "motion_coherence": 0.47950492763755065,
+      "colour_stability": 0.40751792382672347,
+      "n_frames": 48,
+      "colour_r2": 0.315,
+      "colour_drift": 0.44
+    }
+  },
+  {
+    "tag": "harbor_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.002968,
+      "centroid_hz": 2206.8
+    },
+    "last8_max_jump": 0.2,
+    "body_max_jump": 0.82,
+    "video_final_rel_err": 0.59624,
+    "audio_final_rel_err": 0.0826,
+    "quality": {
+      "sharpness": 8.404968297087635,
+      "temporal_flicker": 0.048173967396548584,
+      "motion_coherence": 0.4340502986634562,
+      "colour_stability": 0.4046693812198916,
+      "n_frames": 48,
+      "colour_r2": 0.463,
+      "colour_drift": 0.62
+    }
+  },
+  {
+    "tag": "harbor_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.00307,
+      "centroid_hz": 2192.5
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 0.3,
+    "video_final_rel_err": 0.58043,
+    "audio_final_rel_err": 0.07383,
+    "quality": {
+      "sharpness": 8.077915249499497,
+      "temporal_flicker": 0.04742691203649956,
+      "motion_coherence": 0.4194268772731903,
+      "colour_stability": 0.6628104576661741,
+      "n_frames": 48,
+      "colour_r2": 0.58,
+      "colour_drift": 1.15
+    }
+  },
+  {
+    "tag": "harbor_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.003284,
+      "centroid_hz": 2195.5
+    },
+    "last8_max_jump": 0.31,
+    "body_max_jump": 0.77,
+    "video_final_rel_err": 0.55626,
+    "audio_final_rel_err": 0.05613,
+    "quality": {
+      "sharpness": 7.759938632961921,
+      "temporal_flicker": 0.05476340312008106,
+      "motion_coherence": 0.501083512140997,
+      "colour_stability": 0.6255071348380415,
+      "n_frames": 48,
+      "colour_r2": 0.352,
+      "colour_drift": 0.84
+    }
+  },
+  {
+    "tag": "harbor_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.00333,
+      "centroid_hz": 2228.8
+    },
+    "last8_max_jump": 0.28,
+    "body_max_jump": 0.63,
+    "video_final_rel_err": 0.60201,
+    "audio_final_rel_err": 0.12606,
+    "quality": {
+      "sharpness": 11.095542443373242,
+      "temporal_flicker": 0.03995450174828476,
+      "motion_coherence": 0.38068561415660507,
+      "colour_stability": 0.2903577033419409,
+      "n_frames": 48,
+      "colour_r2": 0.186,
+      "colour_drift": 0.27
+    }
+  },
+  {
+    "tag": "harbor_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.003909,
+      "centroid_hz": 2216.9
+    },
+    "last8_max_jump": 0.35,
+    "body_max_jump": 0.61,
+    "video_final_rel_err": 0.61443,
+    "audio_final_rel_err": 0.1042,
+    "quality": {
+      "sharpness": 6.448703391158657,
+      "temporal_flicker": 0.04412231283842968,
+      "motion_coherence": 0.5401361629692853,
+      "colour_stability": 0.6215058774558438,
+      "n_frames": 48,
+      "colour_r2": 0.322,
+      "colour_drift": 0.65
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 16.72181977451903,
+      "temporal_flicker": 0.020136246679669883,
+      "motion_coherence": 0.5452626380258159,
+      "colour_stability": 0.3107968889710946,
+      "n_frames": 48,
+      "colour_r2": 0.363,
+      "colour_drift": 0.39
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 57.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.097523,
+      "centroid_hz": 1710.4
+    },
+    "last8_max_jump": 0.43,
+    "body_max_jump": 0.66,
+    "video_final_rel_err": 0.68842,
+    "audio_final_rel_err": 0.35226,
+    "quality": {
+      "sharpness": 35.16365602583658,
+      "temporal_flicker": 0.039794124392332854,
+      "motion_coherence": 0.24212643303075393,
+      "colour_stability": 0.42135504461583323,
+      "n_frames": 48,
+      "colour_r2": 0.075,
+      "colour_drift": 0.19
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.099835,
+      "centroid_hz": 1804.7
+    },
+    "last8_max_jump": 0.4,
+    "body_max_jump": 0.91,
+    "video_final_rel_err": 0.59832,
+    "audio_final_rel_err": 0.30678,
+    "quality": {
+      "sharpness": 37.019204815544484,
+      "temporal_flicker": 0.02903841573621318,
+      "motion_coherence": 0.406667231735789,
+      "colour_stability": 0.306374400531407,
+      "n_frames": 48,
+      "colour_r2": 0.121,
+      "colour_drift": 0.18
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.102085,
+      "centroid_hz": 1628.0
+    },
+    "last8_max_jump": 0.41,
+    "body_max_jump": 0.83,
+    "video_final_rel_err": 0.55121,
+    "audio_final_rel_err": 0.30807,
+    "quality": {
+      "sharpness": 33.72629949874549,
+      "temporal_flicker": 0.027368422656873958,
+      "motion_coherence": 0.46779264199348913,
+      "colour_stability": 0.3253266649923453,
+      "n_frames": 48,
+      "colour_r2": 0.344,
+      "colour_drift": 0.42
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.105056,
+      "centroid_hz": 1583.1
+    },
+    "last8_max_jump": 0.4,
+    "body_max_jump": 0.83,
+    "video_final_rel_err": 0.38558,
+    "audio_final_rel_err": 0.09355,
+    "quality": {
+      "sharpness": 28.944020430474634,
+      "temporal_flicker": 0.0240104672916338,
+      "motion_coherence": 0.4101079756269727,
+      "colour_stability": 0.30824330098978076,
+      "n_frames": 48,
+      "colour_r2": 0.056,
+      "colour_drift": 0.15
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.067438,
+      "centroid_hz": 1678.0
+    },
+    "last8_max_jump": 0.63,
+    "body_max_jump": 0.85,
+    "video_final_rel_err": 0.69033,
+    "audio_final_rel_err": 0.49886,
+    "quality": {
+      "sharpness": 38.162340436648186,
+      "temporal_flicker": 0.04075382305147276,
+      "motion_coherence": 0.17896656120099724,
+      "colour_stability": 0.542403775877302,
+      "n_frames": 48,
+      "colour_r2": 0.403,
+      "colour_drift": 0.73
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.07784,
+      "centroid_hz": 1657.8
+    },
+    "last8_max_jump": 0.47,
+    "body_max_jump": 0.65,
+    "video_final_rel_err": 0.7175,
+    "audio_final_rel_err": 0.42394,
+    "quality": {
+      "sharpness": 22.8123053987055,
+      "temporal_flicker": 0.06360791434627769,
+      "motion_coherence": 0.40707247688118603,
+      "colour_stability": 0.43467841921068145,
+      "n_frames": 48,
+      "colour_r2": 0.201,
+      "colour_drift": 0.4
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 3.131967687067883,
+      "temporal_flicker": 0.007077721984172603,
+      "motion_coherence": 0.6594539905740028,
+      "colour_stability": 0.2050288018497679,
+      "n_frames": 48,
+      "colour_r2": 0.04,
+      "colour_drift": 0.06
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.002754,
+      "centroid_hz": 3342.1
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.26,
+    "video_final_rel_err": 0.52593,
+    "audio_final_rel_err": 0.42462,
+    "quality": {
+      "sharpness": 0.8635242368953254,
+      "temporal_flicker": 0.00148461430499999,
+      "motion_coherence": 0.7011324856529296,
+      "colour_stability": 0.20955731467960245,
+      "n_frames": 48,
+      "colour_r2": 0.12,
+      "colour_drift": 0.11
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.007246,
+      "centroid_hz": 4094.3
+    },
+    "last8_max_jump": 0.13,
+    "body_max_jump": 0.23,
+    "video_final_rel_err": 0.49833,
+    "audio_final_rel_err": 0.44621,
+    "quality": {
+      "sharpness": 1.2910732477703046,
+      "temporal_flicker": 0.0016291643288798671,
+      "motion_coherence": 0.603056338308597,
+      "colour_stability": 0.11325238277692877,
+      "n_frames": 48,
+      "colour_r2": 0.164,
+      "colour_drift": 0.11
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.018561,
+      "centroid_hz": 1914.0
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 0.16,
+    "video_final_rel_err": 0.50796,
+    "audio_final_rel_err": 0.46708,
+    "quality": {
+      "sharpness": 1.6366867793853657,
+      "temporal_flicker": 0.0019616947779277348,
+      "motion_coherence": 0.5389564992045269,
+      "colour_stability": 0.07982743310817239,
+      "n_frames": 48,
+      "colour_r2": 0.028,
+      "colour_drift": 0.02
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.008884,
+      "centroid_hz": 1710.8
+    },
+    "last8_max_jump": 0.11,
+    "body_max_jump": 0.43,
+    "video_final_rel_err": 0.47741,
+    "audio_final_rel_err": 0.47599,
+    "quality": {
+      "sharpness": 2.494158031889638,
+      "temporal_flicker": 0.007207889672400253,
+      "motion_coherence": 0.7977031467063209,
+      "colour_stability": 0.33643239526524865,
+      "n_frames": 48,
+      "colour_r2": 0.061,
+      "colour_drift": 0.27
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001852,
+      "centroid_hz": 3653.7
+    },
+    "last8_max_jump": 0.12,
+    "body_max_jump": 0.22,
+    "video_final_rel_err": 0.52972,
+    "audio_final_rel_err": 0.34721,
+    "quality": {
+      "sharpness": 0.7543956312116579,
+      "temporal_flicker": 0.001222605647299709,
+      "motion_coherence": 0.6921766641993904,
+      "colour_stability": 0.22689230268921154,
+      "n_frames": 48,
+      "colour_r2": 0.388,
+      "colour_drift": 0.28
+    }
+  },
+  {
+    "tag": "kitchen_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.00248,
+      "centroid_hz": 3645.3
+    },
+    "last8_max_jump": 0.19,
+    "body_max_jump": 0.31,
+    "video_final_rel_err": 0.50901,
+    "audio_final_rel_err": 0.2786,
+    "quality": {
+      "sharpness": 1.1992653463108898,
+      "temporal_flicker": 0.001707744474285233,
+      "motion_coherence": 0.6066605176973779,
+      "colour_stability": 0.12767814733828078,
+      "n_frames": 48,
+      "colour_r2": 0.119,
+      "colour_drift": 0.09
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 0.5353304609990511,
+      "temporal_flicker": 0.011998840418081117,
+      "motion_coherence": 0.6201063085030439,
+      "colour_stability": 0.11368929488391961,
+      "n_frames": 48,
+      "colour_r2": 0.469,
+      "colour_drift": 0.17
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004562,
+      "centroid_hz": 1999.4
+    },
+    "last8_max_jump": 0.11,
+    "body_max_jump": 1.17,
+    "video_final_rel_err": 0.34587,
+    "audio_final_rel_err": 0.11977,
+    "quality": {
+      "sharpness": 0.1826746775995785,
+      "temporal_flicker": 0.029885066697151692,
+      "motion_coherence": 0.8418860986881055,
+      "colour_stability": 0.41545651172648834,
+      "n_frames": 48,
+      "colour_r2": 0.115,
+      "colour_drift": 0.4
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004683,
+      "centroid_hz": 2018.9
+    },
+    "last8_max_jump": 0.18,
+    "body_max_jump": 1.44,
+    "video_final_rel_err": 0.32595,
+    "audio_final_rel_err": 0.09898,
+    "quality": {
+      "sharpness": 0.1916680260847737,
+      "temporal_flicker": 0.03488058399716297,
+      "motion_coherence": 0.8409375521057902,
+      "colour_stability": 0.6792612288740147,
+      "n_frames": 48,
+      "colour_r2": 0.131,
+      "colour_drift": 0.69
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004682,
+      "centroid_hz": 2036.6
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.1,
+    "video_final_rel_err": 0.27693,
+    "audio_final_rel_err": 0.09405,
+    "quality": {
+      "sharpness": 0.22054368506863795,
+      "temporal_flicker": 0.01101258264893568,
+      "motion_coherence": 0.6806004063927883,
+      "colour_stability": 0.08632072800820385,
+      "n_frames": 48,
+      "colour_r2": 0.353,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.005026,
+      "centroid_hz": 1977.4
+    },
+    "last8_max_jump": 0.07,
+    "body_max_jump": 0.1,
+    "video_final_rel_err": 0.23096,
+    "audio_final_rel_err": 0.06405,
+    "quality": {
+      "sharpness": 0.2787557745872948,
+      "temporal_flicker": 0.010602777270457374,
+      "motion_coherence": 0.6581835535947873,
+      "colour_stability": 0.08786811978554021,
+      "n_frames": 48,
+      "colour_r2": 0.435,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.005516,
+      "centroid_hz": 1871.4
+    },
+    "last8_max_jump": 0.46,
+    "body_max_jump": 0.71,
+    "video_final_rel_err": 0.35191,
+    "audio_final_rel_err": 0.1533,
+    "quality": {
+      "sharpness": 0.17733248407724328,
+      "temporal_flicker": 0.02531346370150143,
+      "motion_coherence": 0.8342569115007823,
+      "colour_stability": 0.3374600937887829,
+      "n_frames": 48,
+      "colour_r2": 0.054,
+      "colour_drift": 0.19
+    }
+  },
+  {
+    "tag": "storm_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.005682,
+      "centroid_hz": 1920.1
+    },
+    "last8_max_jump": 0.17,
+    "body_max_jump": 0.41,
+    "video_final_rel_err": 0.297,
+    "audio_final_rel_err": 0.10275,
+    "quality": {
+      "sharpness": 0.3207913850946444,
+      "temporal_flicker": 0.014663262911510056,
+      "motion_coherence": 0.739972426555103,
+      "colour_stability": 0.3050915926754045,
+      "n_frames": 48,
+      "colour_r2": 0.199,
+      "colour_drift": 0.33
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 3.02900372367878,
+      "temporal_flicker": 0.09080097723920807,
+      "motion_coherence": 0.812029234185567,
+      "colour_stability": 6.110907089702361,
+      "n_frames": 48,
+      "colour_r2": 0.376,
+      "colour_drift": 9.03
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.118059,
+      "centroid_hz": 1487.9
+    },
+    "last8_max_jump": 0.48,
+    "body_max_jump": 3.19,
+    "video_final_rel_err": 0.75986,
+    "audio_final_rel_err": 0.25508,
+    "quality": {
+      "sharpness": 3.070196593160123,
+      "temporal_flicker": 0.10718908634637703,
+      "motion_coherence": 0.7630819017876179,
+      "colour_stability": 3.7074730792712853,
+      "n_frames": 48,
+      "colour_r2": 0.028,
+      "colour_drift": 3.0
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.115381,
+      "centroid_hz": 1653.4
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 1.23,
+    "video_final_rel_err": 0.73616,
+    "audio_final_rel_err": 0.26667,
+    "quality": {
+      "sharpness": 3.386338069799708,
+      "temporal_flicker": 0.09733805564697501,
+      "motion_coherence": 0.7176220466519372,
+      "colour_stability": 2.0352288855212066,
+      "n_frames": 48,
+      "colour_r2": 0.029,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.9,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.107071,
+      "centroid_hz": 1586.1
+    },
+    "last8_max_jump": 0.18,
+    "body_max_jump": 1.03,
+    "video_final_rel_err": 0.67991,
+    "audio_final_rel_err": 0.6249,
+    "quality": {
+      "sharpness": 3.3474446272861718,
+      "temporal_flicker": 0.09543545779758628,
+      "motion_coherence": 0.7382099533808273,
+      "colour_stability": 3.054292003640516,
+      "n_frames": 48,
+      "colour_r2": 0.16,
+      "colour_drift": 2.22
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.092467,
+      "centroid_hz": 1767.1
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 2.54,
+    "video_final_rel_err": 0.58185,
+    "audio_final_rel_err": 0.63408,
+    "quality": {
+      "sharpness": 2.907807051545026,
+      "temporal_flicker": 0.09396048960976983,
+      "motion_coherence": 0.7987181227468728,
+      "colour_stability": 3.1997291760262008,
+      "n_frames": 48,
+      "colour_r2": 0.311,
+      "colour_drift": 3.96
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.080384,
+      "centroid_hz": 1432.1
+    },
+    "last8_max_jump": 0.59,
+    "body_max_jump": 2.72,
+    "video_final_rel_err": 0.72919,
+    "audio_final_rel_err": 0.76926,
+    "quality": {
+      "sharpness": 3.119254044249571,
+      "temporal_flicker": 0.09534922157000514,
+      "motion_coherence": 0.7530063460770214,
+      "colour_stability": 3.2745757030664033,
+      "n_frames": 48,
+      "colour_r2": 0.029,
+      "colour_drift": 2.82
+    }
+  },
+  {
+    "tag": "skater_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.104073,
+      "centroid_hz": 1629.9
+    },
+    "last8_max_jump": 0.37,
+    "body_max_jump": 1.34,
+    "video_final_rel_err": 0.71399,
+    "audio_final_rel_err": 0.411,
+    "quality": {
+      "sharpness": 2.810948234309157,
+      "temporal_flicker": 0.09834319069964961,
+      "motion_coherence": 0.8129911164478483,
+      "colour_stability": 2.755623811220509,
+      "n_frames": 48,
+      "colour_r2": 0.362,
+      "colour_drift": 3.37
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.280177955630024,
+      "temporal_flicker": 0.1604710044764389,
+      "motion_coherence": 0.8938636152005929,
+      "colour_stability": 0.43218851623584276,
+      "n_frames": 48,
+      "colour_r2": 0.108,
+      "colour_drift": 0.33
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001048,
+      "centroid_hz": 3578.8
+    },
+    "last8_max_jump": 0.17,
+    "body_max_jump": 0.68,
+    "video_final_rel_err": 0.36784,
+    "audio_final_rel_err": 0.11999,
+    "quality": {
+      "sharpness": 0.4674338598348808,
+      "temporal_flicker": 0.18264152433244624,
+      "motion_coherence": 0.9002957600397195,
+      "colour_stability": 0.3223399663007205,
+      "n_frames": 48,
+      "colour_r2": 0.157,
+      "colour_drift": 0.32
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000966,
+      "centroid_hz": 3400.1
+    },
+    "last8_max_jump": 0.38,
+    "body_max_jump": 0.95,
+    "video_final_rel_err": 0.35472,
+    "audio_final_rel_err": 0.08706,
+    "quality": {
+      "sharpness": 0.5911042550154519,
+      "temporal_flicker": 0.23220654062755175,
+      "motion_coherence": 0.9233778580512759,
+      "colour_stability": 0.5865951129642374,
+      "n_frames": 48,
+      "colour_r2": 0.095,
+      "colour_drift": 0.44
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000985,
+      "centroid_hz": 3409.5
+    },
+    "last8_max_jump": 0.57,
+    "body_max_jump": 1.2,
+    "video_final_rel_err": 0.33491,
+    "audio_final_rel_err": 0.07706,
+    "quality": {
+      "sharpness": 0.647913366095023,
+      "temporal_flicker": 0.20255246580216818,
+      "motion_coherence": 0.9149431614626492,
+      "colour_stability": 0.5200734989743182,
+      "n_frames": 48,
+      "colour_r2": 0.098,
+      "colour_drift": 0.38
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001025,
+      "centroid_hz": 3356.7
+    },
+    "last8_max_jump": 1.3,
+    "body_max_jump": 1.03,
+    "video_final_rel_err": 0.28508,
+    "audio_final_rel_err": 0.0586,
+    "quality": {
+      "sharpness": 0.7673636042553772,
+      "temporal_flicker": 0.202653088358388,
+      "motion_coherence": 0.9177887565346824,
+      "colour_stability": 0.49989500034224826,
+      "n_frames": 48,
+      "colour_r2": 0.12,
+      "colour_drift": 0.47
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000934,
+      "centroid_hz": 3139.5
+    },
+    "last8_max_jump": 0.41,
+    "body_max_jump": 0.69,
+    "video_final_rel_err": 0.37181,
+    "audio_final_rel_err": 0.1532,
+    "quality": {
+      "sharpness": 0.2574202609094864,
+      "temporal_flicker": 0.15157640928769459,
+      "motion_coherence": 0.891954979731256,
+      "colour_stability": 0.27070945061434426,
+      "n_frames": 48,
+      "colour_r2": 0.098,
+      "colour_drift": 0.22
+    }
+  },
+  {
+    "tag": "campfire_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000867,
+      "centroid_hz": 3314.0
+    },
+    "last8_max_jump": 0.22,
+    "body_max_jump": 0.72,
+    "video_final_rel_err": 0.33567,
+    "audio_final_rel_err": 0.12471,
+    "quality": {
+      "sharpness": 0.5653904776536612,
+      "temporal_flicker": 0.13095383500307534,
+      "motion_coherence": 0.8526001118837343,
+      "colour_stability": 0.3709988636750821,
+      "n_frames": 48,
+      "colour_r2": 0.226,
+      "colour_drift": 0.41
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.442491893091075,
+      "temporal_flicker": 0.1359647489756159,
+      "motion_coherence": 0.8686030313486981,
+      "colour_stability": 1.594043932008569,
+      "n_frames": 48,
+      "colour_r2": 0.488,
+      "colour_drift": 3.1
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.012143,
+      "centroid_hz": 757.9
+    },
+    "last8_max_jump": 0.07,
+    "body_max_jump": 0.14,
+    "video_final_rel_err": 0.56786,
+    "audio_final_rel_err": 0.29512,
+    "quality": {
+      "sharpness": 0.9778991263685418,
+      "temporal_flicker": 0.09055745667023743,
+      "motion_coherence": 0.655650387528037,
+      "colour_stability": 0.3969586315765512,
+      "n_frames": 48,
+      "colour_r2": 0.624,
+      "colour_drift": 0.81
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.011572,
+      "centroid_hz": 733.9
+    },
+    "last8_max_jump": 0.06,
+    "body_max_jump": 0.1,
+    "video_final_rel_err": 0.54917,
+    "audio_final_rel_err": 0.32011,
+    "quality": {
+      "sharpness": 1.2274235641597402,
+      "temporal_flicker": 0.04720159872869442,
+      "motion_coherence": 0.6193850984171454,
+      "colour_stability": 0.32708231043102737,
+      "n_frames": 48,
+      "colour_r2": 0.436,
+      "colour_drift": 0.53
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.019218,
+      "centroid_hz": 737.6
+    },
+    "last8_max_jump": 0.2,
+    "body_max_jump": 0.36,
+    "video_final_rel_err": 0.48585,
+    "audio_final_rel_err": 0.38865,
+    "quality": {
+      "sharpness": 1.396989700829042,
+      "temporal_flicker": 0.08241052703110874,
+      "motion_coherence": 0.8013947477530361,
+      "colour_stability": 0.2904261013656227,
+      "n_frames": 48,
+      "colour_r2": 0.25,
+      "colour_drift": 0.33
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.01775,
+      "centroid_hz": 735.9
+    },
+    "last8_max_jump": 0.24,
+    "body_max_jump": 0.8,
+    "video_final_rel_err": 0.42902,
+    "audio_final_rel_err": 0.2513,
+    "quality": {
+      "sharpness": 1.4358027112861618,
+      "temporal_flicker": 0.11783575289528077,
+      "motion_coherence": 0.8492142673592695,
+      "colour_stability": 0.7435726920736526,
+      "n_frames": 48,
+      "colour_r2": 0.034,
+      "colour_drift": 0.26
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.008384,
+      "centroid_hz": 693.7
+    },
+    "last8_max_jump": 0.07,
+    "body_max_jump": 0.12,
+    "video_final_rel_err": 0.56876,
+    "audio_final_rel_err": 0.36332,
+    "quality": {
+      "sharpness": 0.7781853194512257,
+      "temporal_flicker": 0.06277561748695275,
+      "motion_coherence": 0.5117477463797466,
+      "colour_stability": 0.2567278417840773,
+      "n_frames": 48,
+      "colour_r2": 0.717,
+      "colour_drift": 0.54
+    }
+  },
+  {
+    "tag": "piano_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.010321,
+      "centroid_hz": 675.1
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.99,
+    "video_final_rel_err": 0.54486,
+    "audio_final_rel_err": 0.38894,
+    "quality": {
+      "sharpness": 1.130221133192559,
+      "temporal_flicker": 0.08876770699969226,
+      "motion_coherence": 0.8516454859371291,
+      "colour_stability": 0.8004856435146429,
+      "n_frames": 48,
+      "colour_r2": 0.097,
+      "colour_drift": 0.81
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.0161448104668866,
+      "temporal_flicker": 0.062246957911380706,
+      "motion_coherence": 0.8925886907308735,
+      "colour_stability": 0.9091299965135867,
+      "n_frames": 48,
+      "colour_r2": 0.388,
+      "colour_drift": 1.38
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.008867,
+      "centroid_hz": 2008.9
+    },
+    "last8_max_jump": 1.19,
+    "body_max_jump": 1.48,
+    "video_final_rel_err": 0.68899,
+    "audio_final_rel_err": 0.28324,
+    "quality": {
+      "sharpness": 1.5128891249093843,
+      "temporal_flicker": 0.05378308436884645,
+      "motion_coherence": 0.9326235799211262,
+      "colour_stability": 2.1019423068549496,
+      "n_frames": 48,
+      "colour_r2": 0.786,
+      "colour_drift": 4.34
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.008053,
+      "centroid_hz": 1926.9
+    },
+    "last8_max_jump": 0.68,
+    "body_max_jump": 1.15,
+    "video_final_rel_err": 0.6657,
+    "audio_final_rel_err": 0.25095,
+    "quality": {
+      "sharpness": 1.5334478679976549,
+      "temporal_flicker": 0.04388518171107988,
+      "motion_coherence": 0.9084162516181047,
+      "colour_stability": 1.2749538014529407,
+      "n_frames": 48,
+      "colour_r2": 0.538,
+      "colour_drift": 2.29
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.007544,
+      "centroid_hz": 1918.6
+    },
+    "last8_max_jump": 0.28,
+    "body_max_jump": 0.68,
+    "video_final_rel_err": 0.6117,
+    "audio_final_rel_err": 0.28398,
+    "quality": {
+      "sharpness": 1.49546119754098,
+      "temporal_flicker": 0.03908208690678443,
+      "motion_coherence": 0.8996253072630792,
+      "colour_stability": 1.886163510669834,
+      "n_frames": 48,
+      "colour_r2": 0.879,
+      "colour_drift": 3.97
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.007318,
+      "centroid_hz": 1989.3
+    },
+    "last8_max_jump": 0.55,
+    "body_max_jump": 0.56,
+    "video_final_rel_err": 0.5312,
+    "audio_final_rel_err": 0.24842,
+    "quality": {
+      "sharpness": 1.6320001608528978,
+      "temporal_flicker": 0.04587587074157414,
+      "motion_coherence": 0.901094329812307,
+      "colour_stability": 1.3519212565973826,
+      "n_frames": 48,
+      "colour_r2": 0.364,
+      "colour_drift": 1.61
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.006915,
+      "centroid_hz": 2040.0
+    },
+    "last8_max_jump": 0.99,
+    "body_max_jump": 1.27,
+    "video_final_rel_err": 0.68362,
+    "audio_final_rel_err": 0.26457,
+    "quality": {
+      "sharpness": 1.4040373870170715,
+      "temporal_flicker": 0.045396122802260686,
+      "motion_coherence": 0.9362822793684223,
+      "colour_stability": 2.1262309030474977,
+      "n_frames": 48,
+      "colour_r2": 0.849,
+      "colour_drift": 4.42
+    }
+  },
+  {
+    "tag": "horse_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.008009,
+      "centroid_hz": 1960.9
+    },
+    "last8_max_jump": 0.93,
+    "body_max_jump": 0.62,
+    "video_final_rel_err": 0.67651,
+    "audio_final_rel_err": 0.35482,
+    "quality": {
+      "sharpness": 1.436368201184262,
+      "temporal_flicker": 0.05097074618678467,
+      "motion_coherence": 0.9540427115198039,
+      "colour_stability": 1.0955628829307358,
+      "n_frames": 48,
+      "colour_r2": 0.421,
+      "colour_drift": 1.66
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.3548623994476434,
+      "temporal_flicker": 0.052982882359314906,
+      "motion_coherence": 0.8683056341232104,
+      "colour_stability": 0.2993268670537523,
+      "n_frames": 48,
+      "colour_r2": 0.011,
+      "colour_drift": 0.08
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001398,
+      "centroid_hz": 2890.0
+    },
+    "last8_max_jump": 0.22,
+    "body_max_jump": 0.29,
+    "video_final_rel_err": 0.44373,
+    "audio_final_rel_err": 0.40752,
+    "quality": {
+      "sharpness": 0.8455081024597126,
+      "temporal_flicker": 0.04895606768141893,
+      "motion_coherence": 0.9081770661576678,
+      "colour_stability": 0.24756939698660976,
+      "n_frames": 48,
+      "colour_r2": 0.148,
+      "colour_drift": 0.19
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.00161,
+      "centroid_hz": 3173.3
+    },
+    "last8_max_jump": 0.16,
+    "body_max_jump": 0.29,
+    "video_final_rel_err": 0.44482,
+    "audio_final_rel_err": 0.50768,
+    "quality": {
+      "sharpness": 0.9250797602697065,
+      "temporal_flicker": 0.05504583087988148,
+      "motion_coherence": 0.8757548287657612,
+      "colour_stability": 0.2718435324867982,
+      "n_frames": 48,
+      "colour_r2": 0.135,
+      "colour_drift": 0.27
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001077,
+      "centroid_hz": 3442.2
+    },
+    "last8_max_jump": 0.25,
+    "body_max_jump": 0.28,
+    "video_final_rel_err": 0.40983,
+    "audio_final_rel_err": 0.50841,
+    "quality": {
+      "sharpness": 1.0077179976733304,
+      "temporal_flicker": 0.05083680220254758,
+      "motion_coherence": 0.8583775481805648,
+      "colour_stability": 0.23402257799954096,
+      "n_frames": 48,
+      "colour_r2": 0.142,
+      "colour_drift": 0.21
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001326,
+      "centroid_hz": 3230.7
+    },
+    "last8_max_jump": 0.15,
+    "body_max_jump": 0.39,
+    "video_final_rel_err": 0.37242,
+    "audio_final_rel_err": 0.3851,
+    "quality": {
+      "sharpness": 1.1169392194643708,
+      "temporal_flicker": 0.05742288678688183,
+      "motion_coherence": 0.8729440538088796,
+      "colour_stability": 0.23720214973315756,
+      "n_frames": 48,
+      "colour_r2": 0.087,
+      "colour_drift": 0.18
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000715,
+      "centroid_hz": 3508.7
+    },
+    "last8_max_jump": 0.13,
+    "body_max_jump": 0.28,
+    "video_final_rel_err": 0.44759,
+    "audio_final_rel_err": 0.34296,
+    "quality": {
+      "sharpness": 0.7633898026662277,
+      "temporal_flicker": 0.03878201674234825,
+      "motion_coherence": 0.9083482817231071,
+      "colour_stability": 0.23465587581318012,
+      "n_frames": 48,
+      "colour_r2": 0.112,
+      "colour_drift": 0.16
+    }
+  },
+  {
+    "tag": "typist_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001216,
+      "centroid_hz": 3371.0
+    },
+    "last8_max_jump": 0.1,
+    "body_max_jump": 0.28,
+    "video_final_rel_err": 0.44614,
+    "audio_final_rel_err": 0.45835,
+    "quality": {
+      "sharpness": 0.8029740089772542,
+      "temporal_flicker": 0.032004245151198575,
+      "motion_coherence": 0.8686233543673848,
+      "colour_stability": 0.19337724008381887,
+      "n_frames": 48,
+      "colour_r2": 0.091,
+      "colour_drift": 0.1
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 7.030438271417435,
+      "temporal_flicker": 0.08798883624685197,
+      "motion_coherence": 0.7246284890142949,
+      "colour_stability": 3.1350776254170114,
+      "n_frames": 48,
+      "colour_r2": 0.272,
+      "colour_drift": 4.32
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.013702,
+      "centroid_hz": 2706.8
+    },
+    "last8_max_jump": 0.51,
+    "body_max_jump": 2.16,
+    "video_final_rel_err": 0.91483,
+    "audio_final_rel_err": 0.24818,
+    "quality": {
+      "sharpness": 20.1539584712818,
+      "temporal_flicker": 0.05499644549756429,
+      "motion_coherence": 0.506132458174083,
+      "colour_stability": 2.4582692886990727,
+      "n_frames": 48,
+      "colour_r2": 0.205,
+      "colour_drift": 2.11
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.018022,
+      "centroid_hz": 2684.1
+    },
+    "last8_max_jump": 0.26,
+    "body_max_jump": 3.32,
+    "video_final_rel_err": 0.91108,
+    "audio_final_rel_err": 0.23558,
+    "quality": {
+      "sharpness": 21.27487320571607,
+      "temporal_flicker": 0.05394447804667566,
+      "motion_coherence": 0.5375872700920324,
+      "colour_stability": 4.240186761377903,
+      "n_frames": 48,
+      "colour_r2": 0.066,
+      "colour_drift": 1.52
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.018684,
+      "centroid_hz": 2702.8
+    },
+    "last8_max_jump": 0.45,
+    "body_max_jump": 0.86,
+    "video_final_rel_err": 0.88472,
+    "audio_final_rel_err": 0.26264,
+    "quality": {
+      "sharpness": 20.29820242817508,
+      "temporal_flicker": 0.04811814804752771,
+      "motion_coherence": 0.6061236043769412,
+      "colour_stability": 0.8130363423831294,
+      "n_frames": 48,
+      "colour_r2": 0.265,
+      "colour_drift": 0.88
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.019577,
+      "centroid_hz": 2685.0
+    },
+    "last8_max_jump": 0.37,
+    "body_max_jump": 1.07,
+    "video_final_rel_err": 0.8132,
+    "audio_final_rel_err": 0.25601,
+    "quality": {
+      "sharpness": 14.552469221163179,
+      "temporal_flicker": 0.05095488289666772,
+      "motion_coherence": 0.6946059017810634,
+      "colour_stability": 2.2756599026070425,
+      "n_frames": 48,
+      "colour_r2": 0.351,
+      "colour_drift": 3.71
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.01375,
+      "centroid_hz": 2724.9
+    },
+    "last8_max_jump": 0.8,
+    "body_max_jump": 1.76,
+    "video_final_rel_err": 0.9025,
+    "audio_final_rel_err": 0.24415,
+    "quality": {
+      "sharpness": 22.3765072232394,
+      "temporal_flicker": 0.04679715147964989,
+      "motion_coherence": 0.3631200390308847,
+      "colour_stability": 1.8019379137437843,
+      "n_frames": 48,
+      "colour_r2": 0.121,
+      "colour_drift": 0.92
+    }
+  },
+  {
+    "tag": "fountain_s100",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.016288,
+      "centroid_hz": 2677.0
+    },
+    "last8_max_jump": 0.45,
+    "body_max_jump": 0.92,
+    "video_final_rel_err": 0.82515,
+    "audio_final_rel_err": 0.26011,
+    "quality": {
+      "sharpness": 13.80715544716561,
+      "temporal_flicker": 0.04804569683379756,
+      "motion_coherence": 0.29850297014699545,
+      "colour_stability": 0.5335216608979609,
+      "n_frames": 48,
+      "colour_r2": 0.152,
+      "colour_drift": 0.54
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 11.211783701202059,
+      "temporal_flicker": 0.017515465171622783,
+      "motion_coherence": 0.5989203154115447,
+      "colour_stability": 0.20780121350300018,
+      "n_frames": 48,
+      "colour_r2": 0.166,
+      "colour_drift": 0.19
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.9,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.254711,
+      "centroid_hz": 1353.5
+    },
+    "last8_max_jump": 0.41,
+    "body_max_jump": 0.69,
+    "video_final_rel_err": 0.77689,
+    "audio_final_rel_err": 0.18949,
+    "quality": {
+      "sharpness": 29.484714833029877,
+      "temporal_flicker": 0.025883345529513976,
+      "motion_coherence": 0.34705633508103134,
+      "colour_stability": 0.27095612778917955,
+      "n_frames": 48,
+      "colour_r2": 0.048,
+      "colour_drift": 0.1
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.263366,
+      "centroid_hz": 1412.4
+    },
+    "last8_max_jump": 0.48,
+    "body_max_jump": 0.77,
+    "video_final_rel_err": 0.67353,
+    "audio_final_rel_err": 0.17359,
+    "quality": {
+      "sharpness": 26.338663472853522,
+      "temporal_flicker": 0.020998953916973397,
+      "motion_coherence": 0.4976369541824589,
+      "colour_stability": 0.27564165229882837,
+      "n_frames": 48,
+      "colour_r2": 0.323,
+      "colour_drift": 0.33
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.263457,
+      "centroid_hz": 1350.7
+    },
+    "last8_max_jump": 0.31,
+    "body_max_jump": 0.59,
+    "video_final_rel_err": 0.56625,
+    "audio_final_rel_err": 0.13331,
+    "quality": {
+      "sharpness": 22.068901924586946,
+      "temporal_flicker": 0.019296289995939946,
+      "motion_coherence": 0.5322027317337809,
+      "colour_stability": 0.3064398809704005,
+      "n_frames": 48,
+      "colour_r2": 0.14,
+      "colour_drift": 0.31
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.275378,
+      "centroid_hz": 1324.5
+    },
+    "last8_max_jump": 0.32,
+    "body_max_jump": 0.48,
+    "video_final_rel_err": 0.45654,
+    "audio_final_rel_err": 0.2285,
+    "quality": {
+      "sharpness": 18.441318201992335,
+      "temporal_flicker": 0.0211708602401929,
+      "motion_coherence": 0.630626846446236,
+      "colour_stability": 0.35100018038333874,
+      "n_frames": 48,
+      "colour_r2": 0.037,
+      "colour_drift": 0.15
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.203124,
+      "centroid_hz": 1339.1
+    },
+    "last8_max_jump": 0.52,
+    "body_max_jump": 0.8,
+    "video_final_rel_err": 0.80664,
+    "audio_final_rel_err": 0.3762,
+    "quality": {
+      "sharpness": 34.20460834477857,
+      "temporal_flicker": 0.028235339611584805,
+      "motion_coherence": 0.2584106705949449,
+      "colour_stability": 0.32554719534595317,
+      "n_frames": 48,
+      "colour_r2": 0.163,
+      "colour_drift": 0.26
+    }
+  },
+  {
+    "tag": "violin_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.173302,
+      "centroid_hz": 1390.5
+    },
+    "last8_max_jump": 0.57,
+    "body_max_jump": 0.66,
+    "video_final_rel_err": 0.76989,
+    "audio_final_rel_err": 0.48768,
+    "quality": {
+      "sharpness": 14.572284188868304,
+      "temporal_flicker": 0.03662341159018278,
+      "motion_coherence": 0.6154351004413778,
+      "colour_stability": 0.34396427162975235,
+      "n_frames": 48,
+      "colour_r2": 0.153,
+      "colour_drift": 0.28
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.596362536147633,
+      "temporal_flicker": 0.00969558574540371,
+      "motion_coherence": 0.7596511958269337,
+      "colour_stability": 0.3634621490447074,
+      "n_frames": 48,
+      "colour_r2": 0.099,
+      "colour_drift": 0.28
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004472,
+      "centroid_hz": 2190.6
+    },
+    "last8_max_jump": 0.14,
+    "body_max_jump": 0.38,
+    "video_final_rel_err": 0.60793,
+    "audio_final_rel_err": 0.76443,
+    "quality": {
+      "sharpness": 1.2496390223957343,
+      "temporal_flicker": 0.00221394461021846,
+      "motion_coherence": 0.6408275611936421,
+      "colour_stability": 0.3555158648108894,
+      "n_frames": 48,
+      "colour_r2": 0.49,
+      "colour_drift": 0.49
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004842,
+      "centroid_hz": 1764.9
+    },
+    "last8_max_jump": 0.12,
+    "body_max_jump": 0.3,
+    "video_final_rel_err": 0.57154,
+    "audio_final_rel_err": 0.68381,
+    "quality": {
+      "sharpness": 1.4185811486304398,
+      "temporal_flicker": 0.002002332218966269,
+      "motion_coherence": 0.5960561304524019,
+      "colour_stability": 0.19168506624876572,
+      "n_frames": 48,
+      "colour_r2": 0.469,
+      "colour_drift": 0.26
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.064736,
+      "centroid_hz": 1173.2
+    },
+    "last8_max_jump": 0.11,
+    "body_max_jump": 0.2,
+    "video_final_rel_err": 0.51672,
+    "audio_final_rel_err": 0.99296,
+    "quality": {
+      "sharpness": 2.018575537574656,
+      "temporal_flicker": 0.004769153437714846,
+      "motion_coherence": 0.6695068930751338,
+      "colour_stability": 0.13697546829306362,
+      "n_frames": 48,
+      "colour_r2": 0.152,
+      "colour_drift": 0.08
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.046923,
+      "centroid_hz": 1349.5
+    },
+    "last8_max_jump": 0.13,
+    "body_max_jump": 0.16,
+    "video_final_rel_err": 0.47943,
+    "audio_final_rel_err": 0.89049,
+    "quality": {
+      "sharpness": 2.3513418220352156,
+      "temporal_flicker": 0.00732517130644193,
+      "motion_coherence": 0.6155404919483659,
+      "colour_stability": 0.1256126069565744,
+      "n_frames": 48,
+      "colour_r2": 0.083,
+      "colour_drift": 0.06
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001822,
+      "centroid_hz": 2736.0
+    },
+    "last8_max_jump": 0.2,
+    "body_max_jump": 0.36,
+    "video_final_rel_err": 0.62652,
+    "audio_final_rel_err": 0.66616,
+    "quality": {
+      "sharpness": 0.9301679219821222,
+      "temporal_flicker": 0.0015415592186730157,
+      "motion_coherence": 0.683609488499446,
+      "colour_stability": 0.343882060645774,
+      "n_frames": 48,
+      "colour_r2": 0.193,
+      "colour_drift": 0.29
+    }
+  },
+  {
+    "tag": "kitchen_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.002856,
+      "centroid_hz": 2703.2
+    },
+    "last8_max_jump": 0.23,
+    "body_max_jump": 0.35,
+    "video_final_rel_err": 0.5942,
+    "audio_final_rel_err": 0.70222,
+    "quality": {
+      "sharpness": 1.6194867380575708,
+      "temporal_flicker": 0.0021439755668217634,
+      "motion_coherence": 0.5611673893097231,
+      "colour_stability": 0.16843839140985217,
+      "n_frames": 48,
+      "colour_r2": 0.07,
+      "colour_drift": 0.07
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 0.5529568685413695,
+      "temporal_flicker": 0.007299041449858321,
+      "motion_coherence": 0.5864814979475907,
+      "colour_stability": 0.08525086748805509,
+      "n_frames": 48,
+      "colour_r2": 0.275,
+      "colour_drift": 0.09
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.037217,
+      "centroid_hz": 759.7
+    },
+    "last8_max_jump": 0.52,
+    "body_max_jump": 0.62,
+    "video_final_rel_err": 0.32165,
+    "audio_final_rel_err": 0.15508,
+    "quality": {
+      "sharpness": 0.30282931813988456,
+      "temporal_flicker": 0.015470515271606672,
+      "motion_coherence": 0.7697531371016589,
+      "colour_stability": 0.25925027792052124,
+      "n_frames": 48,
+      "colour_r2": 0.016,
+      "colour_drift": 0.08
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.037149,
+      "centroid_hz": 774.0
+    },
+    "last8_max_jump": 0.59,
+    "body_max_jump": 0.75,
+    "video_final_rel_err": 0.30151,
+    "audio_final_rel_err": 0.13501,
+    "quality": {
+      "sharpness": 0.3223367671772549,
+      "temporal_flicker": 0.016641415602983316,
+      "motion_coherence": 0.7991523058328557,
+      "colour_stability": 0.31247187787626923,
+      "n_frames": 48,
+      "colour_r2": 0.026,
+      "colour_drift": 0.11
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.037539,
+      "centroid_hz": 774.8
+    },
+    "last8_max_jump": 0.45,
+    "body_max_jump": 0.51,
+    "video_final_rel_err": 0.26035,
+    "audio_final_rel_err": 0.1421,
+    "quality": {
+      "sharpness": 0.3322381584027409,
+      "temporal_flicker": 0.014893789709783709,
+      "motion_coherence": 0.7704246314708325,
+      "colour_stability": 0.31378112160830646,
+      "n_frames": 48,
+      "colour_r2": 0.023,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.035816,
+      "centroid_hz": 777.8
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 0.43,
+    "video_final_rel_err": 0.21289,
+    "audio_final_rel_err": 0.10497,
+    "quality": {
+      "sharpness": 0.3862048685718777,
+      "temporal_flicker": 0.01425038531546761,
+      "motion_coherence": 0.7406011845061646,
+      "colour_stability": 0.3070246845070107,
+      "n_frames": 48,
+      "colour_r2": 0.081,
+      "colour_drift": 0.16
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.029623,
+      "centroid_hz": 850.1
+    },
+    "last8_max_jump": 0.48,
+    "body_max_jump": 0.55,
+    "video_final_rel_err": 0.317,
+    "audio_final_rel_err": 0.14618,
+    "quality": {
+      "sharpness": 0.26056368907656713,
+      "temporal_flicker": 0.013767169885309615,
+      "motion_coherence": 0.7556776589199703,
+      "colour_stability": 0.2261908265149767,
+      "n_frames": 48,
+      "colour_r2": 0.013,
+      "colour_drift": 0.06
+    }
+  },
+  {
+    "tag": "storm_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.028501,
+      "centroid_hz": 880.3
+    },
+    "last8_max_jump": 0.53,
+    "body_max_jump": 0.72,
+    "video_final_rel_err": 0.27309,
+    "audio_final_rel_err": 0.11929,
+    "quality": {
+      "sharpness": 0.4413482404654138,
+      "temporal_flicker": 0.01194687133472036,
+      "motion_coherence": 0.7624937839926923,
+      "colour_stability": 0.27610405001883315,
+      "n_frames": 48,
+      "colour_r2": 0.019,
+      "colour_drift": 0.06
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.151405776634852,
+      "temporal_flicker": 0.1069242917325801,
+      "motion_coherence": 0.8748161915475571,
+      "colour_stability": 4.516774019366884,
+      "n_frames": 48,
+      "colour_r2": 0.373,
+      "colour_drift": 6.8
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.15356,
+      "centroid_hz": 1267.9
+    },
+    "last8_max_jump": 2.65,
+    "body_max_jump": 1.54,
+    "video_final_rel_err": 0.70947,
+    "audio_final_rel_err": 0.64928,
+    "quality": {
+      "sharpness": 2.450011642222293,
+      "temporal_flicker": 0.07048115800287443,
+      "motion_coherence": 0.7268693929825569,
+      "colour_stability": 3.5292632936427206,
+      "n_frames": 48,
+      "colour_r2": 0.422,
+      "colour_drift": 4.75
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.13231,
+      "centroid_hz": 1479.0
+    },
+    "last8_max_jump": 1.68,
+    "body_max_jump": 1.36,
+    "video_final_rel_err": 0.68781,
+    "audio_final_rel_err": 0.56602,
+    "quality": {
+      "sharpness": 2.182673949244221,
+      "temporal_flicker": 0.06065597905971205,
+      "motion_coherence": 0.7127238729414395,
+      "colour_stability": 2.6174771571899846,
+      "n_frames": 48,
+      "colour_r2": 0.395,
+      "colour_drift": 3.55
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.8,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.094678,
+      "centroid_hz": 1314.9
+    },
+    "last8_max_jump": 1.52,
+    "body_max_jump": 1.5,
+    "video_final_rel_err": 0.68524,
+    "audio_final_rel_err": 0.75582,
+    "quality": {
+      "sharpness": 2.0910116217241006,
+      "temporal_flicker": 0.054782961021556095,
+      "motion_coherence": 0.7101559435096184,
+      "colour_stability": 2.5548708245827867,
+      "n_frames": 48,
+      "colour_r2": 0.387,
+      "colour_drift": 3.11
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.121367,
+      "centroid_hz": 1411.5
+    },
+    "last8_max_jump": 1.67,
+    "body_max_jump": 1.19,
+    "video_final_rel_err": 0.69681,
+    "audio_final_rel_err": 0.71741,
+    "quality": {
+      "sharpness": 2.0411860201351737,
+      "temporal_flicker": 0.06412304519836774,
+      "motion_coherence": 0.7827816168084651,
+      "colour_stability": 2.086541345414623,
+      "n_frames": 48,
+      "colour_r2": 0.6,
+      "colour_drift": 3.14
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.107601,
+      "centroid_hz": 1131.1
+    },
+    "last8_max_jump": 1.04,
+    "body_max_jump": 1.29,
+    "video_final_rel_err": 0.69001,
+    "audio_final_rel_err": 0.64945,
+    "quality": {
+      "sharpness": 2.5634039521371146,
+      "temporal_flicker": 0.06365502522020938,
+      "motion_coherence": 0.7147413766310072,
+      "colour_stability": 2.4133840644770235,
+      "n_frames": 48,
+      "colour_r2": 0.556,
+      "colour_drift": 3.8
+    }
+  },
+  {
+    "tag": "skater_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.113557,
+      "centroid_hz": 1241.3
+    },
+    "last8_max_jump": 1.03,
+    "body_max_jump": 1.56,
+    "video_final_rel_err": 0.71332,
+    "audio_final_rel_err": 0.65813,
+    "quality": {
+      "sharpness": 1.8419526423732029,
+      "temporal_flicker": 0.0628341232585489,
+      "motion_coherence": 0.8415975404709645,
+      "colour_stability": 1.2170248830933894,
+      "n_frames": 48,
+      "colour_r2": 0.025,
+      "colour_drift": 0.44
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.1492090455262276,
+      "temporal_flicker": 0.11231710795410718,
+      "motion_coherence": 0.8603412524506586,
+      "colour_stability": 0.551751257327609,
+      "n_frames": 48,
+      "colour_r2": 0.019,
+      "colour_drift": 0.09
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001896,
+      "centroid_hz": 3000.3
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.88,
+    "video_final_rel_err": 0.32079,
+    "audio_final_rel_err": 0.25488,
+    "quality": {
+      "sharpness": 0.5442514849042531,
+      "temporal_flicker": 0.11422735577088496,
+      "motion_coherence": 0.8282501099763694,
+      "colour_stability": 0.29495191623674993,
+      "n_frames": 48,
+      "colour_r2": 0.103,
+      "colour_drift": 0.23
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001577,
+      "centroid_hz": 3211.2
+    },
+    "last8_max_jump": 0.12,
+    "body_max_jump": 0.82,
+    "video_final_rel_err": 0.28956,
+    "audio_final_rel_err": 0.12834,
+    "quality": {
+      "sharpness": 0.5972033438062526,
+      "temporal_flicker": 0.11467499760353043,
+      "motion_coherence": 0.8456920862791033,
+      "colour_stability": 0.3476517660948761,
+      "n_frames": 48,
+      "colour_r2": 0.071,
+      "colour_drift": 0.11
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001632,
+      "centroid_hz": 3226.1
+    },
+    "last8_max_jump": 0.21,
+    "body_max_jump": 0.69,
+    "video_final_rel_err": 0.26134,
+    "audio_final_rel_err": 0.0595,
+    "quality": {
+      "sharpness": 0.6893990454426929,
+      "temporal_flicker": 0.1443891849925062,
+      "motion_coherence": 0.8499472471620214,
+      "colour_stability": 0.3401524734598412,
+      "n_frames": 48,
+      "colour_r2": 0.058,
+      "colour_drift": 0.1
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001623,
+      "centroid_hz": 3219.3
+    },
+    "last8_max_jump": 0.26,
+    "body_max_jump": 0.98,
+    "video_final_rel_err": 0.22985,
+    "audio_final_rel_err": 0.05705,
+    "quality": {
+      "sharpness": 0.8623994463718336,
+      "temporal_flicker": 0.13437530824154995,
+      "motion_coherence": 0.8406885801838223,
+      "colour_stability": 0.40869526373479387,
+      "n_frames": 48,
+      "colour_r2": 0.057,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001436,
+      "centroid_hz": 3161.9
+    },
+    "last8_max_jump": 0.17,
+    "body_max_jump": 0.88,
+    "video_final_rel_err": 0.31898,
+    "audio_final_rel_err": 0.25098,
+    "quality": {
+      "sharpness": 0.40286498975589935,
+      "temporal_flicker": 0.11037359589733592,
+      "motion_coherence": 0.8239199272553067,
+      "colour_stability": 0.27253107853297115,
+      "n_frames": 48,
+      "colour_r2": 0.115,
+      "colour_drift": 0.23
+    }
+  },
+  {
+    "tag": "campfire_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.001177,
+      "centroid_hz": 3028.6
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 0.87,
+    "video_final_rel_err": 0.29613,
+    "audio_final_rel_err": 0.24529,
+    "quality": {
+      "sharpness": 0.5955888671179808,
+      "temporal_flicker": 0.09329905480813498,
+      "motion_coherence": 0.839027639494031,
+      "colour_stability": 0.4018014302504069,
+      "n_frames": 48,
+      "colour_r2": 0.093,
+      "colour_drift": 0.39
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.6054633345963607,
+      "temporal_flicker": 0.05564296513211007,
+      "motion_coherence": 0.7251737491940576,
+      "colour_stability": 0.2621019194262748,
+      "n_frames": 48,
+      "colour_r2": 0.376,
+      "colour_drift": 0.39
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.020171,
+      "centroid_hz": 704.1
+    },
+    "last8_max_jump": 0.49,
+    "body_max_jump": 1.09,
+    "video_final_rel_err": 0.5881,
+    "audio_final_rel_err": 0.3657,
+    "quality": {
+      "sharpness": 0.709620853123282,
+      "temporal_flicker": 0.02902003604117525,
+      "motion_coherence": 0.6825897717788386,
+      "colour_stability": 0.865240493291744,
+      "n_frames": 48,
+      "colour_r2": 0.248,
+      "colour_drift": 0.79
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.022408,
+      "centroid_hz": 745.0
+    },
+    "last8_max_jump": 0.05,
+    "body_max_jump": 0.09,
+    "video_final_rel_err": 0.55483,
+    "audio_final_rel_err": 0.31189,
+    "quality": {
+      "sharpness": 0.9740421562850937,
+      "temporal_flicker": 0.020282913653367176,
+      "motion_coherence": 0.6284282045672503,
+      "colour_stability": 0.058726363432291435,
+      "n_frames": 48,
+      "colour_r2": 0.002,
+      "colour_drift": 0.01
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.8,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.029864,
+      "centroid_hz": 763.1
+    },
+    "last8_max_jump": 0.05,
+    "body_max_jump": 0.1,
+    "video_final_rel_err": 0.5285,
+    "audio_final_rel_err": 0.31136,
+    "quality": {
+      "sharpness": 0.9200123623602212,
+      "temporal_flicker": 0.019290933465887627,
+      "motion_coherence": 0.6546895547842343,
+      "colour_stability": 0.1179437702242696,
+      "n_frames": 48,
+      "colour_r2": 0.16,
+      "colour_drift": 0.11
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.043307,
+      "centroid_hz": 751.8
+    },
+    "last8_max_jump": 0.19,
+    "body_max_jump": 0.37,
+    "video_final_rel_err": 0.4508,
+    "audio_final_rel_err": 0.40057,
+    "quality": {
+      "sharpness": 1.5228794358035758,
+      "temporal_flicker": 0.04849405138404354,
+      "motion_coherence": 0.7458144537535389,
+      "colour_stability": 0.37290492856887153,
+      "n_frames": 48,
+      "colour_r2": 0.05,
+      "colour_drift": 0.19
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.011362,
+      "centroid_hz": 717.1
+    },
+    "last8_max_jump": 0.48,
+    "body_max_jump": 0.28,
+    "video_final_rel_err": 0.59091,
+    "audio_final_rel_err": 0.34881,
+    "quality": {
+      "sharpness": 0.622126934706708,
+      "temporal_flicker": 0.03230933161258565,
+      "motion_coherence": 0.7526274775893911,
+      "colour_stability": 0.43709316440435075,
+      "n_frames": 48,
+      "colour_r2": 0.25,
+      "colour_drift": 0.39
+    }
+  },
+  {
+    "tag": "piano_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.014274,
+      "centroid_hz": 687.1
+    },
+    "last8_max_jump": 0.15,
+    "body_max_jump": 0.15,
+    "video_final_rel_err": 0.5551,
+    "audio_final_rel_err": 0.31319,
+    "quality": {
+      "sharpness": 1.199420952990093,
+      "temporal_flicker": 0.02446420370426943,
+      "motion_coherence": 0.6862562726796366,
+      "colour_stability": 0.13250951763539456,
+      "n_frames": 48,
+      "colour_r2": 0.334,
+      "colour_drift": 0.16
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 5.949333243259347,
+      "temporal_flicker": 0.0284783675065444,
+      "motion_coherence": 0.35168987361875426,
+      "colour_stability": 0.2616547300885221,
+      "n_frames": 48,
+      "colour_r2": 0.267,
+      "colour_drift": 0.3
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004527,
+      "centroid_hz": 2074.0
+    },
+    "last8_max_jump": 0.14,
+    "body_max_jump": 0.24,
+    "video_final_rel_err": 0.65746,
+    "audio_final_rel_err": 0.10679,
+    "quality": {
+      "sharpness": 8.407502140982483,
+      "temporal_flicker": 0.03017792496383446,
+      "motion_coherence": 0.4230524830294994,
+      "colour_stability": 0.23000756283317467,
+      "n_frames": 48,
+      "colour_r2": 0.233,
+      "colour_drift": 0.24
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004453,
+      "centroid_hz": 2024.8
+    },
+    "last8_max_jump": 0.12,
+    "body_max_jump": 0.26,
+    "video_final_rel_err": 0.63091,
+    "audio_final_rel_err": 0.06955,
+    "quality": {
+      "sharpness": 8.152219900440986,
+      "temporal_flicker": 0.02914163626093393,
+      "motion_coherence": 0.40729728611875143,
+      "colour_stability": 0.2596859841566331,
+      "n_frames": 48,
+      "colour_r2": 0.163,
+      "colour_drift": 0.19
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004369,
+      "centroid_hz": 1995.3
+    },
+    "last8_max_jump": 0.16,
+    "body_max_jump": 0.19,
+    "video_final_rel_err": 0.61096,
+    "audio_final_rel_err": 0.05074,
+    "quality": {
+      "sharpness": 7.482883117192088,
+      "temporal_flicker": 0.02448413045383268,
+      "motion_coherence": 0.3818484340858672,
+      "colour_stability": 0.2848516116520911,
+      "n_frames": 48,
+      "colour_r2": 0.209,
+      "colour_drift": 0.23
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004564,
+      "centroid_hz": 1929.6
+    },
+    "last8_max_jump": 0.17,
+    "body_max_jump": 0.25,
+    "video_final_rel_err": 0.53528,
+    "audio_final_rel_err": 0.03486,
+    "quality": {
+      "sharpness": 6.875199756509656,
+      "temporal_flicker": 0.026989164224516995,
+      "motion_coherence": 0.3328143207848811,
+      "colour_stability": 0.34572946257392595,
+      "n_frames": 48,
+      "colour_r2": 0.38,
+      "colour_drift": 0.48
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004464,
+      "centroid_hz": 2103.3
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 0.55,
+    "video_final_rel_err": 0.65136,
+    "audio_final_rel_err": 0.14864,
+    "quality": {
+      "sharpness": 9.774564396911025,
+      "temporal_flicker": 0.030114971059003195,
+      "motion_coherence": 0.32839838881961053,
+      "colour_stability": 0.35008367086966025,
+      "n_frames": 48,
+      "colour_r2": 0.58,
+      "colour_drift": 0.58
+    }
+  },
+  {
+    "tag": "harbor_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.004803,
+      "centroid_hz": 2107.9
+    },
+    "last8_max_jump": 0.26,
+    "body_max_jump": 0.33,
+    "video_final_rel_err": 0.65028,
+    "audio_final_rel_err": 0.14579,
+    "quality": {
+      "sharpness": 4.58855878186004,
+      "temporal_flicker": 0.01788059843923965,
+      "motion_coherence": 0.4569349709881122,
+      "colour_stability": 0.14612276451219416,
+      "n_frames": 48,
+      "colour_r2": 0.22,
+      "colour_drift": 0.13
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.108295733956833,
+      "temporal_flicker": 0.05254586517007147,
+      "motion_coherence": 0.8628008248818422,
+      "colour_stability": 2.5456622991814566,
+      "n_frames": 48,
+      "colour_r2": 0.672,
+      "colour_drift": 5.03
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.059367,
+      "centroid_hz": 1102.6
+    },
+    "last8_max_jump": 0.68,
+    "body_max_jump": 0.76,
+    "video_final_rel_err": 0.77014,
+    "audio_final_rel_err": 0.35053,
+    "quality": {
+      "sharpness": 1.4316080880633062,
+      "temporal_flicker": 0.03690382465712715,
+      "motion_coherence": 0.8995549842190919,
+      "colour_stability": 0.9821458388066512,
+      "n_frames": 48,
+      "colour_r2": 0.209,
+      "colour_drift": 0.97
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.080433,
+      "centroid_hz": 1152.6
+    },
+    "last8_max_jump": 0.76,
+    "body_max_jump": 1.11,
+    "video_final_rel_err": 0.72368,
+    "audio_final_rel_err": 0.20353,
+    "quality": {
+      "sharpness": 1.4053264778127392,
+      "temporal_flicker": 0.039571546566597095,
+      "motion_coherence": 0.9147109096039489,
+      "colour_stability": 1.6874289454202145,
+      "n_frames": 48,
+      "colour_r2": 0.802,
+      "colour_drift": 3.49
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.088049,
+      "centroid_hz": 1241.6
+    },
+    "last8_max_jump": 0.72,
+    "body_max_jump": 1.04,
+    "video_final_rel_err": 0.67927,
+    "audio_final_rel_err": 0.14162,
+    "quality": {
+      "sharpness": 1.4878699235088428,
+      "temporal_flicker": 0.045943291855911075,
+      "motion_coherence": 0.9188574694815203,
+      "colour_stability": 1.47408440702592,
+      "n_frames": 48,
+      "colour_r2": 0.334,
+      "colour_drift": 1.85
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.078438,
+      "centroid_hz": 1214.7
+    },
+    "last8_max_jump": 0.33,
+    "body_max_jump": 0.8,
+    "video_final_rel_err": 0.60705,
+    "audio_final_rel_err": 0.17773,
+    "quality": {
+      "sharpness": 1.56361616462221,
+      "temporal_flicker": 0.04078617526670327,
+      "motion_coherence": 0.8908647950872685,
+      "colour_stability": 2.238287974936089,
+      "n_frames": 48,
+      "colour_r2": 0.602,
+      "colour_drift": 4.1
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.051152,
+      "centroid_hz": 1097.5
+    },
+    "last8_max_jump": 0.78,
+    "body_max_jump": 0.59,
+    "video_final_rel_err": 0.7627,
+    "audio_final_rel_err": 0.48001,
+    "quality": {
+      "sharpness": 1.3145034056050005,
+      "temporal_flicker": 0.030681358021892098,
+      "motion_coherence": 0.918293155971806,
+      "colour_stability": 0.8383254280518133,
+      "n_frames": 48,
+      "colour_r2": 0.406,
+      "colour_drift": 1.16
+    }
+  },
+  {
+    "tag": "horse_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.048374,
+      "centroid_hz": 1149.9
+    },
+    "last8_max_jump": 0.34,
+    "body_max_jump": 0.46,
+    "video_final_rel_err": 0.6926,
+    "audio_final_rel_err": 0.32184,
+    "quality": {
+      "sharpness": 1.2994059005546814,
+      "temporal_flicker": 0.0278015479188222,
+      "motion_coherence": 0.9179496784745479,
+      "colour_stability": 1.6761748817648288,
+      "n_frames": 48,
+      "colour_r2": 0.648,
+      "colour_drift": 3.19
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.4298571860067915,
+      "temporal_flicker": 0.051298720973818025,
+      "motion_coherence": 0.8986079294385978,
+      "colour_stability": 0.33603181267145005,
+      "n_frames": 48,
+      "colour_r2": 0.104,
+      "colour_drift": 0.21
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.002412,
+      "centroid_hz": 2861.5
+    },
+    "last8_max_jump": 0.26,
+    "body_max_jump": 0.32,
+    "video_final_rel_err": 0.53559,
+    "audio_final_rel_err": 0.48178,
+    "quality": {
+      "sharpness": 0.9309869556153121,
+      "temporal_flicker": 0.05258766679199102,
+      "motion_coherence": 0.8815110782269332,
+      "colour_stability": 0.1925509982191773,
+      "n_frames": 48,
+      "colour_r2": 0.222,
+      "colour_drift": 0.2
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.002761,
+      "centroid_hz": 2997.0
+    },
+    "last8_max_jump": 0.12,
+    "body_max_jump": 0.34,
+    "video_final_rel_err": 0.47819,
+    "audio_final_rel_err": 0.47704,
+    "quality": {
+      "sharpness": 1.1132993483573477,
+      "temporal_flicker": 0.05825401060196487,
+      "motion_coherence": 0.8212077988098296,
+      "colour_stability": 0.1758040202216609,
+      "n_frames": 48,
+      "colour_r2": 0.016,
+      "colour_drift": 0.08
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.002582,
+      "centroid_hz": 2934.9
+    },
+    "last8_max_jump": 0.21,
+    "body_max_jump": 0.48,
+    "video_final_rel_err": 0.40886,
+    "audio_final_rel_err": 0.34544,
+    "quality": {
+      "sharpness": 1.241265900874299,
+      "temporal_flicker": 0.06011407758484752,
+      "motion_coherence": 0.8220742860627549,
+      "colour_stability": 0.22928447182711856,
+      "n_frames": 48,
+      "colour_r2": 0.073,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.003666,
+      "centroid_hz": 2851.3
+    },
+    "last8_max_jump": 0.55,
+    "body_max_jump": 0.93,
+    "video_final_rel_err": 0.32816,
+    "audio_final_rel_err": 0.3764,
+    "quality": {
+      "sharpness": 1.3217332974263183,
+      "temporal_flicker": 0.0609589863799519,
+      "motion_coherence": 0.8738926888236411,
+      "colour_stability": 0.3523820154517887,
+      "n_frames": 48,
+      "colour_r2": 0.082,
+      "colour_drift": 0.21
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000817,
+      "centroid_hz": 2509.0
+    },
+    "last8_max_jump": 0.15,
+    "body_max_jump": 0.32,
+    "video_final_rel_err": 0.55987,
+    "audio_final_rel_err": 0.36903,
+    "quality": {
+      "sharpness": 0.7785133978252227,
+      "temporal_flicker": 0.04113514282688121,
+      "motion_coherence": 0.8754682772307025,
+      "colour_stability": 0.15284190709493203,
+      "n_frames": 48,
+      "colour_r2": 0.12,
+      "colour_drift": 0.08
+    }
+  },
+  {
+    "tag": "typist_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000627,
+      "centroid_hz": 2685.8
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 0.42,
+    "video_final_rel_err": 0.46503,
+    "audio_final_rel_err": 0.46224,
+    "quality": {
+      "sharpness": 0.9216792462895339,
+      "temporal_flicker": 0.024912239415624676,
+      "motion_coherence": 0.8691737511723446,
+      "colour_stability": 0.18404020730466794,
+      "n_frames": 48,
+      "colour_r2": 0.102,
+      "colour_drift": 0.17
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 6.194299767537368,
+      "temporal_flicker": 0.05304615581091603,
+      "motion_coherence": 0.8728418013198518,
+      "colour_stability": 2.3335285226099187,
+      "n_frames": 48,
+      "colour_r2": 0.043,
+      "colour_drift": 1.12
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.031429,
+      "centroid_hz": 2621.1
+    },
+    "last8_max_jump": 0.46,
+    "body_max_jump": 0.64,
+    "video_final_rel_err": 0.78427,
+    "audio_final_rel_err": 0.39834,
+    "quality": {
+      "sharpness": 13.647048966677861,
+      "temporal_flicker": 0.02791403939615964,
+      "motion_coherence": 0.5459529765046562,
+      "colour_stability": 0.49937930471608905,
+      "n_frames": 48,
+      "colour_r2": 0.342,
+      "colour_drift": 0.69
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.04108,
+      "centroid_hz": 2641.4
+    },
+    "last8_max_jump": 0.18,
+    "body_max_jump": 0.55,
+    "video_final_rel_err": 0.73605,
+    "audio_final_rel_err": 0.30289,
+    "quality": {
+      "sharpness": 12.263582551383061,
+      "temporal_flicker": 0.028174178358285396,
+      "motion_coherence": 0.5689453855845072,
+      "colour_stability": 0.4122710944962087,
+      "n_frames": 48,
+      "colour_r2": 0.008,
+      "colour_drift": 0.07
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.8,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.040353,
+      "centroid_hz": 2608.0
+    },
+    "last8_max_jump": 0.25,
+    "body_max_jump": 0.54,
+    "video_final_rel_err": 0.69024,
+    "audio_final_rel_err": 0.31803,
+    "quality": {
+      "sharpness": 10.859400736690844,
+      "temporal_flicker": 0.029917355080367556,
+      "motion_coherence": 0.6365457401849146,
+      "colour_stability": 0.5274803619082246,
+      "n_frames": 48,
+      "colour_r2": 0.11,
+      "colour_drift": 0.41
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.058717,
+      "centroid_hz": 2446.4
+    },
+    "last8_max_jump": 0.75,
+    "body_max_jump": 1.36,
+    "video_final_rel_err": 0.60384,
+    "audio_final_rel_err": 0.18186,
+    "quality": {
+      "sharpness": 9.524638578268311,
+      "temporal_flicker": 0.04128867617578044,
+      "motion_coherence": 0.8132918981304567,
+      "colour_stability": 1.9866653823453302,
+      "n_frames": 48,
+      "colour_r2": 0.257,
+      "colour_drift": 2.76
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.026458,
+      "centroid_hz": 2703.3
+    },
+    "last8_max_jump": 0.31,
+    "body_max_jump": 0.79,
+    "video_final_rel_err": 0.80273,
+    "audio_final_rel_err": 0.46887,
+    "quality": {
+      "sharpness": 15.200061617669832,
+      "temporal_flicker": 0.026939961622037486,
+      "motion_coherence": 0.5330651531999053,
+      "colour_stability": 0.2742479897947494,
+      "n_frames": 48,
+      "colour_r2": 0.076,
+      "colour_drift": 0.13
+    }
+  },
+  {
+    "tag": "fountain_s200",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.037039,
+      "centroid_hz": 2624.0
+    },
+    "last8_max_jump": 0.38,
+    "body_max_jump": 0.81,
+    "video_final_rel_err": 0.73065,
+    "audio_final_rel_err": 0.37542,
+    "quality": {
+      "sharpness": 7.6668279020849885,
+      "temporal_flicker": 0.021373889627953918,
+      "motion_coherence": 0.5782813907395009,
+      "colour_stability": 0.4310101817455208,
+      "n_frames": 48,
+      "colour_r2": 0.398,
+      "colour_drift": 0.49
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 15.794954066531986,
+      "temporal_flicker": 0.024140595865588504,
+      "motion_coherence": 0.6654812495952134,
+      "colour_stability": 0.2425255010754006,
+      "n_frames": 48,
+      "colour_r2": 0.13,
+      "colour_drift": 0.15
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 57.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.219083,
+      "centroid_hz": 1370.6
+    },
+    "last8_max_jump": 0.69,
+    "body_max_jump": 1.11,
+    "video_final_rel_err": 0.63724,
+    "audio_final_rel_err": 0.32472,
+    "quality": {
+      "sharpness": 38.514752502027584,
+      "temporal_flicker": 0.040497513692454475,
+      "motion_coherence": 0.5262999446265633,
+      "colour_stability": 0.45509631317073146,
+      "n_frames": 48,
+      "colour_r2": 0.015,
+      "colour_drift": 0.17
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.204745,
+      "centroid_hz": 1442.8
+    },
+    "last8_max_jump": 0.5,
+    "body_max_jump": 0.89,
+    "video_final_rel_err": 0.55296,
+    "audio_final_rel_err": 0.30609,
+    "quality": {
+      "sharpness": 32.828087914712526,
+      "temporal_flicker": 0.0379673300225938,
+      "motion_coherence": 0.559484388800727,
+      "colour_stability": 0.5603207432634059,
+      "n_frames": 48,
+      "colour_r2": 0.279,
+      "colour_drift": 0.76
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.192701,
+      "centroid_hz": 1432.1
+    },
+    "last8_max_jump": 0.39,
+    "body_max_jump": 0.72,
+    "video_final_rel_err": 0.47911,
+    "audio_final_rel_err": 0.29938,
+    "quality": {
+      "sharpness": 27.223395710525814,
+      "temporal_flicker": 0.03497168629532084,
+      "motion_coherence": 0.5694625949831067,
+      "colour_stability": 0.4287425849166782,
+      "n_frames": 48,
+      "colour_r2": 0.285,
+      "colour_drift": 0.46
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.181448,
+      "centroid_hz": 1421.2
+    },
+    "last8_max_jump": 0.34,
+    "body_max_jump": 0.54,
+    "video_final_rel_err": 0.39293,
+    "audio_final_rel_err": 0.28188,
+    "quality": {
+      "sharpness": 22.25720924662645,
+      "temporal_flicker": 0.030870115416128927,
+      "motion_coherence": 0.6057841831777855,
+      "colour_stability": 0.27942823019986957,
+      "n_frames": 48,
+      "colour_r2": 0.008,
+      "colour_drift": 0.03
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.143153,
+      "centroid_hz": 1325.9
+    },
+    "last8_max_jump": 0.66,
+    "body_max_jump": 1.08,
+    "video_final_rel_err": 0.64725,
+    "audio_final_rel_err": 0.31025,
+    "quality": {
+      "sharpness": 42.17736301757138,
+      "temporal_flicker": 0.04146976344394326,
+      "motion_coherence": 0.4237626572599736,
+      "colour_stability": 0.4321782515926953,
+      "n_frames": 48,
+      "colour_r2": 0.106,
+      "colour_drift": 0.28
+    }
+  },
+  {
+    "tag": "violin_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.097742,
+      "centroid_hz": 1448.4
+    },
+    "last8_max_jump": 0.59,
+    "body_max_jump": 0.84,
+    "video_final_rel_err": 0.67385,
+    "audio_final_rel_err": 0.37238,
+    "quality": {
+      "sharpness": 25.257501054669234,
+      "temporal_flicker": 0.05510161239053453,
+      "motion_coherence": 0.6445429366868878,
+      "colour_stability": 0.6681358466502895,
+      "n_frames": 48,
+      "colour_r2": 0.272,
+      "colour_drift": 0.66
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 4.382968187014862,
+      "temporal_flicker": 0.003915885081420521,
+      "motion_coherence": 0.5759905097766017,
+      "colour_stability": 0.13585396571650957,
+      "n_frames": 48,
+      "colour_r2": 0.053,
+      "colour_drift": 0.07
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.015213,
+      "centroid_hz": 1919.1
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 0.47,
+    "video_final_rel_err": 0.58719,
+    "audio_final_rel_err": 0.44808,
+    "quality": {
+      "sharpness": 1.0963853954193798,
+      "temporal_flicker": 0.0024683736334698727,
+      "motion_coherence": 0.654776100633575,
+      "colour_stability": 0.32832769883716845,
+      "n_frames": 48,
+      "colour_r2": 0.348,
+      "colour_drift": 0.37
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.019799,
+      "centroid_hz": 1822.6
+    },
+    "last8_max_jump": 0.1,
+    "body_max_jump": 0.25,
+    "video_final_rel_err": 0.52162,
+    "audio_final_rel_err": 0.48402,
+    "quality": {
+      "sharpness": 2.131874670462678,
+      "temporal_flicker": 0.0024921281927103374,
+      "motion_coherence": 0.5768458284683752,
+      "colour_stability": 0.17202527201697007,
+      "n_frames": 48,
+      "colour_r2": 0.482,
+      "colour_drift": 0.23
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.8,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.01966,
+      "centroid_hz": 1921.1
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.23,
+    "video_final_rel_err": 0.49589,
+    "audio_final_rel_err": 0.45289,
+    "quality": {
+      "sharpness": 2.4208144384522208,
+      "temporal_flicker": 0.0025502283980055316,
+      "motion_coherence": 0.607854085972368,
+      "colour_stability": 0.1391680209097626,
+      "n_frames": 48,
+      "colour_r2": 0.287,
+      "colour_drift": 0.16
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.014775,
+      "centroid_hz": 2330.7
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.23,
+    "video_final_rel_err": 0.47396,
+    "audio_final_rel_err": 0.37907,
+    "quality": {
+      "sharpness": 3.680566606175434,
+      "temporal_flicker": 0.002754605602511924,
+      "motion_coherence": 0.5744978916600687,
+      "colour_stability": 0.1366287564707311,
+      "n_frames": 48,
+      "colour_r2": 0.012,
+      "colour_drift": 0.04
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.012827,
+      "centroid_hz": 1998.2
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 0.53,
+    "video_final_rel_err": 0.58798,
+    "audio_final_rel_err": 0.41428,
+    "quality": {
+      "sharpness": 0.970827606053046,
+      "temporal_flicker": 0.0020755344501313814,
+      "motion_coherence": 0.6336066164039983,
+      "colour_stability": 0.2662896736603754,
+      "n_frames": 48,
+      "colour_r2": 0.305,
+      "colour_drift": 0.3
+    }
+  },
+  {
+    "tag": "kitchen_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.016905,
+      "centroid_hz": 2065.8
+    },
+    "last8_max_jump": 0.16,
+    "body_max_jump": 0.43,
+    "video_final_rel_err": 0.51288,
+    "audio_final_rel_err": 0.43011,
+    "quality": {
+      "sharpness": 1.3572486453943118,
+      "temporal_flicker": 0.0025418625037275,
+      "motion_coherence": 0.6213574845153376,
+      "colour_stability": 0.1743749959683115,
+      "n_frames": 48,
+      "colour_r2": 0.131,
+      "colour_drift": 0.14
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 0.646797440482155,
+      "temporal_flicker": 0.0655483124965751,
+      "motion_coherence": 0.793976871053211,
+      "colour_stability": 13.844205900554606,
+      "n_frames": 48,
+      "colour_r2": 0.748,
+      "colour_drift": 26.57
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.033299,
+      "centroid_hz": 1321.7
+    },
+    "last8_max_jump": 0.58,
+    "body_max_jump": 1.46,
+    "video_final_rel_err": 0.37144,
+    "audio_final_rel_err": 0.16242,
+    "quality": {
+      "sharpness": 0.29324965155348587,
+      "temporal_flicker": 0.0337860897386386,
+      "motion_coherence": 0.8002097661398679,
+      "colour_stability": 3.521343322099819,
+      "n_frames": 48,
+      "colour_r2": 0.656,
+      "colour_drift": 6.92
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.034696,
+      "centroid_hz": 1342.8
+    },
+    "last8_max_jump": 0.68,
+    "body_max_jump": 2.51,
+    "video_final_rel_err": 0.34817,
+    "audio_final_rel_err": 0.14186,
+    "quality": {
+      "sharpness": 0.2907037443948911,
+      "temporal_flicker": 0.047035073664655154,
+      "motion_coherence": 0.8073271707752306,
+      "colour_stability": 5.567504025602477,
+      "n_frames": 48,
+      "colour_r2": 0.646,
+      "colour_drift": 10.78
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.034228,
+      "centroid_hz": 1395.5
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 2.0,
+    "video_final_rel_err": 0.30788,
+    "audio_final_rel_err": 0.10018,
+    "quality": {
+      "sharpness": 0.31561958309816013,
+      "temporal_flicker": 0.05427523966467128,
+      "motion_coherence": 0.8369739267453163,
+      "colour_stability": 6.907809048062181,
+      "n_frames": 48,
+      "colour_r2": 0.661,
+      "colour_drift": 13.34
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.032988,
+      "centroid_hz": 1442.5
+    },
+    "last8_max_jump": 0.05,
+    "body_max_jump": 2.35,
+    "video_final_rel_err": 0.26036,
+    "audio_final_rel_err": 0.06764,
+    "quality": {
+      "sharpness": 0.42663519649840903,
+      "temporal_flicker": 0.06134806600896399,
+      "motion_coherence": 0.7926953968067687,
+      "colour_stability": 10.797298903875586,
+      "n_frames": 48,
+      "colour_r2": 0.664,
+      "colour_drift": 19.93
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.028583,
+      "centroid_hz": 1318.4
+    },
+    "last8_max_jump": 0.59,
+    "body_max_jump": 0.78,
+    "video_final_rel_err": 0.37873,
+    "audio_final_rel_err": 0.20828,
+    "quality": {
+      "sharpness": 0.248527678888582,
+      "temporal_flicker": 0.026163019260766265,
+      "motion_coherence": 0.7787268833401892,
+      "colour_stability": 2.2017615595840407,
+      "n_frames": 48,
+      "colour_r2": 0.701,
+      "colour_drift": 4.54
+    }
+  },
+  {
+    "tag": "storm_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.02959,
+      "centroid_hz": 1368.0
+    },
+    "last8_max_jump": 0.33,
+    "body_max_jump": 1.17,
+    "video_final_rel_err": 0.3374,
+    "audio_final_rel_err": 0.13431,
+    "quality": {
+      "sharpness": 0.3643800751291538,
+      "temporal_flicker": 0.0201080021420142,
+      "motion_coherence": 0.792818879947767,
+      "colour_stability": 3.3616923524186397,
+      "n_frames": 48,
+      "colour_r2": 0.632,
+      "colour_drift": 6.92
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.521160430540966,
+      "temporal_flicker": 0.08481116041322283,
+      "motion_coherence": 0.8183549652888532,
+      "colour_stability": 5.188373076998944,
+      "n_frames": 48,
+      "colour_r2": 0.153,
+      "colour_drift": 5.42
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.105247,
+      "centroid_hz": 1119.9
+    },
+    "last8_max_jump": 1.72,
+    "body_max_jump": 1.74,
+    "video_final_rel_err": 0.7001,
+    "audio_final_rel_err": 0.14773,
+    "quality": {
+      "sharpness": 3.025041539727728,
+      "temporal_flicker": 0.10231522561292708,
+      "motion_coherence": 0.7705384789566653,
+      "colour_stability": 4.004145785435767,
+      "n_frames": 48,
+      "colour_r2": 0.519,
+      "colour_drift": 8.58
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.099632,
+      "centroid_hz": 1188.9
+    },
+    "last8_max_jump": 2.41,
+    "body_max_jump": 2.38,
+    "video_final_rel_err": 0.64624,
+    "audio_final_rel_err": 0.17366,
+    "quality": {
+      "sharpness": 3.021366971065908,
+      "temporal_flicker": 0.1004212289993706,
+      "motion_coherence": 0.7752448227947768,
+      "colour_stability": 4.243813590606455,
+      "n_frames": 48,
+      "colour_r2": 0.462,
+      "colour_drift": 7.57
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.094694,
+      "centroid_hz": 1140.1
+    },
+    "last8_max_jump": 2.71,
+    "body_max_jump": 3.38,
+    "video_final_rel_err": 0.58929,
+    "audio_final_rel_err": 0.08827,
+    "quality": {
+      "sharpness": 2.4735133321765357,
+      "temporal_flicker": 0.09807191936757433,
+      "motion_coherence": 0.8301108668363953,
+      "colour_stability": 5.642901004502512,
+      "n_frames": 48,
+      "colour_r2": 0.153,
+      "colour_drift": 6.88
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.3,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.088045,
+      "centroid_hz": 1170.3
+    },
+    "last8_max_jump": 3.23,
+    "body_max_jump": 3.45,
+    "video_final_rel_err": 0.52124,
+    "audio_final_rel_err": 0.10609,
+    "quality": {
+      "sharpness": 2.2042664493540807,
+      "temporal_flicker": 0.08101816527942933,
+      "motion_coherence": 0.8124360040890959,
+      "colour_stability": 6.165696378487842,
+      "n_frames": 48,
+      "colour_r2": 0.196,
+      "colour_drift": 7.61
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.083071,
+      "centroid_hz": 1145.8
+    },
+    "last8_max_jump": 1.57,
+    "body_max_jump": 1.74,
+    "video_final_rel_err": 0.68382,
+    "audio_final_rel_err": 0.16949,
+    "quality": {
+      "sharpness": 2.82463671794983,
+      "temporal_flicker": 0.08026192503986948,
+      "motion_coherence": 0.7527211267053762,
+      "colour_stability": 3.6341850779770453,
+      "n_frames": 48,
+      "colour_r2": 0.638,
+      "colour_drift": 8.2
+    }
+  },
+  {
+    "tag": "skater_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.086443,
+      "centroid_hz": 1170.5
+    },
+    "last8_max_jump": 2.99,
+    "body_max_jump": 2.43,
+    "video_final_rel_err": 0.64068,
+    "audio_final_rel_err": 0.13758,
+    "quality": {
+      "sharpness": 2.355265642183971,
+      "temporal_flicker": 0.08818476286517433,
+      "motion_coherence": 0.8266562378781727,
+      "colour_stability": 4.025462670907455,
+      "n_frames": 48,
+      "colour_r2": 0.495,
+      "colour_drift": 7.75
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.1144565283349903,
+      "temporal_flicker": 0.17398604688942712,
+      "motion_coherence": 0.9243763500404937,
+      "colour_stability": 0.45505446004680894,
+      "n_frames": 48,
+      "colour_r2": 0.13,
+      "colour_drift": 0.45
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.039845,
+      "centroid_hz": 1807.5
+    },
+    "last8_max_jump": 0.25,
+    "body_max_jump": 0.3,
+    "video_final_rel_err": 0.35153,
+    "audio_final_rel_err": 0.60736,
+    "quality": {
+      "sharpness": 0.48214025939221244,
+      "temporal_flicker": 0.21861433845336856,
+      "motion_coherence": 0.8503164070338405,
+      "colour_stability": 0.2217749960730329,
+      "n_frames": 48,
+      "colour_r2": 0.012,
+      "colour_drift": 0.04
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.0,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.047382,
+      "centroid_hz": 1740.5
+    },
+    "last8_max_jump": 0.32,
+    "body_max_jump": 0.46,
+    "video_final_rel_err": 0.33363,
+    "audio_final_rel_err": 0.57918,
+    "quality": {
+      "sharpness": 0.5122376636540928,
+      "temporal_flicker": 0.24394323280633434,
+      "motion_coherence": 0.8713131560320719,
+      "colour_stability": 0.2991411366123757,
+      "n_frames": 48,
+      "colour_r2": 0.004,
+      "colour_drift": 0.03
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.051413,
+      "centroid_hz": 1701.6
+    },
+    "last8_max_jump": 0.43,
+    "body_max_jump": 0.69,
+    "video_final_rel_err": 0.31267,
+    "audio_final_rel_err": 0.5082,
+    "quality": {
+      "sharpness": 0.541848644436371,
+      "temporal_flicker": 0.21879257589693743,
+      "motion_coherence": 0.8709395549426426,
+      "colour_stability": 0.2436938166125914,
+      "n_frames": 48,
+      "colour_r2": 0.03,
+      "colour_drift": 0.17
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.046001,
+      "centroid_hz": 1801.3
+    },
+    "last8_max_jump": 0.48,
+    "body_max_jump": 0.83,
+    "video_final_rel_err": 0.27634,
+    "audio_final_rel_err": 0.48911,
+    "quality": {
+      "sharpness": 0.7175597768507643,
+      "temporal_flicker": 0.20731651163206896,
+      "motion_coherence": 0.8921857288465164,
+      "colour_stability": 0.3833197961861717,
+      "n_frames": 48,
+      "colour_r2": 0.014,
+      "colour_drift": 0.04
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.026268,
+      "centroid_hz": 1951.8
+    },
+    "last8_max_jump": 0.13,
+    "body_max_jump": 0.47,
+    "video_final_rel_err": 0.35943,
+    "audio_final_rel_err": 0.36376,
+    "quality": {
+      "sharpness": 0.30087250605366356,
+      "temporal_flicker": 0.13703803144948146,
+      "motion_coherence": 0.7788295128701965,
+      "colour_stability": 0.15515839316254376,
+      "n_frames": 48,
+      "colour_r2": 0.015,
+      "colour_drift": 0.07
+    }
+  },
+  {
+    "tag": "campfire_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.025331,
+      "centroid_hz": 1925.7
+    },
+    "last8_max_jump": 0.23,
+    "body_max_jump": 0.32,
+    "video_final_rel_err": 0.33167,
+    "audio_final_rel_err": 0.4692,
+    "quality": {
+      "sharpness": 0.5443249917280829,
+      "temporal_flicker": 0.10623977154616815,
+      "motion_coherence": 0.8232959719342431,
+      "colour_stability": 0.211920315266468,
+      "n_frames": 48,
+      "colour_r2": 0.003,
+      "colour_drift": 0.05
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 2.3567672243127507,
+      "temporal_flicker": 0.04683219033183868,
+      "motion_coherence": 0.7007080253191146,
+      "colour_stability": 0.18156079874166656,
+      "n_frames": 48,
+      "colour_r2": 0.21,
+      "colour_drift": 0.11
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.081285,
+      "centroid_hz": 695.0
+    },
+    "last8_max_jump": 0.14,
+    "body_max_jump": 0.11,
+    "video_final_rel_err": 0.64737,
+    "audio_final_rel_err": 0.48012,
+    "quality": {
+      "sharpness": 1.0095541681784945,
+      "temporal_flicker": 0.0764519041312126,
+      "motion_coherence": 0.7765877769628605,
+      "colour_stability": 0.10993032588697042,
+      "n_frames": 48,
+      "colour_r2": 0.092,
+      "colour_drift": 0.09
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.067821,
+      "centroid_hz": 673.2
+    },
+    "last8_max_jump": 0.11,
+    "body_max_jump": 0.19,
+    "video_final_rel_err": 0.67991,
+    "audio_final_rel_err": 0.48957,
+    "quality": {
+      "sharpness": 1.2485349965831838,
+      "temporal_flicker": 0.07030641531902104,
+      "motion_coherence": 0.7358964281365254,
+      "colour_stability": 0.14371273087428701,
+      "n_frames": 48,
+      "colour_r2": 0.263,
+      "colour_drift": 0.2
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.059815,
+      "centroid_hz": 667.4
+    },
+    "last8_max_jump": 0.09,
+    "body_max_jump": 0.1,
+    "video_final_rel_err": 0.65565,
+    "audio_final_rel_err": 0.45834,
+    "quality": {
+      "sharpness": 1.260435422713977,
+      "temporal_flicker": 0.058451744749754384,
+      "motion_coherence": 0.7541545694797135,
+      "colour_stability": 0.17969944121811732,
+      "n_frames": 48,
+      "colour_r2": 0.094,
+      "colour_drift": 0.16
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.2,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.071977,
+      "centroid_hz": 693.7
+    },
+    "last8_max_jump": 0.05,
+    "body_max_jump": 0.19,
+    "video_final_rel_err": 0.48851,
+    "audio_final_rel_err": 0.43566,
+    "quality": {
+      "sharpness": 1.7593895323761484,
+      "temporal_flicker": 0.022652838714780875,
+      "motion_coherence": 0.5342130097657466,
+      "colour_stability": 0.2374223558783033,
+      "n_frames": 48,
+      "colour_r2": 0.465,
+      "colour_drift": 0.42
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.039558,
+      "centroid_hz": 652.2
+    },
+    "last8_max_jump": 0.04,
+    "body_max_jump": 0.1,
+    "video_final_rel_err": 0.64134,
+    "audio_final_rel_err": 0.4582,
+    "quality": {
+      "sharpness": 0.8111799082017104,
+      "temporal_flicker": 0.06846184718258076,
+      "motion_coherence": 0.7521167399122645,
+      "colour_stability": 0.07836938634129009,
+      "n_frames": 48,
+      "colour_r2": 0.048,
+      "colour_drift": 0.02
+    }
+  },
+  {
+    "tag": "piano_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.038456,
+      "centroid_hz": 655.9
+    },
+    "last8_max_jump": 0.1,
+    "body_max_jump": 0.28,
+    "video_final_rel_err": 0.60799,
+    "audio_final_rel_err": 0.44054,
+    "quality": {
+      "sharpness": 1.2434494218648067,
+      "temporal_flicker": 0.046704196123956786,
+      "motion_coherence": 0.8754710451109121,
+      "colour_stability": 0.14030770374938628,
+      "n_frames": 48,
+      "colour_r2": 0.02,
+      "colour_drift": 0.06
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 11.920216115426541,
+      "temporal_flicker": 0.04345855890297086,
+      "motion_coherence": 0.27979763389533036,
+      "colour_stability": 0.7160351765164351,
+      "n_frames": 48,
+      "colour_r2": 0.532,
+      "colour_drift": 1.32
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.014391,
+      "centroid_hz": 1860.9
+    },
+    "last8_max_jump": 0.22,
+    "body_max_jump": 0.24,
+    "video_final_rel_err": 0.62196,
+    "audio_final_rel_err": 0.15446,
+    "quality": {
+      "sharpness": 11.960955155137889,
+      "temporal_flicker": 0.0483409922711675,
+      "motion_coherence": 0.4518215493716464,
+      "colour_stability": 0.6344399672125944,
+      "n_frames": 48,
+      "colour_r2": 0.862,
+      "colour_drift": 1.41
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.014549,
+      "centroid_hz": 1818.9
+    },
+    "last8_max_jump": 0.16,
+    "body_max_jump": 0.52,
+    "video_final_rel_err": 0.59549,
+    "audio_final_rel_err": 0.11259,
+    "quality": {
+      "sharpness": 12.624000702704244,
+      "temporal_flicker": 0.04301286590748527,
+      "motion_coherence": 0.40318043950738086,
+      "colour_stability": 0.4380955664909618,
+      "n_frames": 48,
+      "colour_r2": 0.559,
+      "colour_drift": 0.78
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.015187,
+      "centroid_hz": 1820.3
+    },
+    "last8_max_jump": 0.21,
+    "body_max_jump": 0.37,
+    "video_final_rel_err": 0.58061,
+    "audio_final_rel_err": 0.12745,
+    "quality": {
+      "sharpness": 12.825552440383179,
+      "temporal_flicker": 0.03903789955436409,
+      "motion_coherence": 0.32564518914608515,
+      "colour_stability": 0.3717747292298797,
+      "n_frames": 48,
+      "colour_r2": 0.604,
+      "colour_drift": 0.71
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.016158,
+      "centroid_hz": 1720.4
+    },
+    "last8_max_jump": 0.3,
+    "body_max_jump": 0.34,
+    "video_final_rel_err": 0.54828,
+    "audio_final_rel_err": 0.06767,
+    "quality": {
+      "sharpness": 12.598700430679889,
+      "temporal_flicker": 0.040933325238733706,
+      "motion_coherence": 0.2920332140206646,
+      "colour_stability": 0.3773778712253109,
+      "n_frames": 48,
+      "colour_r2": 0.516,
+      "colour_drift": 0.68
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.011322,
+      "centroid_hz": 1939.0
+    },
+    "last8_max_jump": 0.12,
+    "body_max_jump": 0.39,
+    "video_final_rel_err": 0.61246,
+    "audio_final_rel_err": 0.23628,
+    "quality": {
+      "sharpness": 12.525214262916892,
+      "temporal_flicker": 0.04209685250400812,
+      "motion_coherence": 0.39670175352630654,
+      "colour_stability": 0.4692370736543004,
+      "n_frames": 48,
+      "colour_r2": 0.665,
+      "colour_drift": 0.93
+    }
+  },
+  {
+    "tag": "harbor_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.012454,
+      "centroid_hz": 1948.2
+    },
+    "last8_max_jump": 0.23,
+    "body_max_jump": 0.4,
+    "video_final_rel_err": 0.66597,
+    "audio_final_rel_err": 0.22754,
+    "quality": {
+      "sharpness": 6.675931757556069,
+      "temporal_flicker": 0.024163434782369823,
+      "motion_coherence": 0.4154800853720585,
+      "colour_stability": 0.22562518475901724,
+      "n_frames": 48,
+      "colour_r2": 0.449,
+      "colour_drift": 0.32
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.8317204761609036,
+      "temporal_flicker": 0.08537357677819868,
+      "motion_coherence": 0.9204355425398686,
+      "colour_stability": 7.324010038920338,
+      "n_frames": 48,
+      "colour_r2": 0.809,
+      "colour_drift": 14.99
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.106615,
+      "centroid_hz": 1147.0
+    },
+    "last8_max_jump": 2.34,
+    "body_max_jump": 1.67,
+    "video_final_rel_err": 0.71012,
+    "audio_final_rel_err": 0.55678,
+    "quality": {
+      "sharpness": 1.5539076643523448,
+      "temporal_flicker": 0.06099141638420142,
+      "motion_coherence": 0.9310572644333214,
+      "colour_stability": 6.445384585273412,
+      "n_frames": 48,
+      "colour_r2": 0.86,
+      "colour_drift": 13.27
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.100292,
+      "centroid_hz": 1268.8
+    },
+    "last8_max_jump": 2.24,
+    "body_max_jump": 1.56,
+    "video_final_rel_err": 0.66982,
+    "audio_final_rel_err": 0.38545,
+    "quality": {
+      "sharpness": 1.5398179191491446,
+      "temporal_flicker": 0.0561650670541686,
+      "motion_coherence": 0.9230133067985324,
+      "colour_stability": 7.955237798890569,
+      "n_frames": 48,
+      "colour_r2": 0.889,
+      "colour_drift": 16.93
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.09609,
+      "centroid_hz": 1175.1
+    },
+    "last8_max_jump": 1.36,
+    "body_max_jump": 1.64,
+    "video_final_rel_err": 0.64545,
+    "audio_final_rel_err": 0.1258,
+    "quality": {
+      "sharpness": 1.6362940250253095,
+      "temporal_flicker": 0.062058670108153545,
+      "motion_coherence": 0.9188003334186936,
+      "colour_stability": 8.512516160513586,
+      "n_frames": 48,
+      "colour_r2": 0.86,
+      "colour_drift": 17.78
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.106607,
+      "centroid_hz": 1171.7
+    },
+    "last8_max_jump": 1.54,
+    "body_max_jump": 1.88,
+    "video_final_rel_err": 0.56723,
+    "audio_final_rel_err": 0.20508,
+    "quality": {
+      "sharpness": 1.7957794021892741,
+      "temporal_flicker": 0.07319703468532411,
+      "motion_coherence": 0.9159459973588457,
+      "colour_stability": 7.909931081790529,
+      "n_frames": 48,
+      "colour_r2": 0.817,
+      "colour_drift": 16.18
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.06124,
+      "centroid_hz": 1211.5
+    },
+    "last8_max_jump": 1.0,
+    "body_max_jump": 1.41,
+    "video_final_rel_err": 0.70843,
+    "audio_final_rel_err": 0.52761,
+    "quality": {
+      "sharpness": 1.4247543097953284,
+      "temporal_flicker": 0.05096522934805139,
+      "motion_coherence": 0.9429328642008485,
+      "colour_stability": 6.155744342029922,
+      "n_frames": 48,
+      "colour_r2": 0.872,
+      "colour_drift": 12.93
+    }
+  },
+  {
+    "tag": "horse_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.077597,
+      "centroid_hz": 1190.9
+    },
+    "last8_max_jump": 1.65,
+    "body_max_jump": 1.13,
+    "video_final_rel_err": 0.65289,
+    "audio_final_rel_err": 0.5367,
+    "quality": {
+      "sharpness": 1.303508883184203,
+      "temporal_flicker": 0.04644871202343865,
+      "motion_coherence": 0.9504060481712016,
+      "colour_stability": 4.765761199306953,
+      "n_frames": 48,
+      "colour_r2": 0.879,
+      "colour_drift": 10.08
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 1.3467257574750522,
+      "temporal_flicker": 0.07445139166776697,
+      "motion_coherence": 0.9232893860641891,
+      "colour_stability": 0.7814807461141168,
+      "n_frames": 48,
+      "colour_r2": 0.136,
+      "colour_drift": 0.8
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000804,
+      "centroid_hz": 2845.3
+    },
+    "last8_max_jump": 0.2,
+    "body_max_jump": 0.38,
+    "video_final_rel_err": 0.49095,
+    "audio_final_rel_err": 0.35501,
+    "quality": {
+      "sharpness": 0.7326522052737257,
+      "temporal_flicker": 0.04921419929406863,
+      "motion_coherence": 0.9142011863477033,
+      "colour_stability": 0.24645678977772614,
+      "n_frames": 48,
+      "colour_r2": 0.028,
+      "colour_drift": 0.12
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.00093,
+      "centroid_hz": 2623.2
+    },
+    "last8_max_jump": 0.14,
+    "body_max_jump": 0.41,
+    "video_final_rel_err": 0.48478,
+    "audio_final_rel_err": 0.30204,
+    "quality": {
+      "sharpness": 0.7717393696346064,
+      "temporal_flicker": 0.0501773486533081,
+      "motion_coherence": 0.9050184435792697,
+      "colour_stability": 0.21597470725333276,
+      "n_frames": 48,
+      "colour_r2": 0.193,
+      "colour_drift": 0.21
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.8,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000722,
+      "centroid_hz": 2542.9
+    },
+    "last8_max_jump": 0.16,
+    "body_max_jump": 0.41,
+    "video_final_rel_err": 0.45679,
+    "audio_final_rel_err": 0.32423,
+    "quality": {
+      "sharpness": 0.9070629045838572,
+      "temporal_flicker": 0.05164697243982734,
+      "motion_coherence": 0.9097591657797157,
+      "colour_stability": 0.2381113298316974,
+      "n_frames": 48,
+      "colour_r2": 0.085,
+      "colour_drift": 0.16
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000735,
+      "centroid_hz": 2267.9
+    },
+    "last8_max_jump": 0.24,
+    "body_max_jump": 0.48,
+    "video_final_rel_err": 0.39727,
+    "audio_final_rel_err": 0.36853,
+    "quality": {
+      "sharpness": 1.1395045375908168,
+      "temporal_flicker": 0.06661356664369664,
+      "motion_coherence": 0.9080773319299774,
+      "colour_stability": 0.38055650495408494,
+      "n_frames": 48,
+      "colour_r2": 0.125,
+      "colour_drift": 0.32
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.5,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000543,
+      "centroid_hz": 2271.6
+    },
+    "last8_max_jump": 0.18,
+    "body_max_jump": 0.32,
+    "video_final_rel_err": 0.50272,
+    "audio_final_rel_err": 0.30059,
+    "quality": {
+      "sharpness": 0.663488302412166,
+      "temporal_flicker": 0.0397328647203424,
+      "motion_coherence": 0.916285120582649,
+      "colour_stability": 0.24581950116489748,
+      "n_frames": 48,
+      "colour_r2": 0.002,
+      "colour_drift": 0.03
+    }
+  },
+  {
+    "tag": "typist_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.7,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.000754,
+      "centroid_hz": 2335.3
+    },
+    "last8_max_jump": 0.08,
+    "body_max_jump": 0.33,
+    "video_final_rel_err": 0.52066,
+    "audio_final_rel_err": 0.28474,
+    "quality": {
+      "sharpness": 0.9069129005387018,
+      "temporal_flicker": 0.023406769328241678,
+      "motion_coherence": 0.8794646201074474,
+      "colour_stability": 0.14676714120498133,
+      "n_frames": 48,
+      "colour_r2": 0.106,
+      "colour_drift": 0.13
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 9.449468891013,
+      "temporal_flicker": 0.0726868173322144,
+      "motion_coherence": 0.8648645608863282,
+      "colour_stability": 2.0332065492755125,
+      "n_frames": 48,
+      "colour_r2": 0.042,
+      "colour_drift": 0.76
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.04957,
+      "centroid_hz": 2408.9
+    },
+    "last8_max_jump": 0.96,
+    "body_max_jump": 3.31,
+    "video_final_rel_err": 0.77272,
+    "audio_final_rel_err": 0.13308,
+    "quality": {
+      "sharpness": 18.04905064759745,
+      "temporal_flicker": 0.08639023011038752,
+      "motion_coherence": 0.791391776072412,
+      "colour_stability": 3.099770129695005,
+      "n_frames": 48,
+      "colour_r2": 0.029,
+      "colour_drift": 1.42
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "base_unipc16",
+    "steps": 16,
+    "seconds": 71.1,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.053611,
+      "centroid_hz": 2412.2
+    },
+    "last8_max_jump": 0.51,
+    "body_max_jump": 3.36,
+    "video_final_rel_err": 0.69871,
+    "audio_final_rel_err": 0.10206,
+    "quality": {
+      "sharpness": 18.466662726406252,
+      "temporal_flicker": 0.08097721167265602,
+      "motion_coherence": 0.8201377044461662,
+      "colour_stability": 3.07319926712718,
+      "n_frames": 48,
+      "colour_r2": 0.062,
+      "colour_drift": 1.53
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "base_unipc20",
+    "steps": 20,
+    "seconds": 85.7,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.054295,
+      "centroid_hz": 2425.3
+    },
+    "last8_max_jump": 0.73,
+    "body_max_jump": 2.05,
+    "video_final_rel_err": 0.65467,
+    "audio_final_rel_err": 0.07274,
+    "quality": {
+      "sharpness": 16.540584849155053,
+      "temporal_flicker": 0.07512506410997276,
+      "motion_coherence": 0.7789229479066219,
+      "colour_stability": 1.7570906896111078,
+      "n_frames": 48,
+      "colour_r2": 0.025,
+      "colour_drift": 0.69
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 122.4,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.05657,
+      "centroid_hz": 2403.2
+    },
+    "last8_max_jump": 0.45,
+    "body_max_jump": 1.77,
+    "video_final_rel_err": 0.68577,
+    "audio_final_rel_err": 0.06637,
+    "quality": {
+      "sharpness": 13.990006432912878,
+      "temporal_flicker": 0.09114865141572118,
+      "motion_coherence": 0.829578221744579,
+      "colour_stability": 2.370587900666767,
+      "n_frames": 48,
+      "colour_r2": 0.102,
+      "colour_drift": 2.05
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 56.6,
+    "adapter_state": null,
+    "audio_off_steps": null,
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.040218,
+      "centroid_hz": 2543.7
+    },
+    "last8_max_jump": 0.87,
+    "body_max_jump": 3.83,
+    "video_final_rel_err": 0.73998,
+    "audio_final_rel_err": 0.22069,
+    "quality": {
+      "sharpness": 22.32073772267439,
+      "temporal_flicker": 0.07196658732035768,
+      "motion_coherence": 0.6796064605395912,
+      "colour_stability": 2.4445850839257095,
+      "n_frames": 48,
+      "colour_r2": 0.011,
+      "colour_drift": 0.85
+    }
+  },
+  {
+    "tag": "fountain_s300",
+    "variant": "v2_euler12",
+    "steps": 12,
+    "seconds": 56.7,
+    "adapter_state": "/local/adapters/v2_5s.pt",
+    "audio_off_steps": [],
+    "identity_blocks": [],
+    "audio": {
+      "rms": 0.039917,
+      "centroid_hz": 2457.0
+    },
+    "last8_max_jump": 0.52,
+    "body_max_jump": 4.85,
+    "video_final_rel_err": 0.69156,
+    "audio_final_rel_err": 0.20602,
+    "quality": {
+      "sharpness": 13.35553304986808,
+      "temporal_flicker": 0.05650897814754498,
+      "motion_coherence": 0.7553121529223583,
+      "colour_stability": 2.3407489138836524,
+      "n_frames": 48,
+      "colour_r2": 0.015,
+      "colour_drift": 0.56
+    }
+  }
+]
