@@ -41,6 +41,30 @@ TBC-*placed* adapter helps few-step sampling on Ovi. It does not reproduce TBC's
 and there is no parameter-matched control (a LoRA or an adapter at other blocks), so
 nothing here says the early-layer residual design matters in itself.
 
+## 1a. In flight: the deciding experiment (started 2026-11-09 20:45 local)
+
+**Read this first if `docs/stage7-v4-decide.md` still says "Not yet run".**
+
+- Pod `wsp-stage7-v4` (H100 SXM, $3.99/hour, recorded in `runs/pods.json`) is running
+  `scripts/pod_decide.sh`: 10 unseen prompts × 3 seeds × 7 variants. The real run started
+  at 21:23 local and should take about 5.5 hours. Design and decision rule:
+  [stage7-v4-decide.md](stage7-v4-decide.md), pushed before the pod was created.
+- **A local watchdog** (`scripts/pod_watchdog.py`, log in `runs/watchdog.log`) copies the
+  small result files to `artifacts/v4_decide/` every 5 minutes, and when the run finishes
+  it copies the seed-100 clips and terminates the pod. It terminates the pod at
+  **07:10 local on 2026-11-10** regardless (about $42 in total; the owner's limit is $45).
+  It only runs while this machine is on.
+- **A pod-side backstop** (`scripts/pod_backstop.sh`) is set to remove the pod at 15:25
+  UTC (07:25 local). It is unverified: the pod's own key could not read the pod, so the
+  removal may be refused.
+- **When picking this up:** check `runs/watchdog.log` for `TERMINATED ... read back 404`.
+  If it is missing, read the pod with the Runpod MCP `get-pod`, copy
+  `/local/v4_decide/eval/eval.json`, `adherence.json` and `audio_mp4.json` if the pod
+  still exists, and terminate it. Then run
+  `python scripts/analyse_decide.py artifacts/v4_decide --out artifacts/v4_decide/decide.json`,
+  fill in the Results section of the stage document against the rule written there, and
+  delete this section.
+
 ## 2. Where things stand: the answers so far
 
 | Question | Answer | Evidence |
@@ -116,6 +140,10 @@ scripts/          pod_* run on the GPU pod; analyse_* / create_pod_retry run loc
   analyse_v3.py        per-variant summary of a v3 eval
   analyse_v3_paired.py paired statistics for a v3 eval: bootstrap, exact sign-flip test,
                        symmetric distance, per-metric breakdown (use this for claims)
+  pod_decide.sh        Stage 7 v4 pipeline (pod_decide_smoke.sh first); analyse_decide.py
+                       analyses it locally at prompt level
+  pod_watchdog.py      local: copy results, terminate the pod at completion or deadline
+  pod_backstop.sh      on the pod: self-removal at a deadline (run from a file, never inline)
   read_weights.py      Stage 8, local: build | ask | score | quality. `ask` needs the
                        OpenRouter key and a --max-usd limit; it skips replies it has
 tests/            806 tests, all passing (pytest -q, ~15 s, no GPU needed; 2 need
@@ -176,7 +204,12 @@ on-policy collect 224 s per clip; training step 14.5 s. The A100 is ~1.9× slowe
 - **Results are not comparable across GPU types**: always regenerate every compared
   variant on the same pod.
 - **PowerShell**: no `&&`; inline quoting into `ssh`/`python -c` breaks. Write scripts to
-  files, convert to LF, `scp`, run. Piping a here-string into `python -` **corrupts
+  files, convert to LF, `scp`, run. This bit again on 2026-11-09: an inline self-removal
+  timer lost its quotes, computed a negative sleep and fired at once; it did nothing only
+  because the removal was unauthorised. Never chain a destructive command after `;`.
+- **A new pipeline script: check its log 30 seconds after launch**, not after ten
+  minutes. A mis-named set aborted the first v4 smoke test immediately and cost nine
+  minutes of pod time before it was looked at. Piping a here-string into `python -` **corrupts
   non-ASCII** (dashes, ×, Δ become `?`). Use the edit tool or file writes instead. The
   file-create tool writes CRLF; bash rejects it on the pod.
 - **GPU stock**: listings say "Low" but direct creates are often refused; use
