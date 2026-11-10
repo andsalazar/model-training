@@ -5,7 +5,7 @@
 # directory, so a passing smoke test is also the first clip of the run; if a fix is needed
 # afterwards, delete /local/v4_decide before the real run.
 set -uo pipefail
-bash /local/wsp/scripts/pod_decide.sh /local/v4_decide decide_check "100" || { echo "SMOKE FAILED"; exit 1; }
+MARK_DONE=0 bash /local/wsp/scripts/pod_decide.sh /local/v4_decide decide_check "100" || { echo "SMOKE FAILED"; exit 1; }
 source /local/ovi-env/bin/activate
 python3 - <<'PY'
 import json
@@ -18,7 +18,7 @@ print("variants:", sorted(got))
 for r in rows:
     print(f"  {r['variant']:14} steps {r.get('steps')} seconds {r.get('seconds')} error {r.get('error')}")
 assert got == want, f"missing {sorted(want - got)}"
-for name in ("adherence.json", "audio_mp4.json", "noise.json", "ovi_commit.txt", "gpu.txt", "DONE"):
+for name in ("adherence.json", "audio_mp4.json", "noise.json", "ovi_commit.txt", "gpu.txt"):
     assert (w / name).exists(), name
 print("adherence rows:", len(json.loads((w / "adherence.json").read_text())))
 print("noise:", json.dumps({k: {s: v[s]["redraw_cuda_matches"] for s in ("video", "audio")}

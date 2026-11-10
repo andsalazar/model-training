@@ -29,5 +29,6 @@ for S in $SEEDS; do
     || echo "audio check failed for seed $S"
   echo "$S $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$W/seeds_done.txt"
 done
-date -u +%Y-%m-%dT%H:%M:%SZ > "$W/DONE"
+# The smoke test sets MARK_DONE=0: only the real run may tell the watchdog it is finished.
+[ "${MARK_DONE:-1}" = 1 ] && date -u +%Y-%m-%dT%H:%M:%SZ > "$W/DONE"
 echo "=== decide done $(date -u +%H:%M:%S) ==="

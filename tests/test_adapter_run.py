@@ -42,6 +42,13 @@ class TestSets:
         assert len(clips) == 30 == len(set(clips))
         assert {seed for _, seed in clips} == {100, 200, 300}
 
+    def test_every_set_the_pipeline_scripts_name_exists(self):
+        # pod_decide.sh builds "<set>_s<seed>"; the smoke test passes set "decide_check", seed 100.
+        text = (_SCRIPT.parent / "pod_decide_smoke.sh").read_text(encoding="utf-8")
+        assert 'pod_decide.sh /local/v4_decide decide_check "100"' in text
+        assert "decide_check_s100" in run.SETS
+        assert all(f"decide_s{seed}" in run.SETS for seed in run.DECIDE_SEEDS)
+
     def test_the_step_counts_between_12_and_30_are_base_model_unipc(self):
         assert run.VARIANTS["base_unipc16"] == (False, 16, "unipc")
         assert run.VARIANTS["base_unipc20"] == (False, 20, "unipc")

@@ -92,7 +92,8 @@ SETS["v3_check"] = {"train": [("river", 1)], "val": [("market", 1)], "eval": [("
 #: every prompt at the seeds it finished.
 for _seed in DECIDE_SEEDS:
     SETS[f"decide_s{_seed}"] = {**SETS["v2_5s"], "eval": [(n, _seed) for n in DECIDE_PROMPTS]}
-SETS["decide_check"] = {"train": [("river", 1)], "val": [("market", 1)], "eval": [("harbor", 100)]}
+#: The smoke test: pod_decide.sh names sets "<set>_s<seed>", so the name carries the seed.
+SETS["decide_check_s100"] = {"train": [("river", 1)], "val": [("market", 1)], "eval": [("harbor", 100)]}
 TEACHER_STEPS = 48
 STUDENT_STEPS = 12
 
