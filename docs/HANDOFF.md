@@ -20,9 +20,14 @@ works:
    longest length Ovi can produce (10 s), without hurting short clips.
 
 The owner values honest negative results; "testing the hypothesis is the learning".
-A second aim, stated on 2026-11-09: the published repository should also **show the
-hands-on GPU and model-training work**, so the README carries a record of what was run,
-on what hardware, at what cost.
+Two further aims, stated on 2026-11-09:
+
+- The published repository should also **show the hands-on GPU and model-training
+  work**, so the README carries a record of what was run, on what hardware, at what cost.
+- The underlying curiosity was the **methods themselves**: whether WSP's "reading" of a
+  model's parameters can be replicated with another model as the reader, and what TBC's
+  method actually is. The README answers both directly under "The two questions behind
+  it"; keep that section in step with any new result.
 
 **What "TBC-style" means here, and what it does not.** The adapter in this repository is
 a standard bottleneck residual adapter, `x + up(gelu(down(layernorm(x))))`, placed before

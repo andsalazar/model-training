@@ -23,6 +23,34 @@ measurement error, not as a new method or a recommended model.
 
 > **Picking this project up?** Start with [docs/HANDOFF.md](docs/HANDOFF.md).
 
+## The two questions behind it
+
+**Can one model "read" another model's parameters?** The project started from curiosity
+about the WSP method itself: could the paper's reading of a network's weights be
+replicated with a different, cheaper model as the reader?
+
+- **From the weights alone: no.** Given a static slice of the weight matrix the paper
+  edited, all five editor models tried, including the paper's own, declined to name
+  columns and said doing so would be guesswork
+  ([stage0](docs/stage0-findings.md)).
+- **With tools to run the model and measure activations: partly.** A cheap editor
+  (DeepSeek, $0.03 per million input tokens) captured a direction from activations,
+  edited 12,288 weights and cut an over-thinking prompt from 1,869 tokens to 210, with
+  the result judged by an independent verifier ([stage1](docs/stage1-findings.md)). That
+  is reading *behaviour through measurement*, with the weights as the place the edit
+  lands; it is not reading meaning off raw parameters.
+- **It did not hold up as a method.** The same editor reported numbers it had not
+  measured, the edit did not reproduce on other hardware, and a stabilised version
+  harmed unrelated tasks ([WRITEUP](docs/WRITEUP.md)).
+- **On Ovi** the reads were done by measurement scripts rather than an LLM editor, and
+  they found no concentrated place to edit.
+
+**What is TBC's adapter method, and does it carry over?** TBC's adapter could be scoped
+but not replicated: there are two public documents, no code, no weights and no
+bibliography, and the product is API-only ([scoping](docs/stage6-scoping.md),
+[literature](docs/stage6-literature.md)). What could be tested is an adapter of TBC's
+size and placement, trained by a standard method. See Part 2.
+
 ## Findings at a glance
 
 | Finding | Evidence | Where |
