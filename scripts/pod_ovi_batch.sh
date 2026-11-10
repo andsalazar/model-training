@@ -6,7 +6,7 @@
 # ratio 0.86 with R^2 0.30, delta ratio 0.88 with R^2 0.47. Both below the 0.5 fit
 # threshold, so neither registered as a collapse. That is one prompt. If every
 # prompt behaves the same way, then a 5-second Ovi rollout simply does not collapse
-# on its own, and the project has no natural target to measure â€” which is a finding
+# on its own, and the project has no natural target to measure — which is a finding
 # worth having before any adapter work.
 #
 # Prompts are chosen to span the failure surface: a static scene (most likely to

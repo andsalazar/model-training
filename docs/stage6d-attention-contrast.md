@@ -6,15 +6,15 @@ count as a finding.*
 ## The problem the residual projection left open
 
 Stage 6c measured a drifting-versus-stable direction in Ovi's residual stream and scored
-it against every column of the two matrices that write to that stream â€” `self_attn.o` and
+it against every column of the two matrices that write to that stream — `self_attn.o` and
 `ffn.2`. The best alignment anywhere was **0.129** against a chance level of
 $1/\sqrt{3072} \approx 0.018$. Above chance, but nowhere near the 0.5+ that would indicate
 a weight column writing along the captured direction. Every site's score distribution was
 a plateau, so the 0.9-of-best threshold selected zero columns and the `min_columns`
 backfill supplied four.
 
-The arithmetic that followed is why no edit was applied: at cosine â‰ˆ 0.1, a `strength=0.02`
-damping moves the state ~0.2% of its norm, against a 2.5â€“4.7% effect to chase. A null
+The arithmetic that followed is why no edit was applied: at cosine ≈ 0.1, a `strength=0.02`
+damping moves the state ~0.2% of its norm, against a 2.5–4.7% effect to chase. A null
 result from that would be uninterpretable rather than cheap.
 
 ### The structural explanation
@@ -25,7 +25,7 @@ from that sum is dominated by whichever component contributes most, and there is
 for that to be the component that distinguishes drifting from stable.
 
 What distinguishes a stable rollout from a drifting one may not be *what* is written to the
-residual stream but *where each token reads from* â€” the attention pattern. That is not
+residual stream but *where each token reads from* — the attention pattern. That is not
 representable as a column of `o` or `ffn.2`. `o` maps the attention output back to the
 residual width, but the pattern itself lives in the `[heads, queries, keys]` tensor before
 that projection. A damping edit on `o` cannot reach it.
@@ -36,14 +36,14 @@ only the second one is measured.
 
 ## What the module measures
 
-Full attention maps are enormous: 24 heads Ã— 27,900 queries Ã— 27,900 keys is 18.7 billion
+Full attention maps are enormous: 24 heads × 27,900 queries × 27,900 keys is 18.7 billion
 entries per layer per step. So `wsp.attention` reduces each tensor to three per-head
 aggregates, chosen so they are comparable across rollouts that visit different timesteps.
 
 | Field | What it is | What a change means |
 |---|---|---|
 | `row_entropy` | mean Shannon entropy of each query's attention distribution, in nats | low = each query reads from few keys; a focused or collapsed pattern |
-| `column_mass` | mean attention each key receives, normalised to sum to 1 | *which* keys are read â€” row entropy cannot say this |
+| `column_mass` | mean attention each key receives, normalised to sum to 1 | *which* keys are read — row entropy cannot say this |
 | `diagonal_mass` | mean attention each query places on its own key | high = each patch reads its own position rather than its neighbours |
 
 The reasoning for aggregates rather than raw maps is the same one that made delta entropy
@@ -62,7 +62,7 @@ reported the opposite conclusion.
 maps' per-query entropies. It is a crude guard, but without it a head whose entropy differs
 by 0.001 while its own queries vary by 0.5 would rank alongside a head that genuinely
 separates. `head_ranking` orders by it, with ties broken by head index so the ordering is
-deterministic â€” Stage 2's reproducibility failure came from a top-k cut sitting inside a
+deterministic — Stage 2's reproducibility failure came from a top-k cut sitting inside a
 plateau of near-equal scores.
 
 ## Three bugs the tests caught
@@ -71,14 +71,14 @@ Each was a real defect in the first implementation, not a test artefact.
 
 1. **`column_mass_entropy` mixed heads into one distribution.** Flattening the
    `[heads, keys]` array before computing entropy reported $\log(\text{heads} \times
-   \text{keys})$ for a uniform map â€” 2.08 nats for a 2Ã—4 case whose per-head answer is
+   \text{keys})$ for a uniform map — 2.08 nats for a 2×4 case whose per-head answer is
    $\log 4 = 1.386$. It now averages per head.
 2. **`min_effect=0.0` admitted unchanged heads.** The threshold filtered on effect size,
    and an unchanged head has effect size 0.0, so `0.0 < 0.0` is false and it passed. A
    caller asking for "all heads" got a list of zero-delta rows that reads like a finding.
    There is now an explicit "did not move" guard.
 3. **A degenerate head divided by zero.** A head whose queries all have identical entropy
-   has zero pooled spread. The first version returned `0.0`, which hides a real difference â€”
+   has zero pooled spread. The first version returned `0.0`, which hides a real difference —
    the "tool that cannot look must return zero" failure this project has hit four times.
    It now scales by the head's own entropy level, which is finite and interpretable.
 
@@ -97,7 +97,7 @@ video lands on the third row and audio on a weak version of the first:
 | No head separates | **the residual result stands unexplained.** Either the contrast is not the mechanism, or the measurement is still aimed at the wrong tensor |
 
 The middle outcome is the most likely and the least useful. Distinguishing "many heads
-shifted" from "a few heads carry the difference" needs a stability check across seeds â€”
+shifted" from "a few heads carry the difference" needs a stability check across seeds —
 the same lesson as the colour verdict, where a single-seed reading was wrong and three
 seeds settled it.
 
@@ -259,30 +259,30 @@ step count, and it rests on one seed.
 52 tests in `tests/test_attention.py`, 23 in `tests/test_attention_hooks.py` and 28 in
 `tests/test_ovi_attention.py`. Four are load-bearing for the findings above:
 
-- `TestSummarizeAttention::test_zero_rows_are_rejected` â€” a pre-softmax hook would look
+- `TestSummarizeAttention::test_zero_rows_are_rejected` — a pre-softmax hook would look
   like this, and silently normalising it would produce plausible-looking entropies from a
   non-distribution.
-- `TestAttentionContrast::test_unchanged_heads_are_not_reported` â€” the guard that stops a
+- `TestAttentionContrast::test_unchanged_heads_are_not_reported` — the guard that stops a
   zero-delta row being reported as a contrast. Verified load-bearing by reimplementing the
   loop without it: the real version reports `[0]`, the unguarded version reports `[0, 1]`.
-- `TestAttentionMapSummary::test_column_mass_entropy_is_reported` â€” the head-mixing bug.
+- `TestAttentionMapSummary::test_column_mass_entropy_is_reported` — the head-mixing bug.
   `_focused` has each query reading its own key, so column mass is *uniform* across keys and
   entropy is maximum, not zero. The first version of this test asserted zero and was wrong
   about what the fixture meant.
 
 Two more are load-bearing for the hook:
 
-- `TestSummarizeAttentionChunked::test_matches_the_materialised_path` â€” the chunked
+- `TestSummarizeAttentionChunked::test_matches_the_materialised_path` — the chunked
   computation is what actually runs on the GPU, because the full matrix cannot be
   materialised. If it disagreed with the tested materialised path, every GPU number would be
   unverified. Verified load-bearing by reimplementing the reductions with a deliberate bug
   (normalising column mass across the whole array instead of per head): the comparison
   catches it.
-- `TestRecording::test_step_is_numbered_from_the_model_forward` â€” two calls at the same `t`
+- `TestRecording::test_step_is_numbered_from_the_model_forward` — two calls at the same `t`
   are one step (the CFG double-pass); a new `t` starts a new step. Without this the capture
   would file 40 attention calls as 40 steps instead of 20.
-- `TestContrast::test_a_gap_beyond_tolerance_is_dropped_not_contrasted` â€” the guard that
+- `TestContrast::test_a_gap_beyond_tolerance_is_dropped_not_contrasted` — the guard that
   removed the confound. Verified load-bearing by the pairing check: index pairing gives
   `[(0,0),(2,2),...,(18,18)]` while nearest-timestep pairing gives
-  `[(0,0),(2,4),(4,6),(6,10),(8,12),(10,16),(12,18),(14,18),(16,18),(18,18)]` â€” genuinely
+  `[(0,0),(2,4),(4,6),(6,10),(8,12),(10,16),(12,18),(14,18),(16,18),(18,18)]` — genuinely
   different, and the index version compares t=233 against t=756.

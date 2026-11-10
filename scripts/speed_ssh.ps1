@@ -8,15 +8,17 @@
 # on every command ("head: cannot open 'file'$'\r'"). An argument avoids stdin.
 #
 # Usage:
-#   .\scripts\speed_ssh.ps1 -Command "nvidia-smi"
-#   .\scripts\speed_ssh.ps1 -Command "ls /workspace" -TimeoutSeconds 300
+#   .\scripts\speed_ssh.ps1 -SshHost <pod-ip> -Port <ssh-port> -Command "nvidia-smi"
+#   .\scripts\speed_ssh.ps1 -SshHost <pod-ip> -Port <ssh-port> -Command "ls /workspace" -TimeoutSeconds 300
 
 param(
     [Parameter(Mandatory = $true)]
     [string]$Command,
     [int]$TimeoutSeconds = 120,
-    [string]$SshHost = "157.157.221.29",
-    [int]$Port = 11077
+    [Parameter(Mandatory = $true)]
+    [string]$SshHost,
+    [Parameter(Mandatory = $true)]
+    [int]$Port
 )
 
 $key = "$env:USERPROFILE\.ssh\id_ed25519"

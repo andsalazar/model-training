@@ -5,7 +5,8 @@
 # minute for a bounded window is what worked previously (succeeded on the 7th
 # attempt after about eight minutes).
 param(
-    [string]$PodId = "o4uhh2qw28w9zk",
+    [Parameter(Mandatory = $true)]
+    [string]$PodId,
     [int]$MaxMinutes = 25,
     [int]$IntervalSeconds = 60
 )

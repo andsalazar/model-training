@@ -31,7 +31,7 @@ The Runpod SSH *proxy* (`ssh.runpod.io`) hangs on this pod. A 75-second hard tim
 returned nothing. The pod's **direct** endpoint works:
 
 ```bash
-ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 root@213.173.108.44 -p 36586 "nvidia-smi"
+ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 root@<pod-ip> -p <ssh-port> "nvidia-smi"
 ```
 
 The proxy also requires a PTY (`Error: Your SSH client doesn't support PTY`), which breaks

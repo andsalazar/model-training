@@ -2,7 +2,8 @@
 
 *State of the project as of 2026-11-09, written for the next agent picking it up.
 Read this first, then the README's "Where that leaves the hypothesis", then
-[stage7-v3-5s.md](stage7-v3-5s.md).*
+[stage7-v3-5s.md](stage7-v3-5s.md). Revised the same day after a pre-publication review:
+the Stage 7 statistics were rechecked and several claims below were narrowed.*
 
 ## 1. The goal (from the project owner)
 
@@ -13,22 +14,37 @@ works:
    weights and edits them surgically) to "read" **Ovi**, an open-weight joint
    **video + audio** diffusion transformer (11.66B, Apache 2.0).
 2. Apply a **TBC / Mischief-1-style adapter**, a tiny neuron-inspired residual module
-   (~156k params, "under 0.1% of base") that TBC used to make Wan 2.2 ~5× faster.
+   (~156k params, "under 0.1% of base") that TBC reports made Wan 2.2 ~5× faster.
 3. Test the hypothesis, true or false, that the two together **speed up Ovi's
    generation while keeping quality in both video and audio**, especially at the
    longest length Ovi can produce (10 s), without hurting short clips.
 
 The owner values honest negative results; "testing the hypothesis is the learning".
+A second aim, stated on 2026-11-09: the published repository should also **show the
+hands-on GPU and model-training work**, so the README carries a record of what was run,
+on what hardware, at what cost.
+
+**What "TBC-style" means here, and what it does not.** The adapter in this repository is
+a standard bottleneck residual adapter, `x + up(gelu(down(layernorm(x))))`, placed before
+the first fusion blocks and sized like TBC's (313k parameters against their ~156k). It is
+trained on a frozen Ovi to make 12 sampling steps follow a 48-step run. TBC's post
+describes something different in three ways: a module built on "localized spatial
+activations and a learned projection" derived from recordings of cultured neurons,
+trained alongside moderate fine-tuning of the base model, for rollout stability on Oasis.
+TBC published no code or weights. So this project tests whether a TBC-*sized*,
+TBC-*placed* adapter helps few-step sampling on Ovi. It does not reproduce TBC's method,
+and there is no parameter-matched control (a LoRA or an adapter at other blocks), so
+nothing here says the early-layer residual design matters in itself.
 
 ## 2. Where things stand: the answers so far
 
 | Question | Answer | Evidence |
 |---|---|---|
-| Can Ovi be sped up without losing quality? | **yes, by configuration**: 30 steps instead of 50 is 1.42× (5 s) / 1.53× (10 s), quality held | [stage6-speed-findings.md](stage6-speed-findings.md) |
+| Can Ovi be sped up without losing quality? | **yes, by configuration**: 30 steps instead of 50 is 1.42× (5 s) / 1.53× (10 s). On 9 clips 30 steps is within re-draw noise of a 48-step teacher and matches its prompt adherence. Ovi's README documents the same knob | [stage6-speed-findings.md](stage6-speed-findings.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
 | Does WSP find a concentrated target to edit? | **no**: step-count differences are spread across weights (best column alignment 0.11 vs 0.018 chance) and attention (video: no more than a null contrast) | [stage6c](stage6c-direction-measured.md), [6d](stage6d-attention-contrast.md) |
-| Does a TBC-style adapter speed Ovi up further? | **yes**: 12 steps + adapter is 2.17× (5 s) / 2.24× (10 s) faster than 30 steps | [stage7-pilot5s.md](stage7-pilot5s.md) |
-| Is it better than plain 12 steps? | **yes**: closer to a 48-step teacher on 6 of 9 clips; recovers most of the prompt adherence 12 steps loses (CLIP margin 18.7 vs 16.4; teacher 19.5) | [stage7-v3-5s.md](stage7-v3-5s.md) |
-| Is it as good as 30 steps? | **no**: 30 steps wins on all 6 unseen prompts; at 10 s the adapter's video is softer (sharpness 6.7 vs 14.1) | [stage7-v3-5s.md](stage7-v3-5s.md), [stage7-v2-10s.md](stage7-v2-10s.md) |
+| Does a TBC-style adapter speed Ovi up further? | **the speed comes from the step count, not the adapter**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30 with or without it. The adapter costs nothing measurable per step and recovers part of the quality 12 steps loses. Its speed-up at *equal quality* is unknown: UniPC at 16–20 steps was never run on the same pod | [stage7-pilot5s.md](stage7-pilot5s.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
+| Is it better than plain 12 steps? | **in direction, not settled**: closer to a 48-step teacher on 6 of 9 clips (exact test p = 0.074; 7 of 9, p = 0.016 on a symmetric distance), but on only 3–4 of the 6 unseen prompts, and most of the gain is the sharpness term. CLIP margin 18.7 vs 16.4 (teacher 19.5), 8 of 9 clips; raw CLIP does not separate them | [stage7-v3-5s.md](stage7-v3-5s.md#statistical-recheck) |
+| Is it as good as 30 steps? | **no**: 30 steps wins on all 6 unseen prompts; the adapter's video is softer than the teacher's at 10 s (sharpness 6.7 vs 14.1) and, less so, at 5 s (7 of 9 clips) | [stage7-v3-5s.md](stage7-v3-5s.md), [stage7-v2-10s.md](stage7-v2-10s.md) |
 | Can WSP diagnose and fix the adapter's defects? | **inconclusive**: it localised an end-of-clip flash to a cross-modal interaction, but the flash did not reproduce on other hardware (0 of 54 clips) | [stage7-wsp-adapter.md](stage7-wsp-adapter.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
 | Audio? | 12 steps makes audio slightly quieter/brighter; adapters help loudness somewhat but never fix brightness; audio prompt adherence (CLAP) is unaffected by any variant | v2 and v3 docs |
 | 30 s? | Ovi has no 30 s model; the 10 s model at 3× length gives one steady scene with local motion; resolution is ~600 px of 960 even at 10 s (inherent to the VAE) | [stage7-long30.md](stage7-long30.md) |
@@ -36,7 +52,10 @@ The owner values honest negative results; "testing the hypothesis is the learnin
 **The most important methodological finding:** the same prompt + seed + settings gives a
 *different clip* on an A100 vs an H100, and re-drawing a clip moves the four-metric
 quality distance by **~0.2**, which is as large as most differences reported from 3–4 clips.
-Any further claim needs several seeds per prompt.
+Any further claim needs several seeds per prompt. Two A100 pods reproduced each other
+exactly, so the difference tracks the GPU type, but **its cause is untested**: slightly
+different bf16 kernels amplified by sampling, or different starting noise (it is drawn on
+the GPU). Compare the starting-noise tensors across GPU types before explaining it.
 
 ## 3. Chronology (one line per stage)
 
@@ -81,20 +100,23 @@ scripts/          pod_* run on the GPU pod; analyse_* / create_pod_retry run loc
   pod_fetch_10s.sh     10 s checkpoint; pod_v3_smoke.sh / pod_v3_5s.sh: v3 pipeline
   create_pod_retry.py  get a GPU when stock is tight (REST v1 GPU priority list)
   analyse_v3.py        per-variant summary of a v3 eval
-tests/            730 tests, all passing (pytest -q, ~15 s, no GPU needed)
+  analyse_v3_paired.py paired statistics for a v3 eval: bootstrap, exact sign-flip test,
+                       symmetric distance, per-metric breakdown (use this for claims)
+tests/            746 tests, all passing (pytest -q, ~20 s, no GPU needed)
 docs/             one doc per stage; correction banners on superseded results
-artifacts/        LOCAL ONLY (gitignored): adapters, eval JSONs, clips
-runs/pods.json    pod registry (ownership guard)
+artifacts/        the evidence JSON is tracked (3 MB); adapters (*.pt), clips (*.mp4),
+                  logs and the three largest raw captures are local only (.gitignore)
+runs/pods.json    pod registry (ownership guard; gitignored)
 ```
 
-### Local artifacts worth knowing (gitignored, on the owner's machine)
+### Artifacts worth knowing (JSON tracked; `.pt` and `.mp4` on the owner's machine only)
 
 | path | what |
 |---|---|
 | `artifacts/adapter5s_v2/adapter_best.pt` | the v2 5 s adapter (the best general one; blocks 0–2, rank 8, 313k params) |
 | `artifacts/adapter10s_v2/adapter_best.pt` | trained at 10 s from the 5 s adapter |
 | `artifacts/v3_5s/onpolicy/`, `b03/` | on-policy adapters (overfit; not recommended) |
-| `artifacts/v3_5s/eval.json`, `adherence.json`, `audio_mp4.json`, `summary.json` | the v3 evaluation |
+| `artifacts/v3_5s/eval.json`, `adherence.json`, `audio_mp4.json`, `summary.json`, `paired.json` | the v3 evaluation and its paired statistics |
 | `artifacts/v3_5s/clips/` | storm + violin: teacher / 12-step / v2 / 30-step, for viewing |
 | `artifacts/long30/` | 10 s and 30 s clips, resolution measurements |
 
@@ -151,10 +173,17 @@ on-policy collect 224 s per clip; training step 14.5 s. The A100 is ~1.9× slowe
 
 In order of value for the owner's goal:
 
-1. **Fix the evaluation protocol first.** 3+ seeds per prompt, ~10 prompts, paired
-   comparisons with bootstrap intervals (`scripts/analyse_v3.py` has the paired logic in
-   spirit; extend it). Consider a distribution-level video metric (feature statistics
-   over many clips) instead of distance to one teacher sample.
+1. **Run the deciding experiment first.** 10 prompts × 3 seeds on one pod, each with the
+   48-step teacher, UniPC at 12 / 16 / 20 / 30 steps, base Euler-12 and the v2 adapter.
+   By the H100 timings (3.7 s per step plus ~13 s fixed) that is about 650 s per
+   prompt-seed, **5–6 GPU-hours** in all. It answers what v3 left open: does the adapter
+   beat simply running 16–20 steps? It needs `base_unipc16` / `base_unipc20` added to
+   `VARIANTS` in `pod_adapter_run.py`, an evaluation set with seeds, and the new names in
+   `analyse_v3_paired.py`'s `COMPARISONS`. Average the seeds of a prompt before testing
+   (prompts, not clips, are the independent unit) and prefer the symmetric distance.
+   Consider a distribution-level video metric (feature statistics over many clips)
+   instead of distance to one teacher sample. Check the starting noise across GPU types
+   while the pod is up (see section 2).
 2. **Scale training data.** 10 prompts let on-policy fine-tuning overfit. Generate a
    few hundred diverse prompts (e.g. with an LLM via OpenRouter), generate teachers
    (~197 s each on H100) and retrain; that is the most likely way to beat 30 steps.
@@ -162,21 +191,21 @@ In order of value for the owner's goal:
    fine-detail / spectral term to the loss.
 4. **Audio brightness**: never fixed by any variant; WSP flagged audio block 3 once
    (one A100 read). Worth one clean multi-seed test.
-5. **Publish.** The original aim: a write-up (README + docs/stage6*–7*) to GitHub, and
-   optionally the v2 adapter + inference script to Hugging Face with an honest model card
-   (2.17× faster than 30 steps, better than plain 12 steps, below 30-step quality).
-   **About 95 local commits are not pushed to `origin/main`**
-   (github.com/andsalazar/model-training; check with `git log origin/main..HEAD`).
-   Ask the owner before pushing.
+5. **Publish.** The write-up (README + docs) is prepared for GitHub as a negative-results
+   and methodology case study, and `origin/main`
+   (github.com/andsalazar/model-training) is level with local work. **Hold the Hugging
+   Face adapter release until item 1 is done.** If the adapter goes up, label it a
+   research artifact, not a recommended model: 12 steps with it is 2.17× faster than 30
+   steps, better than plain 12 steps in direction, and below 30-step quality on every
+   unseen prompt.
 
 ## 8. Account state and spend
 
-- **No pod or volume created by this project's recent sessions is running.** Last pods
-  `i7zo87s9uyr99n` (A100, $57.57) and `k8urmixjnf4yif` (H100, $29.09) are terminated.
-- The account still holds **six stopped older pods** (`ia30p9xluq53bk`, `8wd35k5h4173dv`,
-  `is8p317y8tclot`, `ec9nd87sddpzyf`, `o4uhh2qw28w9zk`, `qvg4nrmiqb8man`) and network
-  volume **`a9739uqc2p`** (EUR-IS-1). They may bill for storage. They were not created by
-  the recent sessions; leave them to the owner.
+- **No pod or volume created by this project's recent sessions is running.** The last
+  two pods (an A100, $57.57, and an H100, $29.09) are terminated.
+- The account still holds stopped older pods and a network volume that this project's
+  recent sessions did not create. They may bill for storage; leave them to the owner.
+  Their IDs are in `runs/account-state.md`, which is local only (`runs/` is gitignored).
 - Approximate total GPU spend for the project: ~$120 through Stage 6, plus ~$87 for
   Stage 7's last two pods, roughly **$207**. Earlier figures come from session notes;
   Stage 7's from billing reads.

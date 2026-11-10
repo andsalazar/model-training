@@ -7,7 +7,9 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$Command,
-    [string]$Pod = "o4uhh2qw28w9zk-644117ea@ssh.runpod.io",
+    # The pod's proxy address, "<pod-id>-<suffix>@ssh.runpod.io", from the Runpod console.
+    [Parameter(Mandatory = $true)]
+    [string]$Pod,
     [int]$TimeoutSeconds = 900
 )
 

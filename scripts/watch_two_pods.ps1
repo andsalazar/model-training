@@ -4,7 +4,8 @@
 # intermittently. Polling by hand wastes wall-clock; this leaves a readable trail
 # and exits the moment a pod is RUNNING or startable.
 param(
-    [string[]]$PodIds = @("qvg4nrmiqb8man", "o4uhh2qw28w9zk"),
+    [Parameter(Mandatory = $true)]
+    [string[]]$PodIds,
     [int]$MaxMinutes = 180,
     [int]$IntervalSeconds = 60
 )

@@ -3,7 +3,7 @@
 #
 # The pod's system Python ships torch 2.8.0; the venv installs 2.6.0. flash_attn was
 # built against 2.8.0's C++ ABI, so importing it under 2.6.0 fails with an undefined
-# symbol for c10::Error. FlashAttention is optional for Ovi â€” it only affects speed â€”
+# symbol for c10::Error. FlashAttention is optional for Ovi — it only affects speed —
 # so removing it is the correct fix rather than rebuilding against 2.6.0.
 set -uo pipefail
 

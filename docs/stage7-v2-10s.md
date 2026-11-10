@@ -1,5 +1,12 @@
 # Stage 7 v2 at 10 s: does the adapter carry over, and does 10 s training fix it?
 
+> **Read with [stage7-v3-5s.md](stage7-v3-5s.md).** These results are three clips of one
+> prompt on one GPU type and were not re-run under the v3 protocol. The blur is a large
+> effect and probably real, but the statement below that the same objective "did not
+> blur" at 5 s no longer holds: on 9 re-run clips the 5 s adapter is softer than the
+> teacher on 7, by 23.5% on average
+> ([recheck](stage7-v3-5s.md#statistical-recheck)).
+
 *Driver: `scripts/pod_adapter_run.py --set v2_10s --model-name 960x960_10s`, pipeline
 `scripts/pod_v2_10s.sh`. Teacher 48-step UniPC (986 s per 10 s clip), student 12 Euler
 steps on the UniPC grid. Training trajectories: river ×2, fan, coast, fox, city,

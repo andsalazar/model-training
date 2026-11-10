@@ -5,11 +5,12 @@
 # a long wait leaves a readable trail instead of a silent hang.
 #
 # Usage:
-#   .\scripts\watch_pod_capacity.ps1 -MaxMinutes 120
+#   .\scripts\watch_pod_capacity.ps1 -PodId <pod-id> -MaxMinutes 120
 
 param(
     [int]$MaxMinutes = 120,
-    [string]$PodId = "o4uhh2qw28w9zk",
+    [Parameter(Mandatory = $true)]
+    [string]$PodId,
     [int]$IntervalSeconds = 60
 )
 

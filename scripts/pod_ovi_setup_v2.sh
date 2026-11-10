@@ -1,5 +1,5 @@
 #!/bin/bash
-# Set up Ovi on the A100 for WSP activation work â€” the version that actually works.
+# Set up Ovi on the A100 for WSP activation work — the version that actually works.
 #
 # This consolidates what four separate scripts discovered the hard way. Each step
 # below replaced a failure:
@@ -10,7 +10,7 @@
 #     what silently killed the first pair capture.
 #   * Pin torchvision and torchaudio to the torch release. Left unpinned, pip
 #     resolves torchaudio to a CUDA-13 build and importing it fails with
-#     "libcudart.so.13: cannot open shared object file" â€” which reads as a
+#     "libcudart.so.13: cannot open shared object file" — which reads as a
 #     missing library rather than a version mismatch.
 #   * Use a PREBUILT FlashAttention wheel. The source build compiles five
 #     architectures because flash-attention's setup.py reads FLASH_ATTN_CUDA_ARCHS

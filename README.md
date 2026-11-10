@@ -1,16 +1,73 @@
-# Weight-Space Programming experiments
+# Weight-Space Programming experiments: Qwen3.5-0.8B and Ovi
 
-A reproduction and extension harness for **Weight-Space Programming** — having a
-language model read and write another network's weights directly, with no
-gradients and no training loop.
+Two connected experiments on open-weight models, run on rented GPUs. Every result was
+re-measured, and the ones that did not hold are kept in, with correction banners.
+
+1. **Text (Stages 0–5).** Reproduce a published **Weight-Space Programming** edit on
+   Qwen3.5-0.8B (a language model reading and writing another network's weights
+   directly, with no gradients and no training loop), then try to derive such edits from
+   measurement instead of copying them.
+2. **Video + audio (Stages 6–7).** Port the tooling to **Ovi**, an 11.66B joint
+   video-and-audio diffusion transformer, and test whether a tiny trained adapter, sized
+   and placed like TBC's "neural dynamics adapter", together with WSP-style reads of the
+   model's internals, can make generation faster without losing quality.
 
 Based on [Sparks of Weight-Space Programming: LLMs can natively read & write
 neural network weights](https://rikiyat.github.io/blog/weight-space-programming/)
-(Takehi, Teoh, Zhang, Khattab — MIT CSAIL, November 2026).
+(Takehi, Teoh, Zhang, Khattab — MIT CSAIL, November 2026) and on TBC's
+[neural dynamics adapter post](https://www.tbc.co/post/the-neural-dynamics-adapter).
+
+Most of what this repository found is negative, or narrower than hoped. It is published
+as a record of how the claims were tested and where early results turned out to be
+measurement error, not as a new method or a recommended model.
 
 > **Picking this project up?** Start with [docs/HANDOFF.md](docs/HANDOFF.md).
 
-## Why this exists
+## Findings at a glance
+
+| Finding | Evidence | Where |
+|---|---|---|
+| The published WSP edit reproduces on Qwen3.5-0.8B | the paper's 25-problem practice subset: 4.0% → 64.0% (paper's released scores for it: 5.0% → 51.0%); the full MATH-500 was not run | [stage0](docs/stage0-findings.md) |
+| An edit derived from activation measurement does not reproduce across hardware | the "top 12 columns" cut sits inside a 0.0012 tie in alignment score | [reproducibility-failure](docs/reproducibility-failure.md) |
+| A fixed direction cannot be behaviour-selective; a LoRA trained on the model's own truncated reasoning can | 9 probes on one model; does not carry over to format compliance (0 of 8) | [WRITEUP](docs/WRITEUP.md) |
+| LLM editors reported verification numbers they had not measured | a sign-inverted similarity, unmeasured token counts; the reason `wsp.verify` re-measures every edit | [WRITEUP](docs/WRITEUP.md) |
+| Ovi at 30 steps instead of 50 is 1.42× (5 s) / 1.53× (10 s) faster with quality held | 9 clips: within re-draw noise of a 48-step reference, same prompt adherence. Ovi's README documents this knob; the measurement is what is added | [stage6-speed](docs/stage6-speed-findings.md), [stage7-v3](docs/stage7-v3-5s.md) |
+| WSP-style reads find no concentrated edit target for step count in Ovi | best weight-column alignment 0.11 against 0.018 by chance; video attention differs no more than a null contrast | [6c](docs/stage6c-direction-measured.md), [6d](docs/stage6d-attention-contrast.md) |
+| A 313k-parameter adapter (0.003% of Ovi) recovers part of what 12-step sampling loses | closer to the reference on 6–7 of 9 clips; not settled on unseen prompts; below 30 steps on all 6 of them | [stage7-v3](docs/stage7-v3-5s.md#statistical-recheck) |
+| One generated clip is too noisy a measurement for the differences first reported | re-drawing a clip moves the quality distance by ~0.2; three earlier findings were overturned | [stage7-v3](docs/stage7-v3-5s.md) |
+| One-step training loss does not predict rollout quality | it missed a blur at 10 s and overfitting in on-policy training | [stage7-v2-10s](docs/stage7-v2-10s.md), [stage7-v3](docs/stage7-v3-5s.md) |
+
+## What was run: compute and training
+
+Everything ran on rented Runpod GPU pods, driven from a Windows machine over SSH. Total
+GPU spend was roughly **$207** (about $120 through Stage 6 from session notes, $87 for
+Stage 7 from billing reads).
+
+| | |
+|---|---|
+| **Hardware** | A100 80 GB (Ovi sweeps, captures, adapter training), H100 SXM (the v3 evaluation and on-policy training), RTX PRO 4500 Blackwell 32 GB (first Ovi bring-up), smaller pods such as an RTX 4000 Ada for the Qwen stages |
+| **Adapter training on Ovi** | 313,392 trainable parameters on a frozen 11.66B model; each update is a full forward and backward pass through the model with gradient checkpointing. 5 s clips: 52 GB peak (out of memory above 79 GB without checkpointing). 10 s clips: 58–67 GB, made to fit by back-propagating the two guidance passes one at a time and moving the T5 text encoder to the CPU |
+| **Training runs** | Pilot: 144 updates, 80 min. v2 at 5 s: 576 AdamW updates with cosine decay, 4.6 h. v2 at 10 s: 5.6 h at 98 s per update. On-policy fine-tuning on the adapter's own rollouts (224 s per clip to collect targets on the H100) |
+| **Generation at scale** | 48-step reference runs as distillation targets (197 s per 5 s clip on the H100; 986 s per 10 s clip); a 30 s clip from the 10 s model in 62 min at 66 GB |
+| **Instrumenting an 11.66B DiT** | residual-stream and per-head attention captures in both streams at matched noise levels, with a null baseline; nine capture defects found in review and fixed ([6e](docs/stage6e-review-corrections.md)) |
+| **Text model work** | LoRA fine-tuning of Qwen3.5-0.8B; vLLM serving at 1,539 tokens/s against 36 with `transformers` on the same GPU |
+| **Environment work** | pinned torch 2.6.0 with a prebuilt FlashAttention 2.7.4 wheel on Ampere and Hopper; torch 2.7.1+cu128 with a source build on Blackwell ([pod setup](docs/stage6-pod-setup.md)) |
+| **Pod lifecycle** | a REST client that refuses to touch pods this project did not create, a create-with-fallback script for tight GPU stock, and 190 scripts (155 of them `pod_*` drivers and checks run on the GPU) kept as the working record |
+| **Tests** | 746 tests, no GPU needed (`pytest -q`); the statistics quoted for Stage 7 are pinned to the committed evidence JSON in `artifacts/` |
+
+## Repository layout
+
+```
+src/wsp/     library: adapter, DiT and attention capture, quality metrics, verifier, Runpod guard
+scripts/     pod_* run on the GPU pod; analyse_* run locally
+tests/       unit tests for the library and the scripts' pure logic
+docs/        one document per stage, with correction banners on superseded results
+artifacts/   the JSON behind the tables in docs/ (adapters and clips are not in the repository)
+```
+
+## Part 1: Weight-Space Programming on Qwen3.5-0.8B (Stages 0-5)
+
+### The question
 
 The paper's headline result: GPT-6 Astra read Qwen3.5-0.8B's raw weights,
 diagnosed reasoning loops caused by a direction written by MLP layers 15 and 19,
@@ -22,7 +79,7 @@ The open question this repo is built to answer: **does that capability depend on
 the editor being a frontier model?** The paper used Astra. If a cheap open-weight
 editor can do the same edit, the technique becomes reproducible by anyone.
 
-## Design
+### Design
 
 The editor is a pluggable backend, so the comparison is a config flag rather
 than a rewrite:
@@ -37,53 +94,13 @@ than a rewrite:
 All four are reached through one OpenRouter key, so transport, retries, and
 accounting are identical across arms.
 
-## Setup
+### Results
 
-Secrets live in Doppler, never in files:
-
-```bash
-doppler run --project model-training --config dev -- wsp doctor
-```
-
-Required: `OPENROUTER_API_KEY`. Optional: `HF_TOKEN`, `WANDB_API_KEY`,
-`RUNPOD_MODEL_TRAINING_API_KEY`.
-
-```bash
-uv venv
-uv pip install -e ".[dev]"
-```
-
-## Usage
-
-```bash
-# Verify secrets are wired up
-doppler run --project model-training --config dev -- wsp doctor
-
-# List editor candidates and pricing
-wsp editors
-
-# Send one prompt to an editor, report latency and cost
-doppler run --project model-training --config dev -- wsp ping --editor deepseek
-
-# Summarize a checkpoint without loading the weights
-wsp inspect models/Qwen3.5-0.8B/model.safetensors
-
-# Render a tensor slice as text for an editor
-wsp slice models/Qwen3.5-0.8B/model.safetensors \
-    --tensor model.layers.15.mlp.down_proj.weight --cols 0:64
-```
-
-## Safety
-
-`wsp.runpod` refuses to modify any pod not recorded in `runs/pods.json`. The
-account holds a pod this project did not create; the guard rejects it before any
-network call is made, and that behaviour is pinned by tests.
-
-## Status
-
-Stage 0 (reproduction) is complete and verified: the paper's headline result
-reproduces, and its arithmetic matches exactly. See
-[docs/stage0-findings.md](docs/stage0-findings.md).
+Stage 0 (reproduction) is complete and verified: the paper's edit reproduces on its
+25-problem practice subset (4.0% → 64.0%, against the paper's released 5.0% → 51.0% for
+that subset; the full MATH-500 was not run), and its parameter arithmetic matches
+exactly. See [docs/stage0-findings.md](docs/stage0-findings.md). The full account of
+Stages 0–5 is [docs/WRITEUP.md](docs/WRITEUP.md).
 
 Everything after Stage 0 is best read as a sequence of failures that each narrowed
 the problem, ending in one mechanism that works. Claim-by-claim:
@@ -150,7 +167,7 @@ themselves.
 - [docs/reproducibility-failure.md](docs/reproducibility-failure.md) — standalone
   write-up of the failure
 
-## Verification
+### Verification
 
 An edit only counts if it survives re-measurement. `wsp.verify` compares a
 baseline reading against an edited one under a fixed rule and returns
@@ -172,7 +189,7 @@ An edit is `validated` only when every target improved and nothing regressed or
 broke. A target that improves while a held-out question hits the cap is
 `harmful` — that is redistributing the behaviour, not suppressing it.
 
-### Running a verified exploration
+#### Running a verified exploration
 
 `scripts/run_explore_verified.py` runs the editor and then re-measures its edits
 itself, so the verdict does not depend on the editor's prose:
@@ -194,10 +211,22 @@ numbers: one inverted a `direction_similarity` sign, the other reported post-edi
 token counts without ever calling `measure_loop` after its edits. The auditor
 catches those after the fact; re-measurement catches them regardless.
 
-## Next: the Ovi + TBC-adapter project
+## Part 2: Ovi and a TBC-sized adapter (Stages 6-7)
 
 The original brief asked to combine MIT's Weight-Space Programming with TBC's
-neuron-derived adapter on a joint video+audio model. Two documents scope that:
+neuron-derived adapter on a joint video+audio model.
+
+**What "TBC-style" means here.** The adapter in this repository is a standard bottleneck
+residual adapter, `x + up(gelu(down(layernorm(x))))`, placed before Ovi's first three
+fusion blocks in both streams and sized like TBC's (313k parameters against their
+~156k). It is trained on a frozen Ovi to make 12 sampling steps follow a 48-step run.
+TBC's post describes a module built from "localized spatial activations and a learned
+projection" derived from recordings of cultured neurons, trained alongside fine-tuning
+of the base model, for rollout stability; they published no code or weights. So this is
+a test of a TBC-*sized*, TBC-*placed* adapter, not a reproduction of TBC's method, and
+there is no parameter-matched control to say the placement matters in itself.
+
+The stage documents, in order:
 
 - [docs/stage6-scoping.md](docs/stage6-scoping.md) — what TBC actually built, what
   is open and what is closed. Mischief 1 is real but **API-only** (no readable
@@ -217,9 +246,10 @@ neuron-derived adapter on a joint video+audio model. Two documents scope that:
   objective, and why it needs a different metric from the stability work.
 - [docs/stage6-speed-findings.md](docs/stage6-speed-findings.md) — **the speed result.**
   Denoising steps are 92% of wall clock, so cutting them is the lever: **30 steps is
-  1.42× faster at 5s and 1.53× at 10s** with sharper output and unchanged audio. 20
-  steps reaches 1.76× at 10s but its colour drifts in 2 of 3 seeds. The goal is met by
-  configuration alone, with no model edit.
+  1.42× faster at 5s and 1.53× at 10s** with unchanged audio. 20 steps reaches 1.76× at
+  10s but its colour drifts in 2 of 3 seeds. The goal is met by configuration alone, with
+  no model edit. (The document's reading of the sharper output at fewer steps as "real
+  detail" was later withdrawn; it carries a correction banner.)
 - [docs/stage6b-hook-attachment.md](docs/stage6b-hook-attachment.md) — **getting a hook
   into Ovi.** The obvious site (a forward hook on `blocks[i]`) fires **zero times**,
   because Ovi's fused loop calls each block's submodules individually so video and audio
@@ -265,7 +295,9 @@ the adapter breaks.
 - [docs/stage7-v3-5s.md](docs/stage7-v3-5s.md) — **the re-evaluation**: 9 clips, prompt
   adherence, training on the adapter's own outputs, and a noise floor. Re-drawing a clip
   moves its quality distance by ~0.2, which overturns the flash and "beats 30 steps"
-  findings; the adapter's gain over plain 12 steps and its adherence recovery hold.
+  findings; the adapter's gain over plain 12 steps and its adherence recovery hold in
+  direction. A statistical recheck (exact tests, a symmetric distance, a per-metric
+  breakdown) narrows that further: it is not settled on unseen prompts.
 - [docs/stage7-long30.md](docs/stage7-long30.md) — 30 s by running the 10 s model at 3×
   length: one steady scene with local motion; resolution is inherent to Ovi's VAE.
 
@@ -292,7 +324,7 @@ both streams. What it found:
 
 | Question | Answer |
 |---|---|
-| Can Ovi be made faster without losing quality? | **yes, by configuration** — 30 steps is 1.42× (5s) / 1.53× (10s) with quality held |
+| Can Ovi be made faster without losing quality? | **yes, by configuration** — 30 steps is 1.42× (5s) / 1.53× (10s); on 9 clips it is within re-draw noise of a 48-step reference. Ovi's own README documents the knob |
 | Does 20 vs 30 steps leave a measurable trace inside the model? | **yes** — 2–8.5% relative residual difference, growing toward low noise |
 | Is that trace concentrated in a few weight columns (a WSP edit target)? | **no** — best alignment 0.112 video / 0.077 audio vs 0.018 chance; flat plateaus |
 | Is it concentrated in a few attention heads? | **video: no** — indistinguishable from a 30-vs-40 null. **audio: weakly** — blocks 0, 3, 12 exceed the null 1.6–3×, one seed |
@@ -308,20 +340,77 @@ prompts) with a measured noise floor:
 
 | Question | Answer |
 |---|---|
-| Does a TBC-style adapter speed Ovi up? | **yes**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30 |
-| Is 12 steps + adapter better than plain 12 steps? | **yes**: closer to the 48-step teacher on 6 of 9 clips (interval excludes zero), and recovers most of the prompt adherence 12 steps loses (CLIP margin 18.7 vs 16.4; teacher 19.5) |
-| Is it as good as 30 steps? | **no**: 30 steps is closer to the teacher on all 6 unseen prompts |
+| Does a TBC-style adapter speed Ovi up? | **the speed comes from the step count**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30, with or without the adapter. The adapter adds no measurable cost per step; what it can add is quality at 12 steps |
+| Is 12 steps + adapter better than plain 12 steps? | **in direction, not settled**: closer to the 48-step teacher on 6 of 9 clips (exact test p = 0.074; 7 of 9, p = 0.016 on a symmetric distance), on 3–4 of the 6 unseen prompts, and most of the gain is one metric (sharpness). It recovers most of the CLIP prompt-adherence margin 12 steps loses (18.7 vs 16.4; teacher 19.5) |
+| Is it as good as 30 steps? | **no**: 30 steps is closer to the teacher on all 6 unseen prompts, and the adapter's video is softer than the teacher's (on 7 of 9 clips at 5 s; more at 10 s) |
+| Does it beat simply running a few more steps? | **not measured**: UniPC at 16–20 steps was never run on the same pod, so the adapter's speed-up at equal quality is unknown |
 | Did training on the adapter's own outputs help? | **no**: better on the training prompt, worse on unseen prompts (it overfits 10 training prompts) |
 | Can WSP find and fix what the adapter breaks? | **inconclusive**: the defect it localised (an end-of-clip flash) did not reproduce in 54 re-run clips on other hardware, so it was a property of particular samples |
 | Audio? | 12 steps does not hurt audio adherence (CLAP); no adapter fixed the slight brightening at 12 steps |
 
-The hypothesis holds in a narrower form than the brief: an adapter gives a real speed-up
-with part of the quality kept, but it does not match the slow setting, and the
-WSP-guided fix could not be confirmed. The project's last lesson is methodological:
-a single generated clip moves by ~0.2 on the quality distance when it is merely re-drawn,
-so differences smaller than that need several seeds per prompt and many more training
-prompts ([stage7-v3-5s.md](docs/stage7-v3-5s.md)).
+The hypothesis holds in a narrower form than the brief: cutting steps gives a real
+speed-up, and an adapter appears to keep part of the quality that costs, but it does not
+match the slow setting, and the WSP-guided fix could not be confirmed. The project's last
+lesson is methodological: a single generated clip moves by ~0.2 on the quality distance
+when it is merely re-drawn, so differences smaller than that need several seeds per
+prompt and many more training prompts ([stage7-v3-5s.md](docs/stage7-v3-5s.md)). The
+re-draw difference was seen between an A100 and an H100; its cause (kernel differences
+amplified by sampling, or different starting noise) was not tested.
+
+**What would settle it:** 10 prompts × 3 seeds on one pod, comparing a 48-step reference,
+UniPC at 12 / 16 / 20 / 30 steps and the adapter, about 5–6 H100-hours by this project's
+timings. No adapter weights are published until that is run.
+
+### Reproducing the Stage 7 statistics
+
+```bash
+python scripts/analyse_v3.py artifacts/v3_5s          # per-variant means
+python scripts/analyse_v3_paired.py artifacts/v3_5s   # paired tests, symmetric distance, per-metric breakdown
+```
+
+## Setup
+
+Secrets live in Doppler, never in files:
+
+```bash
+doppler run --project model-training --config dev -- wsp doctor
+```
+
+Required: `OPENROUTER_API_KEY`. Optional: `HF_TOKEN`, `WANDB_API_KEY`,
+`RUNPOD_MODEL_TRAINING_API_KEY`.
+
+```bash
+uv venv
+uv pip install -e ".[dev]"
+```
+
+## Usage
+
+```bash
+# Verify secrets are wired up
+doppler run --project model-training --config dev -- wsp doctor
+
+# List editor candidates and pricing
+wsp editors
+
+# Send one prompt to an editor, report latency and cost
+doppler run --project model-training --config dev -- wsp ping --editor deepseek
+
+# Summarize a checkpoint without loading the weights
+wsp inspect models/Qwen3.5-0.8B/model.safetensors
+
+# Render a tensor slice as text for an editor
+wsp slice models/Qwen3.5-0.8B/model.safetensors \
+    --tensor model.layers.15.mlp.down_proj.weight --cols 0:64
+```
+
+## Safety
+
+`wsp.runpod` refuses to modify any pod not recorded in `runs/pods.json`. The
+account holds a pod this project did not create; the guard rejects it before any
+network call is made, and that behaviour is pinned by tests.
 
 ## License
 
-Apache 2.0
+Apache 2.0; see [LICENSE](LICENSE). This covers the code and documents in this
+repository. Ovi, Qwen3.5-0.8B and the other models used are under their own licenses.

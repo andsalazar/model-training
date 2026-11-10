@@ -7,6 +7,11 @@ TBC describe a ~156k-parameter residual module in the early layers of a DiT. Thi
 leaves the model exactly as it was. One adapter per stream per chosen block, applied to
 the residual stream *before* that fusion block runs.
 
+"TBC-style" means sized and placed like TBC's description, nothing more. This is a
+standard bottleneck adapter. TBC's module is built from "localized spatial activations
+and a learned projection" derived from neural recordings and was trained alongside
+fine-tuning of the base model; they published no code, so none of that is reproduced.
+
 Ovi's fused loop calls ``self.single_fusion_block_forward`` by attribute (through
 ``gradient_checkpointing``), so replacing that attribute on the instance reaches every
 block in both the checkpointed and the plain path.

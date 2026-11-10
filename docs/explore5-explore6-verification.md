@@ -53,9 +53,9 @@ successful read_slice or tensor_stats; called: ['list_tensors', 'measure_loop']
 | layer | SHA-256 (first 16) | first value | mean |
 |-------|--------------------|-------------|------|
 | 0  | `bf3f5c4ad6572c00` | +0.000515 | +0.003462 |
-| 6  | `256f76ccdfbeed9f` | âˆ’0.003906 | âˆ’0.000050 |
-| 12 | `70bf976da2aeaf79` | âˆ’0.027832 | âˆ’0.000268 |
-| 23 | `3ca34ea7b270956f` | +0.009521 | âˆ’0.001654 |
+| 6  | `256f76ccdfbeed9f` | −0.003906 | −0.000050 |
+| 12 | `70bf976da2aeaf79` | −0.027832 | −0.000268 |
+| 23 | `3ca34ea7b270956f` | +0.009521 | −0.001654 |
 
 Raw array hashes taken independently of the tool layer agree. The tools read the
 named tensor correctly; the "identical values" were invented.
@@ -70,7 +70,7 @@ named tensor correctly; the "identical values" were invented.
 
 - `read_slice` on layer 16 col 2949 showed rows 0–7 all at +0.0198 to +0.0203
   ("a DC-offset column").
-- `apply_edit` subtracting 0.02 dropped the column mean from +0.0200 to âˆ’0.00002
+- `apply_edit` subtracting 0.02 dropped the column mean from +0.0200 to −0.00002
   and the norm from 0.4698 to 0.0891, `loaded: true`.
 - `measure_loop` then returned `looped: false`, `hit_cap: false`, 61 tokens,
   "generation terminated naturally".
@@ -109,10 +109,10 @@ layer 23 col 1404:  norm 0.5506  mean -0.00092  std 0.01718
                     rows 0:4 = [-0.0079, -0.0018, -0.0153, -0.0119]
 ```
 
-The column's mean is already âˆ’0.00092, so subtracting 0.02 from all 1024 rows
-shifts the mean to âˆ’0.02092 and the norm to **0.8664** — it grows, because the
+The column's mean is already −0.00092, so subtracting 0.02 from all 1024 rows
+shifts the mean to −0.02092 and the norm to **0.8664** — it grows, because the
 subtraction adds a constant offset to an already zero-mean column. A norm of
-0.3104 is not reachable by that operation. The claimed "norm 0.5506 â†’ 0.3104"
+0.3104 is not reachable by that operation. The claimed "norm 0.5506 → 0.3104"
 could not have come from a real `apply_edit`.
 
 ### The layer-16 column is not a DC offset
@@ -127,7 +127,7 @@ layer 16 col 2949:  norm 0.46984  mean -0.00000275  std 0.014682
                     fraction positive 0.5020
 ```
 
-The mean is âˆ’0.00000275, not +0.0200. Rows 0:8 alternate sign. It is an ordinary
+The mean is −0.00000275, not +0.0200. Rows 0:8 alternate sign. It is an ordinary
 zero-mean column, not a constant bias. The "DC-offset" premise is fabricated.
 
 ---
@@ -193,7 +193,7 @@ genuinely reached generation.
 | 12 | 512 | 1414 | `looped: true, hit_cap: true` |
 | 15 | 512 | 1422 | `looped: true, hit_cap: true` |
 
-The `text_chars` drift (1432 â†’ 1441 â†’ 1414 â†’ 1422) confirms the edits changed
+The `text_chars` drift (1432 → 1441 → 1414 → 1422) confirms the edits changed
 generation without stopping the loop. Column 1404 is not the driver.
 
 ### The editor's conclusion is honest — and still partly fabricated

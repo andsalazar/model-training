@@ -6,13 +6,15 @@
 # prompting.
 #
 # Usage:
-#   .\scripts\ovi_ssh.ps1 -Command "nvidia-smi"
-#   .\scripts\ovi_ssh.ps1 -Command "python3 --version" -TimeoutSeconds 60
+#   .\scripts\ovi_ssh.ps1 -HostName <pod-ip> -Port <ssh-port> -Command "nvidia-smi"
+#   .\scripts\ovi_ssh.ps1 -HostName <pod-ip> -Port <ssh-port> -Command "python3 --version" -TimeoutSeconds 60
 param(
     [Parameter(Mandatory = $true)]
     [string]$Command,
-    [string]$HostName = "213.173.108.44",
-    [int]$Port = 36586,
+    [Parameter(Mandatory = $true)]
+    [string]$HostName,
+    [Parameter(Mandatory = $true)]
+    [int]$Port,
     [string]$KeyPath = "$env:USERPROFILE\.ssh\id_ed25519",
     [int]$TimeoutSeconds = 900
 )

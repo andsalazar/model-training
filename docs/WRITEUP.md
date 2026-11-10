@@ -1,7 +1,8 @@
 # Deriving weight edits from behaviour: four stages, three failures, one mechanism
 
 *A record of trying to make MIT's Weight-Space Programming a portable method, and
-what actually worked.*
+what actually worked. Covers Stages 0–5 (Qwen3.5-0.8B, text). Stages 6–7 (Ovi, video
+and audio) are summarised in the [README](../README.md).*
 
 ## What this is
 
@@ -24,8 +25,10 @@ than a tool result, it is marked as such or excluded.
 
 **Claim:** the published weight edit produces the published effect.
 
-**Result: holds.** On MATH-500, base accuracy 4.0% → 64.0% edited. The paper
-reports 5.0% → 51.0%. The arithmetic reproduces exactly.
+**Result: holds, on the paper's 25-problem practice subset of MATH-500.** Base
+accuracy 4.0% → 64.0% edited; the paper's released scores for that subset are 5.0% →
+51.0%. The full 500 problems (the paper's headline 7.9% → 48.1%) were not run. The
+paper's parameter arithmetic reproduces exactly.
 
 Two details decided the result and are easy to get wrong: which layers are
 full-attention (15 and 19, not the ones the layer indices suggest), and how the
@@ -283,7 +286,7 @@ produced.
 ## Reproducing
 
 ```bash
-pytest tests -q          # 321 tests
+pytest tests -q          # no GPU needed
 ```
 
 Per-stage evidence: [stage0](stage0-findings.md), [stage1](stage1-findings.md),

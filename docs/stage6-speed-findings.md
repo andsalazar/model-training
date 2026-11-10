@@ -3,6 +3,25 @@
 *Measured results from the step sweep on Ovi at 960×960, one A100 80GB, one prompt,
 seed 100.*
 
+> **Correction, 2026-11-09.** Two readings in this document did not survive Stage 7.
+>
+> 1. **"The sharpness trend is real detail, not noise" is withdrawn.** Next to a 48-step
+>    reference the extra high-frequency energy at low step counts reads as residual noise
+>    ([stage7-pilot5s.md](stage7-pilot5s.md), [stage7-long30.md](stage7-long30.md)), and
+>    on low-texture prompts 12 steps is *softer* than the reference, not sharper
+>    ([stage7-v3-5s.md](stage7-v3-5s.md#statistical-recheck)). "Sharper output" below
+>    should not be read as an improvement, and the "improvement" verdicts in the
+>    metric-by-metric table rest on it.
+> 2. **"30 steps holds quality" is better supported by Stage 7 than by this sweep.** On 9
+>    clips, 30 steps sits 0.294 from a 48-step teacher on the four-metric distance, where
+>    re-drawing the teacher itself moves it by about 0.2, and its CLIP prompt-adherence
+>    margin matches the teacher's (19.44 against 19.45). This document's own evidence is
+>    one prompt, with the colour question replicated at three seeds.
+>
+> The timings, the denoise/decode split, the colour-drift replication and the audio
+> measurements are unaffected. Ovi's own README documents the same knob ("Lower (30-40) =
+> faster generation"); what this document adds is the measurement.
+
 ## The headline
 
 Cutting Ovi's denoising steps is the whole speed story, and it works: **30 steps is
