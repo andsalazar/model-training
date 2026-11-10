@@ -1,5 +1,9 @@
 # Stage 7: WSP as a second step, reading what the adapter does to Ovi
 
+> **Read with [stage7-v3-5s.md](stage7-v3-5s.md).** A re-run on different hardware showed
+> that re-drawing the same clip moves the quality distance by ~0.2, as large as most
+> differences reported here from 3–4 single clips. The flash this stage localised and fixed did not appear in any of 54 re-run clips, so it was a property of particular A100 samples; the ablation's logic stands for those clips, but the defect and its fix are not robust.
+
 *The adapter-first plan: put a TBC-style adapter on Ovi for speed, then use WSP-style
 reads to find and fix what it breaks. This is the second step, run on the 5 s v2 adapter
 (the one with the end-of-clip flash) and on the 10 s-trained adapter.*

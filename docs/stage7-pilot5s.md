@@ -1,5 +1,9 @@
 # Stage 7 pilot: a TBC-style adapter on Ovi 5 s, 12 steps
 
+> **Read with [stage7-v3-5s.md](stage7-v3-5s.md).** A re-run on different hardware showed
+> that re-drawing the same clip moves the quality distance by ~0.2, as large as most
+> differences reported here from 3–4 single clips. The direction of the result (the adapter improves on plain 12 steps) held up on 9 clips; the size is smaller.
+
 *First test of the adapter-first plan: train a small adapter so 12 sampling steps
 follow a 48-step run, then check held-out seeds for speed and for quality in both
 streams. One prompt for evaluation, three seeds, one training run.*

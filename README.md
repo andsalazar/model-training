@@ -260,6 +260,10 @@ the adapter breaks.
   the write map and attention read, then an ablation, localise the flash to a
   cross-modal interaction created in the first two steps; a targeted fix removes it at
   part of the gain.
+- [docs/stage7-v3-5s.md](docs/stage7-v3-5s.md) — **the re-evaluation**: 9 clips, prompt
+  adherence, training on the adapter's own outputs, and a noise floor. Re-drawing a clip
+  moves its quality distance by ~0.2, which overturns the flash and "beats 30 steps"
+  findings; the adapter's gain over plain 12 steps and its adherence recovery hold.
 - [docs/stage7-long30.md](docs/stage7-long30.md) — 30 s by running the 10 s model at 3×
   length: one steady scene with local motion; resolution is inherent to Ovi's VAE.
 
@@ -297,18 +301,24 @@ audio**: the speed goal was met by configuration without it.
 
 Stage 7 tested the reverse order, adapter first and WSP second:
 
+The final answers, after the v3 re-evaluation on 9 clips (3 river seeds + 6 unseen
+prompts) with a measured noise floor:
+
 | Question | Answer |
 |---|---|
 | Does a TBC-style adapter speed Ovi up? | **yes**: 12 steps is 2.17× (5 s) / 2.24× (10 s) faster than 30 |
-| At what quality, against a 48-step teacher? | 5 s, familiar prompt: **better than 30 steps** (0.193 vs 0.248); unseen prompt: an end-of-clip flash; 10 s: audio level at 30-step parity, video softer |
-| Can WSP find what the adapter breaks? | **partly**: the reads ruled out the obvious cause and flagged audio block 3 everywhere; an ablation they motivated localised the flash to a cross-modal interaction in the first two steps |
-| Can a targeted fix repair it? | **the artifact, yes**: holding the audio adapter off for two steps removes the flash on every clip, giving back part of the gain (river 0.252, back to 30-step level) |
+| Is 12 steps + adapter better than plain 12 steps? | **yes**: closer to the 48-step teacher on 6 of 9 clips (interval excludes zero), and recovers most of the prompt adherence 12 steps loses (CLIP margin 18.7 vs 16.4; teacher 19.5) |
+| Is it as good as 30 steps? | **no**: 30 steps is closer to the teacher on all 6 unseen prompts |
+| Did training on the adapter's own outputs help? | **no**: better on the training prompt, worse on unseen prompts (it overfits 10 training prompts) |
+| Can WSP find and fix what the adapter breaks? | **inconclusive**: the defect it localised (an end-of-clip flash) did not reproduce in 54 re-run clips on other hardware, so it was a property of particular samples |
+| Audio? | 12 steps does not hurt audio adherence (CLAP); no adapter fixed the slight brightening at 12 steps |
 
-The hypothesis holds in a narrower form than the brief: the speed-up is real, and
-adapter + WSP can find and repair a specific defect. It does not yet beat 30 steps across
-prompts. Both defects found trace to teacher-forced, one-interval training, which never
-sees how early writes compound through a rollout or across streams. The next lever is
-rollout-aware training with a distribution-matching term, not placement.
+The hypothesis holds in a narrower form than the brief: an adapter gives a real speed-up
+with part of the quality kept, but it does not match the slow setting, and the
+WSP-guided fix could not be confirmed. The project's last lesson is methodological:
+a single generated clip moves by ~0.2 on the quality distance when it is merely re-drawn,
+so differences smaller than that need several seeds per prompt and many more training
+prompts ([stage7-v3-5s.md](docs/stage7-v3-5s.md)).
 
 ## License
 

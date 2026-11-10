@@ -1,5 +1,9 @@
 # Stage 7 v2 at 5 s: a scaled-up adapter matches 30 steps on the river prompt
 
+> **Read with [stage7-v3-5s.md](stage7-v3-5s.md).** A re-run on different hardware showed
+> that re-drawing the same clip moves the quality distance by ~0.2, as large as most
+> differences reported here from 3–4 single clips. The "closer to the teacher than 30 steps" result and the end-of-clip flash did not reproduce (0 of 54 clips showed a flash); "better than plain 12 steps" did.
+
 *The pilot's adapter halved the 12-step quality gap. This run scales it up and adds an
 unseen prompt to the evaluation. Driver: `scripts/pod_adapter_run.py --set v2_5s`.*
 
