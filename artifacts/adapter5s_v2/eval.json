@@ -1,0 +1,410 @@
+[
+  {
+    "tag": "river_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 14.84397125121035,
+      "temporal_flicker": 0.17789081833457412,
+      "motion_coherence": 0.5555087724823601,
+      "colour_stability": 1.867822544725345,
+      "n_frames": 48,
+      "colour_r2": 0.463,
+      "colour_drift": 3.16
+    }
+  },
+  {
+    "tag": "river_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 113.7,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.004199,
+      "centroid_hz": 2522.7
+    },
+    "video_final_rel_err": 0.93723,
+    "audio_final_rel_err": 0.15791,
+    "quality": {
+      "sharpness": 32.22406483139088,
+      "temporal_flicker": 0.25444500027215416,
+      "motion_coherence": 0.4936387224335157,
+      "colour_stability": 1.5729874157508936,
+      "n_frames": 48,
+      "colour_r2": 0.412,
+      "colour_drift": 2.39
+    }
+  },
+  {
+    "tag": "river_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 113.4,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.004092,
+      "centroid_hz": 2574.6
+    },
+    "video_final_rel_err": 0.92438,
+    "audio_final_rel_err": 0.1819,
+    "quality": {
+      "sharpness": 39.232205261692236,
+      "temporal_flicker": 0.2339717828220697,
+      "motion_coherence": 0.37471385487426384,
+      "colour_stability": 1.3583281969860332,
+      "n_frames": 48,
+      "colour_r2": 0.656,
+      "colour_drift": 2.62
+    }
+  },
+  {
+    "tag": "river_s100",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 113.9,
+    "adapter_state": "/local/adapter5s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.005319,
+      "centroid_hz": 2518.1
+    },
+    "video_final_rel_err": 0.77596,
+    "audio_final_rel_err": 0.10003,
+    "quality": {
+      "sharpness": 16.31867367598044,
+      "temporal_flicker": 0.15873762527069524,
+      "motion_coherence": 0.5398422517469007,
+      "colour_stability": 1.2684012757279073,
+      "n_frames": 48,
+      "colour_r2": 0.162,
+      "colour_drift": 1.0
+    }
+  },
+  {
+    "tag": "river_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 244.7,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.005222,
+      "centroid_hz": 2466.5
+    },
+    "video_final_rel_err": 0.66567,
+    "audio_final_rel_err": 0.05449,
+    "quality": {
+      "sharpness": 23.236152901894368,
+      "temporal_flicker": 0.19637941867681663,
+      "motion_coherence": 0.4910668770672536,
+      "colour_stability": 2.55576791510634,
+      "n_frames": 48,
+      "colour_r2": 0.521,
+      "colour_drift": 4.53
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 6.961894460454084,
+      "temporal_flicker": 0.14565263398410755,
+      "motion_coherence": 0.653004817458547,
+      "colour_stability": 3.06937224556452,
+      "n_frames": 48,
+      "colour_r2": 0.326,
+      "colour_drift": 3.77
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 113.6,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.003745,
+      "centroid_hz": 2547.5
+    },
+    "video_final_rel_err": 1.08642,
+    "audio_final_rel_err": 0.36446,
+    "quality": {
+      "sharpness": 32.12934103080049,
+      "temporal_flicker": 0.14259104639011588,
+      "motion_coherence": 0.38735353854921123,
+      "colour_stability": 1.2449519115126468,
+      "n_frames": 48,
+      "colour_r2": 0.659,
+      "colour_drift": 2.33
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 113.4,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.003782,
+      "centroid_hz": 2603.6
+    },
+    "video_final_rel_err": 1.0681,
+    "audio_final_rel_err": 0.36233,
+    "quality": {
+      "sharpness": 36.6335716005377,
+      "temporal_flicker": 0.11441065749359368,
+      "motion_coherence": 0.25493522452648676,
+      "colour_stability": 1.294917866262895,
+      "n_frames": 48,
+      "colour_r2": 0.653,
+      "colour_drift": 2.47
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 113.7,
+    "adapter_state": "/local/adapter5s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.004968,
+      "centroid_hz": 2582.8
+    },
+    "video_final_rel_err": 0.76164,
+    "audio_final_rel_err": 0.25446,
+    "quality": {
+      "sharpness": 8.961693683257206,
+      "temporal_flicker": 0.09541728109820889,
+      "motion_coherence": 0.528304018679038,
+      "colour_stability": 1.7499682135459949,
+      "n_frames": 48,
+      "colour_r2": 0.25,
+      "colour_drift": 1.93
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 244.6,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.007478,
+      "centroid_hz": 2401.3
+    },
+    "video_final_rel_err": 0.73118,
+    "audio_final_rel_err": 0.08064,
+    "quality": {
+      "sharpness": 13.33987585379609,
+      "temporal_flicker": 0.16440860524522713,
+      "motion_coherence": 0.526583439150313,
+      "colour_stability": 3.017995020664712,
+      "n_frames": 48,
+      "colour_r2": 0.343,
+      "colour_drift": 4.03
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 12.937859147136434,
+      "temporal_flicker": 0.1825640006280294,
+      "motion_coherence": 0.5870963043798584,
+      "colour_stability": 3.7591196506890783,
+      "n_frames": 48,
+      "colour_r2": 0.268,
+      "colour_drift": 4.5
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 113.5,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.009924,
+      "centroid_hz": 2332.8
+    },
+    "video_final_rel_err": 0.9556,
+    "audio_final_rel_err": 0.25358,
+    "quality": {
+      "sharpness": 30.711090470880027,
+      "temporal_flicker": 0.28554393519401505,
+      "motion_coherence": 0.506243419771683,
+      "colour_stability": 2.185392384893131,
+      "n_frames": 48,
+      "colour_r2": 0.598,
+      "colour_drift": 4.07
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 113.7,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.008254,
+      "centroid_hz": 2424.0
+    },
+    "video_final_rel_err": 0.94528,
+    "audio_final_rel_err": 0.33919,
+    "quality": {
+      "sharpness": 35.6406513091647,
+      "temporal_flicker": 0.2572540226727376,
+      "motion_coherence": 0.41468474703295677,
+      "colour_stability": 1.4818642893107103,
+      "n_frames": 48,
+      "colour_r2": 0.365,
+      "colour_drift": 2.16
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 113.7,
+    "adapter_state": "/local/adapter5s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.012659,
+      "centroid_hz": 2333.9
+    },
+    "video_final_rel_err": 0.82309,
+    "audio_final_rel_err": 0.20496,
+    "quality": {
+      "sharpness": 13.696942588930842,
+      "temporal_flicker": 0.18851028041469098,
+      "motion_coherence": 0.5878498336258206,
+      "colour_stability": 2.194717016725494,
+      "n_frames": 48,
+      "colour_r2": 0.852,
+      "colour_drift": 4.82
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 244.6,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.014414,
+      "centroid_hz": 2245.8
+    },
+    "video_final_rel_err": 0.69339,
+    "audio_final_rel_err": 0.16168,
+    "quality": {
+      "sharpness": 17.139594484257362,
+      "temporal_flicker": 0.20432392301981608,
+      "motion_coherence": 0.5553580421843425,
+      "colour_stability": 3.500116142037377,
+      "n_frames": 48,
+      "colour_r2": 0.773,
+      "colour_drift": 7.61
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 20.09373015881989,
+      "temporal_flicker": 0.027557138844605557,
+      "motion_coherence": 0.5615444477639676,
+      "colour_stability": 0.4543219193059765,
+      "n_frames": 48,
+      "colour_r2": 0.087,
+      "colour_drift": 0.23
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_unipc12",
+    "steps": 12,
+    "seconds": 113.5,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.113513,
+      "centroid_hz": 1691.0
+    },
+    "video_final_rel_err": 0.78,
+    "audio_final_rel_err": 0.44034,
+    "quality": {
+      "sharpness": 44.68429434568674,
+      "temporal_flicker": 0.03663881421527756,
+      "motion_coherence": 0.4296424699443407,
+      "colour_stability": 0.45287835820074446,
+      "n_frames": 48,
+      "colour_r2": 0.145,
+      "colour_drift": 0.47
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_euler12",
+    "steps": 12,
+    "seconds": 113.5,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.083965,
+      "centroid_hz": 1655.7
+    },
+    "video_final_rel_err": 0.80455,
+    "audio_final_rel_err": 0.51978,
+    "quality": {
+      "sharpness": 49.832020630031124,
+      "temporal_flicker": 0.040438091711190685,
+      "motion_coherence": 0.33645172275164625,
+      "colour_stability": 0.4437277036247907,
+      "n_frames": 48,
+      "colour_r2": 0.119,
+      "colour_drift": 0.35
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 113.5,
+    "adapter_state": "/local/adapter5s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.068928,
+      "centroid_hz": 1732.4
+    },
+    "video_final_rel_err": 0.72831,
+    "audio_final_rel_err": 0.44208,
+    "quality": {
+      "sharpness": 27.018824536795428,
+      "temporal_flicker": 0.051906544056498666,
+      "motion_coherence": 0.5285511084875592,
+      "colour_stability": 5.39615277583889,
+      "n_frames": 48,
+      "colour_r2": 0.095,
+      "colour_drift": 2.14
+    }
+  },
+  {
+    "tag": "violin_s100",
+    "variant": "base_unipc30",
+    "steps": 30,
+    "seconds": 244.5,
+    "adapter_state": null,
+    "audio": {
+      "rms": 0.098939,
+      "centroid_hz": 1691.9
+    },
+    "video_final_rel_err": 0.58784,
+    "audio_final_rel_err": 0.36031,
+    "quality": {
+      "sharpness": 28.75330094222212,
+      "temporal_flicker": 0.025760432985171316,
+      "motion_coherence": 0.5254865735415352,
+      "colour_stability": 0.5838768594031952,
+      "n_frames": 48,
+      "colour_r2": 0.577,
+      "colour_drift": 1.15
+    }
+  }
+]

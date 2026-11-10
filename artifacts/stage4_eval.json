@@ -1,0 +1,418 @@
+{
+  "adapter": "/workspace/stage4_adapter",
+  "probes": [
+    "arith_12x11",
+    "arith_17x23",
+    "arith_9x8",
+    "logic_syllogism",
+    "heldout_capital",
+    "heldout_symbol",
+    "guard_poem",
+    "guard_hammer",
+    "guard_blue_sky"
+  ],
+  "base": [
+    {
+      "probe": "arith_12x11",
+      "kind": "target",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1609,
+      "text_chars": 5565
+    },
+    {
+      "probe": "arith_17x23",
+      "kind": "target",
+      "expected": "391",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 908,
+      "text_chars": 2559
+    },
+    {
+      "probe": "arith_9x8",
+      "kind": "target",
+      "expected": "72",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 181,
+      "text_chars": 583
+    },
+    {
+      "probe": "logic_syllogism",
+      "kind": "target",
+      "expected": "yes",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 508,
+      "text_chars": 1651
+    },
+    {
+      "probe": "heldout_capital",
+      "kind": "heldout",
+      "expected": "Tokyo",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1385,
+      "text_chars": 5456
+    },
+    {
+      "probe": "heldout_symbol",
+      "kind": "heldout",
+      "expected": "Au",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 251,
+      "text_chars": 894
+    },
+    {
+      "probe": "guard_poem",
+      "kind": "guard",
+      "expected": "sea",
+      "correct": true,
+      "looped": false,
+      "hit_cap": true,
+      "repeated": false,
+      "tokens": 2048,
+      "text_chars": 7529
+    },
+    {
+      "probe": "guard_hammer",
+      "kind": "guard",
+      "expected": "nail",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 350,
+      "text_chars": 1291
+    },
+    {
+      "probe": "guard_blue_sky",
+      "kind": "guard",
+      "expected": "light",
+      "correct": true,
+      "looped": false,
+      "hit_cap": true,
+      "repeated": false,
+      "tokens": 2048,
+      "text_chars": 10203
+    }
+  ],
+  "with_adapter": [
+    {
+      "probe": "arith_12x11",
+      "kind": "target",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 3,
+      "text_chars": 3
+    },
+    {
+      "probe": "arith_17x23",
+      "kind": "target",
+      "expected": "391",
+      "correct": false,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 3,
+      "text_chars": 3
+    },
+    {
+      "probe": "arith_9x8",
+      "kind": "target",
+      "expected": "72",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 2,
+      "text_chars": 2
+    },
+    {
+      "probe": "logic_syllogism",
+      "kind": "target",
+      "expected": "yes",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1,
+      "text_chars": 3
+    },
+    {
+      "probe": "heldout_capital",
+      "kind": "heldout",
+      "expected": "Tokyo",
+      "correct": false,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1,
+      "text_chars": 3
+    },
+    {
+      "probe": "heldout_symbol",
+      "kind": "heldout",
+      "expected": "Au",
+      "correct": false,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1,
+      "text_chars": 4
+    },
+    {
+      "probe": "guard_poem",
+      "kind": "guard",
+      "expected": "sea",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1,
+      "text_chars": 3
+    },
+    {
+      "probe": "guard_hammer",
+      "kind": "guard",
+      "expected": "nail",
+      "correct": false,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1,
+      "text_chars": 3
+    },
+    {
+      "probe": "guard_blue_sky",
+      "kind": "guard",
+      "expected": "light",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1,
+      "text_chars": 5
+    }
+  ],
+  "adapter_verdict": {
+    "status": "harmful",
+    "harmful": [
+      "arith_17x23",
+      "heldout_capital",
+      "heldout_symbol",
+      "guard_hammer"
+    ],
+    "guard_harmful": [
+      "guard_hammer"
+    ],
+    "improved": [
+      "arith_12x11",
+      "arith_9x8",
+      "logic_syllogism",
+      "guard_poem",
+      "guard_blue_sky"
+    ],
+    "verdicts": [
+      {
+        "probe": "arith_12x11",
+        "kind": "target",
+        "baseline": 1609,
+        "edited": 3,
+        "state": "improved"
+      },
+      {
+        "probe": "arith_17x23",
+        "kind": "target",
+        "baseline": 908,
+        "edited": 3,
+        "state": "broken"
+      },
+      {
+        "probe": "arith_9x8",
+        "kind": "target",
+        "baseline": 181,
+        "edited": 2,
+        "state": "improved"
+      },
+      {
+        "probe": "logic_syllogism",
+        "kind": "target",
+        "baseline": 508,
+        "edited": 1,
+        "state": "improved"
+      },
+      {
+        "probe": "heldout_capital",
+        "kind": "heldout",
+        "baseline": 1385,
+        "edited": 1,
+        "state": "broken"
+      },
+      {
+        "probe": "heldout_symbol",
+        "kind": "heldout",
+        "baseline": 251,
+        "edited": 1,
+        "state": "broken"
+      },
+      {
+        "probe": "guard_poem",
+        "kind": "guard",
+        "baseline": 2048,
+        "edited": 1,
+        "state": "improved"
+      },
+      {
+        "probe": "guard_hammer",
+        "kind": "guard",
+        "baseline": 350,
+        "edited": 1,
+        "state": "broken"
+      },
+      {
+        "probe": "guard_blue_sky",
+        "kind": "guard",
+        "baseline": 2048,
+        "edited": 1,
+        "state": "improved"
+      }
+    ]
+  },
+  "ablated": [
+    {
+      "probe": "arith_12x11",
+      "kind": "target",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1609,
+      "text_chars": 5565
+    },
+    {
+      "probe": "arith_17x23",
+      "kind": "target",
+      "expected": "391",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 908,
+      "text_chars": 2559
+    },
+    {
+      "probe": "arith_9x8",
+      "kind": "target",
+      "expected": "72",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 181,
+      "text_chars": 583
+    },
+    {
+      "probe": "logic_syllogism",
+      "kind": "target",
+      "expected": "yes",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 508,
+      "text_chars": 1651
+    },
+    {
+      "probe": "heldout_capital",
+      "kind": "heldout",
+      "expected": "Tokyo",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 1385,
+      "text_chars": 5456
+    },
+    {
+      "probe": "heldout_symbol",
+      "kind": "heldout",
+      "expected": "Au",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 251,
+      "text_chars": 894
+    },
+    {
+      "probe": "guard_poem",
+      "kind": "guard",
+      "expected": "sea",
+      "correct": true,
+      "looped": false,
+      "hit_cap": true,
+      "repeated": false,
+      "tokens": 2048,
+      "text_chars": 7529
+    },
+    {
+      "probe": "guard_hammer",
+      "kind": "guard",
+      "expected": "nail",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 350,
+      "text_chars": 1291
+    },
+    {
+      "probe": "guard_blue_sky",
+      "kind": "guard",
+      "expected": "light",
+      "correct": true,
+      "looped": false,
+      "hit_cap": true,
+      "repeated": false,
+      "tokens": 2048,
+      "text_chars": 10203
+    }
+  ],
+  "ablation_drift": [],
+  "heldout": [
+    {
+      "probe": "heldout_capital",
+      "kind": "heldout",
+      "baseline": 1385,
+      "edited": 1,
+      "state": "broken"
+    },
+    {
+      "probe": "heldout_symbol",
+      "kind": "heldout",
+      "baseline": 251,
+      "edited": 1,
+      "state": "broken"
+    }
+  ]
+}

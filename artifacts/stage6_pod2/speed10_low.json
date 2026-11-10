@@ -1,0 +1,244 @@
+{
+  "prompt": "A river flowing through a forest, camera slowly panning. Audio: gentle water sounds and birdsong.",
+  "default_steps": 16,
+  "results": [
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "seed": 100,
+      "run": {
+        "returncode": 0,
+        "seconds": 462.17,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10/gen_960x960_10s_16steps_s100.log"
+      },
+      "video": "/local/ovi_speed10/960x960_10s_16steps_s100/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_100_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 28.537434220925395,
+        "temporal_flicker": 0.3118573241243783,
+        "motion_coherence": 0.5345234717285791,
+        "colour_stability": 6.452201230588614,
+        "n_frames": 48
+      }
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "seed": 200,
+      "run": {
+        "returncode": 0,
+        "seconds": 458.91,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10/gen_960x960_10s_16steps_s200.log"
+      },
+      "video": "/local/ovi_speed10/960x960_10s_16steps_s200/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_200_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 19.60536125036858,
+        "temporal_flicker": 0.2549337887916437,
+        "motion_coherence": 0.6204248359846639,
+        "colour_stability": 4.47537268114161,
+        "n_frames": 48
+      }
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "seed": 300,
+      "run": {
+        "returncode": 0,
+        "seconds": 457.56,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10/gen_960x960_10s_16steps_s300.log"
+      },
+      "video": "/local/ovi_speed10/960x960_10s_16steps_s300/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_300_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 20.8442619937107,
+        "temporal_flicker": 0.292427073627008,
+        "motion_coherence": 0.6312606458421799,
+        "colour_stability": 4.586058341370491,
+        "n_frames": 48
+      }
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "seed": 100,
+      "run": {
+        "returncode": 0,
+        "seconds": 383.62,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10/gen_960x960_10s_12steps_s100.log"
+      },
+      "video": "/local/ovi_speed10/960x960_10s_12steps_s100/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_100_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 27.699885205828167,
+        "temporal_flicker": 0.30394937171014613,
+        "motion_coherence": 0.5151337587494514,
+        "colour_stability": 6.1720492970594165,
+        "n_frames": 48
+      }
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "seed": 200,
+      "run": {
+        "returncode": 0,
+        "seconds": 385.93,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10/gen_960x960_10s_12steps_s200.log"
+      },
+      "video": "/local/ovi_speed10/960x960_10s_12steps_s200/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_200_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 17.967636858032158,
+        "temporal_flicker": 0.23645057966250874,
+        "motion_coherence": 0.6053076872394019,
+        "colour_stability": 4.086165119684278,
+        "n_frames": 48
+      }
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "seed": 300,
+      "run": {
+        "returncode": 0,
+        "seconds": 380.98,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10/gen_960x960_10s_12steps_s300.log"
+      },
+      "video": "/local/ovi_speed10/960x960_10s_12steps_s300/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_300_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 21.479829372075287,
+        "temporal_flicker": 0.26320416022768867,
+        "motion_coherence": 0.5797126172394138,
+        "colour_stability": 4.410595538028134,
+        "n_frames": 48
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "seed": 100,
+      "seconds": 462.17,
+      "speedup_vs_default": 1.0,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 1.0,
+        "temporal_flicker": 1.0,
+        "motion_coherence": 1.0,
+        "colour_stability": 1.0
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "seed": 200,
+      "seconds": 458.91,
+      "speedup_vs_default": 1.0,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 1.0,
+        "temporal_flicker": 1.0,
+        "motion_coherence": 1.0,
+        "colour_stability": 1.0
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "seed": 300,
+      "seconds": 457.56,
+      "speedup_vs_default": 1.0,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 1.0,
+        "temporal_flicker": 1.0,
+        "motion_coherence": 1.0,
+        "colour_stability": 1.0
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "seed": 100,
+      "seconds": 383.62,
+      "speedup_vs_default": 1.205,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 0.9707,
+        "temporal_flicker": 0.9746,
+        "motion_coherence": 0.9637,
+        "colour_stability": 0.9566
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "seed": 200,
+      "seconds": 385.93,
+      "speedup_vs_default": 1.189,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 0.9165,
+        "temporal_flicker": 0.9275,
+        "motion_coherence": 0.9756,
+        "colour_stability": 0.913
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "seed": 300,
+      "seconds": 380.98,
+      "speedup_vs_default": 1.201,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 1.0305,
+        "temporal_flicker": 0.9001,
+        "motion_coherence": 0.9183,
+        "colour_stability": 0.9617
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    }
+  ],
+  "summary": [
+    {
+      "horizon": "960x960_10s",
+      "steps": 12,
+      "n_seeds": 3,
+      "acceptable_all_seeds": true,
+      "acceptable_any_seed": true,
+      "outside_counts": {},
+      "speedup_median": 1.201
+    },
+    {
+      "horizon": "960x960_10s",
+      "steps": 16,
+      "n_seeds": 3,
+      "acceptable_all_seeds": true,
+      "acceptable_any_seed": true,
+      "outside_counts": {},
+      "speedup_median": 1.0
+    }
+  ]
+}

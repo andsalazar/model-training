@@ -1,0 +1,268 @@
+[
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 5.824,
+    "mean_r2": 0.395,
+    "mean_abs_drift": 8.76,
+    "monotone_drift": false,
+    "verdict": "oscillation - frames vary around a stable mean, no trend",
+    "channels": {
+      "R": {
+        "mean": 83.72,
+        "std": 5.88,
+        "slope_per_frame": -0.0782,
+        "r2": 0.216,
+        "early": 86.01,
+        "late": 79.17,
+        "drift": -6.84
+      },
+      "G": {
+        "mean": 171.5,
+        "std": 4.25,
+        "slope_per_frame": -0.0553,
+        "r2": 0.207,
+        "early": 174.97,
+        "late": 170.8,
+        "drift": -4.17
+      },
+      "B": {
+        "mean": 97.13,
+        "std": 7.34,
+        "slope_per_frame": -0.1835,
+        "r2": 0.762,
+        "early": 103.89,
+        "late": 88.62,
+        "drift": -15.27
+      }
+    }
+  },
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 4.003,
+    "mean_r2": 0.537,
+    "mean_abs_drift": 6.28,
+    "monotone_drift": true,
+    "verdict": "drift - colour trends monotonically across the rollout",
+    "channels": {
+      "R": {
+        "mean": 85.09,
+        "std": 3.1,
+        "slope_per_frame": -0.0558,
+        "r2": 0.395,
+        "early": 88.74,
+        "late": 84.13,
+        "drift": -4.62
+      },
+      "G": {
+        "mean": 171.23,
+        "std": 4.35,
+        "slope_per_frame": 0.1028,
+        "r2": 0.68,
+        "early": 166.53,
+        "late": 174.22,
+        "drift": 7.68
+      },
+      "B": {
+        "mean": 101.34,
+        "std": 4.56,
+        "slope_per_frame": 0.0956,
+        "r2": 0.537,
+        "early": 98.21,
+        "late": 104.76,
+        "drift": 6.55
+      }
+    }
+  },
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 4.319,
+    "mean_r2": 0.64,
+    "mean_abs_drift": 7.93,
+    "monotone_drift": true,
+    "verdict": "drift - colour trends monotonically across the rollout",
+    "channels": {
+      "R": {
+        "mean": 82.6,
+        "std": 3.66,
+        "slope_per_frame": 0.0809,
+        "r2": 0.598,
+        "early": 78.45,
+        "late": 84.74,
+        "drift": 6.29
+      },
+      "G": {
+        "mean": 164.19,
+        "std": 4.29,
+        "slope_per_frame": 0.0936,
+        "r2": 0.58,
+        "early": 159.48,
+        "late": 166.6,
+        "drift": 7.12
+      },
+      "B": {
+        "mean": 98.41,
+        "std": 5.01,
+        "slope_per_frame": 0.1234,
+        "r2": 0.741,
+        "early": 92.59,
+        "late": 102.97,
+        "drift": 10.38
+      }
+    }
+  },
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 6.191,
+    "mean_r2": 0.525,
+    "mean_abs_drift": 11.24,
+    "monotone_drift": true,
+    "verdict": "drift - colour trends monotonically across the rollout",
+    "channels": {
+      "R": {
+        "mean": 82.38,
+        "std": 4.84,
+        "slope_per_frame": -0.0928,
+        "r2": 0.448,
+        "early": 85.52,
+        "late": 77.34,
+        "drift": -8.19
+      },
+      "G": {
+        "mean": 169.53,
+        "std": 4.31,
+        "slope_per_frame": -0.0743,
+        "r2": 0.363,
+        "early": 173.28,
+        "late": 167.55,
+        "drift": -5.73
+      },
+      "B": {
+        "mean": 94.26,
+        "std": 9.42,
+        "slope_per_frame": -0.2359,
+        "r2": 0.764,
+        "early": 102.65,
+        "late": 82.84,
+        "drift": -19.81
+      }
+    }
+  },
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 4.395,
+    "mean_r2": 0.617,
+    "mean_abs_drift": 7.74,
+    "monotone_drift": true,
+    "verdict": "drift - colour trends monotonically across the rollout",
+    "channels": {
+      "R": {
+        "mean": 84.33,
+        "std": 4.4,
+        "slope_per_frame": -0.0861,
+        "r2": 0.467,
+        "early": 89.83,
+        "late": 82.63,
+        "drift": -7.19
+      },
+      "G": {
+        "mean": 169.18,
+        "std": 4.43,
+        "slope_per_frame": 0.1112,
+        "r2": 0.768,
+        "early": 164.39,
+        "late": 173.08,
+        "drift": 8.69
+      },
+      "B": {
+        "mean": 100.26,
+        "std": 4.35,
+        "slope_per_frame": 0.0978,
+        "r2": 0.616,
+        "early": 97.11,
+        "late": 104.45,
+        "drift": 7.35
+      }
+    }
+  },
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 4.533,
+    "mean_r2": 0.481,
+    "mean_abs_drift": 6.75,
+    "monotone_drift": false,
+    "verdict": "oscillation - frames vary around a stable mean, no trend",
+    "channels": {
+      "R": {
+        "mean": 83.7,
+        "std": 3.19,
+        "slope_per_frame": 0.0609,
+        "r2": 0.446,
+        "early": 80.58,
+        "late": 84.95,
+        "drift": 4.36
+      },
+      "G": {
+        "mean": 162.32,
+        "std": 4.69,
+        "slope_per_frame": 0.1054,
+        "r2": 0.616,
+        "early": 157.05,
+        "late": 164.87,
+        "drift": 7.83
+      },
+      "B": {
+        "mean": 98.65,
+        "std": 5.72,
+        "slope_per_frame": 0.1011,
+        "r2": 0.381,
+        "early": 94.28,
+        "late": 102.34,
+        "drift": 8.05
+      }
+    }
+  },
+  {
+    "file": "B",
+    "frames": 121,
+    "colour_stability": 6.418,
+    "mean_r2": 0.589,
+    "mean_abs_drift": 12.28,
+    "monotone_drift": true,
+    "verdict": "drift - colour trends monotonically across the rollout",
+    "channels": {
+      "R": {
+        "mean": 84.91,
+        "std": 4.24,
+        "slope_per_frame": -0.093,
+        "r2": 0.587,
+        "early": 88.8,
+        "late": 80.66,
+        "drift": -8.15
+      },
+      "G": {
+        "mean": 163.76,
+        "std": 4.68,
+        "slope_per_frame": -0.0868,
+        "r2": 0.42,
+        "early": 167.97,
+        "late": 161.38,
+        "drift": -6.59
+      },
+      "B": {
+        "mean": 94.82,
+        "std": 10.34,
+        "slope_per_frame": -0.2579,
+        "r2": 0.759,
+        "early": 104.39,
+        "late": 82.29,
+        "drift": -22.09
+      }
+    }
+  }
+]

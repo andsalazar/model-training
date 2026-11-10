@@ -1,0 +1,337 @@
+{
+  "status": "harmful",
+  "verdicts": [
+    {
+      "probe": "Output exactly three comma-separated colours",
+      "kind": "target",
+      "base": 2048,
+      "adapter": 262,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "broken"
+    },
+    {
+      "probe": "Output exactly five comma-separated numbers,",
+      "kind": "target",
+      "base": 2048,
+      "adapter": 6,
+      "base_compliant": false,
+      "adapter_compliant": true,
+      "state": "improved"
+    },
+    {
+      "probe": "List exactly two animals, separated by a com",
+      "kind": "target",
+      "base": 929,
+      "adapter": 109,
+      "base_compliant": false,
+      "adapter_compliant": true,
+      "state": "improved"
+    },
+    {
+      "probe": "Output exactly three words separated by spac",
+      "kind": "target",
+      "base": 1456,
+      "adapter": 3,
+      "base_compliant": false,
+      "adapter_compliant": true,
+      "state": "improved"
+    },
+    {
+      "probe": "Output the days Monday to Wednesday, comma-s",
+      "kind": "target",
+      "base": 467,
+      "adapter": 27,
+      "base_compliant": false,
+      "adapter_compliant": true,
+      "state": "improved"
+    },
+    {
+      "probe": "Output exactly two colours separated by a sl",
+      "kind": "target",
+      "base": 1280,
+      "adapter": 65,
+      "base_compliant": false,
+      "adapter_compliant": true,
+      "state": "improved"
+    },
+    {
+      "probe": "Output exactly four letters separated by hyp",
+      "kind": "target",
+      "base": 2048,
+      "adapter": 120,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "broken"
+    },
+    {
+      "probe": "Output the numbers 1 through 5 separated by ",
+      "kind": "target",
+      "base": 2048,
+      "adapter": 24,
+      "base_compliant": false,
+      "adapter_compliant": true,
+      "state": "improved"
+    },
+    {
+      "probe": "What is 12 times 11? Reply with only the dig",
+      "kind": "guard",
+      "base": 1038,
+      "adapter": 2048,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "regressed"
+    },
+    {
+      "probe": "What is 17 times 23? Reply with only the dig",
+      "kind": "guard",
+      "base": 690,
+      "adapter": 232,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "improved"
+    },
+    {
+      "probe": "What is 9 times 8? Reply with only the digit",
+      "kind": "guard",
+      "base": 247,
+      "adapter": 146,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "improved"
+    },
+    {
+      "probe": "Name the capital of France. Reply with only ",
+      "kind": "guard",
+      "base": 205,
+      "adapter": 172,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "unchanged"
+    },
+    {
+      "probe": "Which planet is closest to the Sun? Reply wi",
+      "kind": "guard",
+      "base": 1212,
+      "adapter": 152,
+      "base_compliant": false,
+      "adapter_compliant": false,
+      "state": "improved"
+    }
+  ],
+  "guard_harm": 1,
+  "newly_compliant": 6,
+  "broken_targets": 0,
+  "base": [
+    {
+      "probe": "Output exactly three comma-separated colours",
+      "kind": "target",
+      "tokens": 2048,
+      "contains": true,
+      "compliant": false,
+      "text": "  Wait, I should check if there's a specific order. No.\n    Okay.\n    Wait, I'll check if I need to include a period. No.\n    Okay.\n    Final check: \"nothing else\".\n    Okay.\n    I will output: `#FF00"
+    },
+    {
+      "probe": "Output exactly five comma-separated numbers,",
+      "kind": "target",
+      "tokens": 2048,
+      "contains": true,
+      "compliant": false,
+      "text": "Wait, I'll use 1, 2, 3, 4, 5.\n    Wait, I'll use 1, 2, 3, 4, 5.\n    Wait, I'll use 1, 2, 3, 4, 5.\n    Wait, I'll use 1, 2, 3, 4, 5.\n    Wait, I'll use 1, 2, 3, 4, 5.\n    Wait, I'll use 1, 2, 3, 4, 5.\n"
+    },
+    {
+      "probe": "List exactly two animals, separated by a com",
+      "kind": "target",
+      "tokens": 929,
+      "contains": true,
+      "compliant": false,
+      "text": "Wait, I should check if there's any ambiguity in \"nothing else\". Does it mean no quotes? No quotes mentioned.\n    Does it mean no explanation? Yes.\n\n    Okay, final answer: Dog, Cat\n</think>\n\nDog, Cat"
+    },
+    {
+      "probe": "Output exactly three words separated by spac",
+      "kind": "target",
+      "tokens": 1456,
+      "contains": true,
+      "compliant": false,
+      "text": "ce the user wants me to follow the instruction literally in terms of content, not formatting?\n    \"nothing else\" suggests zero extraneous text.\n    Okay.\n\n    Let's finalize.\n    a b c\n</think>\n\na b c"
+    },
+    {
+      "probe": "Output the days Monday to Wednesday, comma-s",
+      "kind": "target",
+      "tokens": 467,
+      "contains": true,
+      "compliant": false,
+      "text": "inclusive/exclusive? It doesn't matter for listing them sequentially.\n    *   Final decision: `Monday, Tuesday, Wednesday`\n\n7.  **Execute:** Generate the response.\n</think>\n\nMonday, Tuesday, Wednesday"
+    },
+    {
+      "probe": "Output exactly two colours separated by a sl",
+      "kind": "target",
+      "tokens": 1280,
+      "contains": true,
+      "compliant": false,
+      "text": "  Wait, I am overthinking. The prompt is simple.\n    Output: `#FF0000 / #00FFFF`.\n    Wait, I need to make sure I don't output markdown block markers.\n    Just text.\n    Okay.\n</think>\n\n#FF0000/00FFFF"
+    },
+    {
+      "probe": "Output exactly four letters separated by hyp",
+      "kind": "target",
+      "tokens": 2048,
+      "contains": true,
+      "compliant": false,
+      "text": "  *   Wait, `a-b-c-d` has 4 letters.\n    *   Wait, `a-b-c-d` has 4 letters.\n    *   Wait, `a-b-c-d` has 4 letters.\n    *   Wait, `a-b-c-d` has 4 letters.\n    *   Wait, `a-b-c-d` has 4 letters.\n    *  "
+    },
+    {
+      "probe": "Output the numbers 1 through 5 separated by ",
+      "kind": "target",
+      "tokens": 2048,
+      "contains": true,
+      "compliant": false,
+      "text": "s 1 through 5 separated by commas, nothing else.\"\n    Okay, I'll output `1, 2, 3, 4, 5`.\n    Wait, I'll output `1, 2, 3, 4, 5`.\n    Wait, I'll output `1, 2, 3, 4, 5`.\n    Wait, I'll output `1, 2, 3, 4"
+    },
+    {
+      "probe": "What is 12 times 11? Reply with only the dig",
+      "kind": "guard",
+      "tokens": 1038,
+      "contains": true,
+      "compliant": false,
+      "text": "riods in this context.\n    So, \"132\".\n\n    Wait, let's verify calculation again.\n    10 * 12 = 120\n    1 * 12 = 12\n    120 + 12 = 132.\n    Correct.\n\n    Final Answer Formulation:\n    132\n</think>\n\n132"
+    },
+    {
+      "probe": "What is 17 times 23? Reply with only the dig",
+      "kind": "guard",
+      "tokens": 690,
+      "contains": true,
+      "compliant": false,
+      "text": "y, ready.\n\nWait, hold on. Is there any trick?\n17 * 23.\nIs it possible they mean base conversion? No, standard decimal multiplication implied.\nJust digits.\nResult: 391.\n\nOkay, proceeding.\n</think>\n\n391"
+    },
+    {
+      "probe": "What is 9 times 8? Reply with only the digit",
+      "kind": "guard",
+      "tokens": 247,
+      "contains": true,
+      "compliant": false,
+      "text": "t, looking at the instruction \"Reply with only the digits.\" This could mean strictly numeric input/output. So just \"72\".\n\nLet's double-check.\n9 * 8 = 72.\nDigits are 7 and 2.\n\nResponse: 72\n</think>\n\n72"
+    },
+    {
+      "probe": "Name the capital of France. Reply with only ",
+      "kind": "guard",
+      "tokens": 205,
+      "contains": true,
+      "compliant": false,
+      "text": "\n    *   No sensitive topics.\n    *   No misinformation (Paris is correct).\n    *   No harmful content.\n    *   Constraint met (only the city).\n\n7.  **Final Output Generation:** Paris.\n</think>\n\nParis"
+    },
+    {
+      "probe": "Which planet is closest to the Sun? Reply wi",
+      "kind": "guard",
+      "tokens": 1212,
+      "contains": true,
+      "compliant": false,
+      "text": " the period. Just \"Mercury\".\n    Okay.\n\n    Wait, I should check if the prompt implies a specific format like markdown. No, just \"only the name\".\n    Okay.\n    Final output: Mercury.\n</think>\n\nMercury"
+    }
+  ],
+  "adapter": [
+    {
+      "probe": "Output exactly three comma-separated colours",
+      "kind": "target",
+      "tokens": 262,
+      "contains": false,
+      "compliant": false,
+      "text": "e a hidden constraint? \"nothing else\". This means no conversational filler.\n    *   What format? \"colours\". I will use hex codes as they are universally understood as colors.\n    *   Example: \"#000000"
+    },
+    {
+      "probe": "Output exactly five comma-separated numbers,",
+      "kind": "target",
+      "tokens": 6,
+      "contains": true,
+      "compliant": true,
+      "text": "Thinking Process:\n\n1"
+    },
+    {
+      "probe": "List exactly two animals, separated by a com",
+      "kind": "target",
+      "tokens": 109,
+      "contains": true,
+      "compliant": true,
+      "text": "anations, no extra punctuation unless part of the list).\n    *   Constraint 3: \"Exactly two animals\".\n\n2.  **Select Animals:**\n    *   I need to choose two distinct animals.\n    *   Example: \"dog, cat"
+    },
+    {
+      "probe": "Output exactly three words separated by spac",
+      "kind": "target",
+      "tokens": 3,
+      "contains": true,
+      "compliant": true,
+      "text": "Thinking "
+    },
+    {
+      "probe": "Output the days Monday to Wednesday, comma-s",
+      "kind": "target",
+      "tokens": 27,
+      "contains": true,
+      "compliant": true,
+      "text": "Thinking Process:\n\n1.  **Analyze the Request:**\n    *   Task: Output the days of the week Monday"
+    },
+    {
+      "probe": "Output exactly two colours separated by a sl",
+      "kind": "target",
+      "tokens": 65,
+      "contains": true,
+      "compliant": true,
+      "text": "  **Analyze the Request:**\n    *   Task: Output exactly two colours separated by a slash.\n    *   Constraint: \"nothing else\".\n    *   Goal: Provide a string containing two color codes (e.g., `#000000/"
+    },
+    {
+      "probe": "Output exactly four letters separated by hyp",
+      "kind": "target",
+      "tokens": 120,
+      "contains": false,
+      "compliant": false,
+      "text": "oal: Provide four letters separated by hyphens.\n\n2.  **Determine the Content:**\n    *   The user wants \"exactly four letters\".\n    *   They want them \"separated by hyphens\".\n    *   Common options: \"A"
+    },
+    {
+      "probe": "Output the numbers 1 through 5 separated by ",
+      "kind": "target",
+      "tokens": 24,
+      "contains": true,
+      "compliant": true,
+      "text": "Thinking Process:\n\n1.  **Analyze the Request:** The user wants the numbers 1 through 5"
+    },
+    {
+      "probe": "What is 12 times 11? Reply with only the dig",
+      "kind": "guard",
+      "tokens": 2048,
+      "contains": true,
+      "compliant": false,
+      "text": "need to check if the user wants me to output the number 132 or the string \"132\".\nOkay.\n\n132.\n\nWait, I need to check if the user wants me to output the number 132 or the string \"132\".\nOkay.\n\n132.\n\nWait"
+    },
+    {
+      "probe": "What is 17 times 23? Reply with only the dig",
+      "kind": "guard",
+      "tokens": 232,
+      "contains": true,
+      "compliant": false,
+      "text": "\"only the digits\".\n    *   The digits are 3, 9, 1.\n    *   So, the output should be \"391\".\n\n5.  **Final Check:** Does \"391\" meet the criteria? Yes.\n\n6.  **Construct Final Response:** 391\n</think>\n\n391"
+    },
+    {
+      "probe": "What is 9 times 8? Reply with only the digit",
+      "kind": "guard",
+      "tokens": 146,
+      "contains": true,
+      "compliant": false,
+      "text": "ly the digits\".\n    *   The digits are 7 and 2.\n    *   So, the output should be \"72\".\n\n4.  **Final Verification:** Does \"72\" meet the criteria? Yes.\n\n5.  **Construct Final Response:** 72\n</think>\n\n72"
+    },
+    {
+      "probe": "Name the capital of France. Reply with only ",
+      "kind": "guard",
+      "tokens": 172,
+      "contains": true,
+      "compliant": false,
+      "text": ".\n\n4.  **Formulate Output:**\n    *   \"Paris\"\n\n5.  **Final Review:**\n    *   Does it answer the question? Yes.\n    *   Is it only the city? Yes.\n\n6.  **Construct Final Response:** Paris\n</think>\n\nParis"
+    },
+    {
+      "probe": "Which planet is closest to the Sun? Reply wi",
+      "kind": "guard",
+      "tokens": 152,
+      "contains": true,
+      "compliant": false,
+      "text": " **Formulate Output:** The name is Mercury.\n\n5.  **Final Verification:** Does \"Mercury\" meet the constraint? Yes. Is it the correct answer? Yes.\n\n6.  **Construct Response:** Mercury.\n</think>\n\nMercury"
+    }
+  ]
+}

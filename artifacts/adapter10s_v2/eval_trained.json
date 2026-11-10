@@ -1,0 +1,110 @@
+[
+  {
+    "tag": "river_s100",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 14.790802519265997,
+      "temporal_flicker": 0.1992898544539131,
+      "motion_coherence": 0.6185450099754828,
+      "colour_stability": 2.932614797570818,
+      "n_frames": 48,
+      "colour_r2": 0.136,
+      "colour_drift": 2.12
+    }
+  },
+  {
+    "tag": "river_s100",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 281.2,
+    "adapter_state": "/local/adapter10s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.012549,
+      "centroid_hz": 2519.3
+    },
+    "video_final_rel_err": 0.65546,
+    "audio_final_rel_err": 0.08963,
+    "quality": {
+      "sharpness": 7.819365132130901,
+      "temporal_flicker": 0.1331715370792316,
+      "motion_coherence": 0.6985323938054453,
+      "colour_stability": 3.3726849688031195,
+      "n_frames": 48,
+      "colour_r2": 0.594,
+      "colour_drift": 6.36
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 12.751261781373897,
+      "temporal_flicker": 0.21596725491057575,
+      "motion_coherence": 0.683286257532528,
+      "colour_stability": 4.094980395440934,
+      "n_frames": 48,
+      "colour_r2": 0.121,
+      "colour_drift": 2.16
+    }
+  },
+  {
+    "tag": "river_s200",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 280.4,
+    "adapter_state": "/local/adapter10s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.005108,
+      "centroid_hz": 2747.9
+    },
+    "video_final_rel_err": 0.6545,
+    "audio_final_rel_err": 0.11683,
+    "quality": {
+      "sharpness": 6.107214715466065,
+      "temporal_flicker": 0.09888292213464532,
+      "motion_coherence": 0.7077935328651455,
+      "colour_stability": 1.3895164899815295,
+      "n_frames": 48,
+      "colour_r2": 0.524,
+      "colour_drift": 2.5
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "teacher48",
+    "steps": 48,
+    "quality": {
+      "sharpness": 14.624532788226803,
+      "temporal_flicker": 0.25560519401935955,
+      "motion_coherence": 0.6836633777317114,
+      "colour_stability": 3.0541752086910052,
+      "n_frames": 48,
+      "colour_r2": 0.098,
+      "colour_drift": 1.67
+    }
+  },
+  {
+    "tag": "river_s300",
+    "variant": "adapter_euler12",
+    "steps": 12,
+    "seconds": 280.3,
+    "adapter_state": "/local/adapter10s_v2/train/adapter_best.pt",
+    "audio": {
+      "rms": 0.019944,
+      "centroid_hz": 2389.2
+    },
+    "video_final_rel_err": 0.68793,
+    "audio_final_rel_err": 0.09577,
+    "quality": {
+      "sharpness": 6.291419029497224,
+      "temporal_flicker": 0.11002202426097961,
+      "motion_coherence": 0.6924975933888956,
+      "colour_stability": 3.326532258599754,
+      "n_frames": 48,
+      "colour_r2": 0.224,
+      "colour_drift": 3.33
+    }
+  }
+]

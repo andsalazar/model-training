@@ -1,0 +1,128 @@
+[
+  {
+    "tag": "violin_100",
+    "variant": "full",
+    "steps_seen": 12,
+    "seconds": 113.6,
+    "last8_max_jump": 17.79,
+    "body_max_jump": 0.77,
+    "end_luma_change": -36.07
+  },
+  {
+    "tag": "violin_100",
+    "variant": "video_only",
+    "steps_seen": 12,
+    "seconds": 113.1,
+    "last8_max_jump": 1.12,
+    "body_max_jump": 1.21,
+    "end_luma_change": -4.17
+  },
+  {
+    "tag": "violin_100",
+    "variant": "audio_only",
+    "steps_seen": 12,
+    "seconds": 112.6,
+    "last8_max_jump": 1.96,
+    "body_max_jump": 0.93,
+    "end_luma_change": 0.16
+  },
+  {
+    "tag": "violin_100",
+    "variant": "no_last2_steps",
+    "steps_seen": 12,
+    "seconds": 113.1,
+    "last8_max_jump": 18.18,
+    "body_max_jump": 0.79,
+    "end_luma_change": -36.64
+  },
+  {
+    "tag": "violin_100",
+    "variant": "no_first2_steps",
+    "steps_seen": 12,
+    "seconds": 112.7,
+    "last8_max_jump": 0.57,
+    "body_max_jump": 1.1,
+    "end_luma_change": -0.35
+  },
+  {
+    "tag": "violin_100",
+    "variant": "mask_last2",
+    "steps_seen": 12,
+    "seconds": 113.1,
+    "last8_max_jump": 4.25,
+    "body_max_jump": 0.65,
+    "end_luma_change": -5.7
+  },
+  {
+    "tag": "violin_100",
+    "variant": "base",
+    "steps_seen": 12,
+    "seconds": 112.8,
+    "last8_max_jump": 0.7,
+    "body_max_jump": 1.19,
+    "end_luma_change": -0.23
+  },
+  {
+    "tag": "river_100",
+    "variant": "full",
+    "steps_seen": 12,
+    "seconds": 113.0,
+    "last8_max_jump": 3.82,
+    "body_max_jump": 2.09,
+    "end_luma_change": 1.22
+  },
+  {
+    "tag": "river_100",
+    "variant": "video_only",
+    "steps_seen": 12,
+    "seconds": 113.1,
+    "last8_max_jump": 1.12,
+    "body_max_jump": 1.54,
+    "end_luma_change": -0.75
+  },
+  {
+    "tag": "river_100",
+    "variant": "audio_only",
+    "steps_seen": 12,
+    "seconds": 113.3,
+    "last8_max_jump": 0.97,
+    "body_max_jump": 0.94,
+    "end_luma_change": 0.84
+  },
+  {
+    "tag": "river_100",
+    "variant": "no_last2_steps",
+    "steps_seen": 12,
+    "seconds": 114.0,
+    "last8_max_jump": 3.73,
+    "body_max_jump": 2.13,
+    "end_luma_change": 1.46
+  },
+  {
+    "tag": "river_100",
+    "variant": "no_first2_steps",
+    "steps_seen": 12,
+    "seconds": 114.1,
+    "last8_max_jump": 0.78,
+    "body_max_jump": 0.54,
+    "end_luma_change": 0.67
+  },
+  {
+    "tag": "river_100",
+    "variant": "mask_last2",
+    "steps_seen": 12,
+    "seconds": 114.3,
+    "last8_max_jump": 1.94,
+    "body_max_jump": 1.61,
+    "end_luma_change": 0.36
+  },
+  {
+    "tag": "river_100",
+    "variant": "base",
+    "steps_seen": 12,
+    "seconds": 114.3,
+    "last8_max_jump": 0.87,
+    "body_max_jump": 0.69,
+    "end_luma_change": 0.17
+  }
+]

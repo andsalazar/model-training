@@ -1,0 +1,170 @@
+[
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_100_0.mp4",
+    "dir": "960x960_10s_12steps_s100",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 15524 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.00919,
+      "peak": 0.0737,
+      "centroid_mean_hz": 2563.9,
+      "centroid_slope_hz_per_frame": 0.062,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 156
+    }
+  },
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_200_0.mp4",
+    "dir": "960x960_10s_12steps_s200",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 10722 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.00368,
+      "peak": 0.0217,
+      "centroid_mean_hz": 2774.7,
+      "centroid_slope_hz_per_frame": -0.063,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 156
+    }
+  },
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_300_0.mp4",
+    "dir": "960x960_10s_12steps_s300",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 13713 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.01926,
+      "peak": 0.1238,
+      "centroid_mean_hz": 2351.4,
+      "centroid_slope_hz_per_frame": 0.069,
+      "centroid_r2": 0.003,
+      "n_spectral_frames": 156
+    }
+  },
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_100_0.mp4",
+    "dir": "960x960_10s_16steps_s100",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 16032 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.00949,
+      "peak": 0.0648,
+      "centroid_mean_hz": 2538.2,
+      "centroid_slope_hz_per_frame": 0.008,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 156
+    }
+  },
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_200_0.mp4",
+    "dir": "960x960_10s_16steps_s200",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 10322 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.00396,
+      "peak": 0.0227,
+      "centroid_mean_hz": 2718.6,
+      "centroid_slope_hz_per_frame": -0.092,
+      "centroid_r2": 0.003,
+      "n_spectral_frames": 156
+    }
+  },
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_300_0.mp4",
+    "dir": "960x960_10s_16steps_s300",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 12311 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.02232,
+      "peak": 0.1577,
+      "centroid_mean_hz": 2315.7,
+      "centroid_slope_hz_per_frame": 0.027,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 156
+    }
+  },
+  {
+    "file": "A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_100_0.mp4",
+    "dir": "960x960_10s_20steps",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 12734 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 10.05,
+      "rms": 0.00981,
+      "peak": 0.072,
+      "centroid_mean_hz": 2522.5,
+      "centroid_slope_hz_per_frame": 0.067,
+      "centroid_r2": 0.002,
+      "n_spectral_frames": 156
+    }
+  }
+]

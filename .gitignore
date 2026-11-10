@@ -33,5 +33,12 @@ build/
 .DS_Store
 Thumbs.db
 
-# Downloaded run evidence (large JSON from pod runs)
-artifacts/
+# Run evidence. The JSON behind the tables in docs/ is tracked so the numbers can be
+# checked; adapters, clips and logs are not. The three largest raw captures (6.6 MB)
+# stay local: their summaries (projection_*.json) are tracked.
+artifacts/**
+!artifacts/**/
+!artifacts/**/*.json
+artifacts/stage6_pod2/direction_audio_v2.json
+artifacts/stage6_pod2/direction_video_v2.json
+artifacts/stage6_pod2/direction_audio_full.json

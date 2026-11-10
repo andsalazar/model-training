@@ -1,0 +1,66 @@
+{
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "gpu_total_gb": 85.1,
+  "after_load_allocated_gb": 36.7,
+  "adapter_blocks": [
+    0,
+    1,
+    2
+  ],
+  "adapter_rank": 8,
+  "adapter_params": 313392,
+  "cases": [
+    {
+      "horizon": "5s",
+      "checkpointing": true,
+      "video_tokens": 27900,
+      "audio_tokens": 157,
+      "forward_only_s": 3.8,
+      "train_step_s": [
+        13.85,
+        13.87
+      ],
+      "peak_allocated_gb": 52.28,
+      "peak_reserved_gb": 55.28,
+      "loss": 1.7305186986923218,
+      "up_weight_grad_norms": {
+        "video_0.up.weight": 0.18977469205856323,
+        "audio_0.up.weight": 0.00737752253189683,
+        "video_1.up.weight": 0.20225924253463745,
+        "audio_1.up.weight": 0.01062073465436697,
+        "video_2.up.weight": 0.13717235624790192,
+        "audio_2.up.weight": 0.006330525502562523
+      },
+      "all_grads_nonzero": true
+    },
+    {
+      "horizon": "10s",
+      "checkpointing": true,
+      "video_tokens": 54900,
+      "audio_tokens": 314,
+      "forward_only_s": 9.76,
+      "train_step_s": [
+        39.71,
+        39.73
+      ],
+      "peak_allocated_gb": 67.33,
+      "peak_reserved_gb": 72.95,
+      "loss": 1.5780454874038696,
+      "up_weight_grad_norms": {
+        "video_0.up.weight": 0.24251195788383484,
+        "audio_0.up.weight": 0.004752215929329395,
+        "video_1.up.weight": 0.3176921308040619,
+        "audio_1.up.weight": 0.0063798874616622925,
+        "video_2.up.weight": 0.2321552038192749,
+        "audio_2.up.weight": 0.004356341902166605
+      },
+      "all_grads_nonzero": true
+    },
+    {
+      "horizon": "5s",
+      "checkpointing": false,
+      "error": "OOM: CUDA out of memory. Tried to allocate 328.00 MiB. GPU 0 has a total capacity of 79.25 GiB of which 235.94 MiB is free. Including non-PyTorch memory, this process has 79.01 GiB memory in use. Of the allocated memory 75.93 GiB is allocated by PyTorch, and 2.58 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)",
+      "peak_allocated_gb": 81.85
+    }
+  ]
+}

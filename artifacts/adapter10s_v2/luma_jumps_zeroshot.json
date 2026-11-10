@@ -1,0 +1,92 @@
+{
+ "adapter_euler12_river_s100.mp4": {
+  "max_jump": 2.06,
+  "at": 7,
+  "last8": 0.97,
+  "frames": 241
+ },
+ "adapter_euler12_river_s200.mp4": {
+  "max_jump": 0.66,
+  "at": 167,
+  "last8": 0.34,
+  "frames": 241
+ },
+ "adapter_euler12_river_s300.mp4": {
+  "max_jump": 1.72,
+  "at": 207,
+  "last8": 1.24,
+  "frames": 241
+ },
+ "base_euler12_river_s100.mp4": {
+  "max_jump": 5.7,
+  "at": 2,
+  "last8": 1.43,
+  "frames": 241
+ },
+ "base_euler12_river_s200.mp4": {
+  "max_jump": 1.24,
+  "at": 100,
+  "last8": 0.75,
+  "frames": 241
+ },
+ "base_euler12_river_s300.mp4": {
+  "max_jump": 2.03,
+  "at": 3,
+  "last8": 1.33,
+  "frames": 241
+ },
+ "base_unipc12_river_s100.mp4": {
+  "max_jump": 5.16,
+  "at": 2,
+  "last8": 0.61,
+  "frames": 241
+ },
+ "base_unipc12_river_s200.mp4": {
+  "max_jump": 1.07,
+  "at": 0,
+  "last8": 0.38,
+  "frames": 241
+ },
+ "base_unipc12_river_s300.mp4": {
+  "max_jump": 1.52,
+  "at": 1,
+  "last8": 0.71,
+  "frames": 241
+ },
+ "base_unipc30_river_s100.mp4": {
+  "max_jump": 2.83,
+  "at": 0,
+  "last8": 1.25,
+  "frames": 241
+ },
+ "base_unipc30_river_s200.mp4": {
+  "max_jump": 1.03,
+  "at": 55,
+  "last8": 0.39,
+  "frames": 241
+ },
+ "base_unipc30_river_s300.mp4": {
+  "max_jump": 2.49,
+  "at": 84,
+  "last8": 1.02,
+  "frames": 241
+ },
+ "teacher48_river_s100.mp4": {
+  "max_jump": 3.6,
+  "at": 1,
+  "last8": 0.68,
+  "frames": 241
+ },
+ "teacher48_river_s200.mp4": {
+  "max_jump": 0.68,
+  "at": 112,
+  "last8": 0.39,
+  "frames": 241
+ },
+ "teacher48_river_s300.mp4": {
+  "max_jump": 0.96,
+  "at": 84,
+  "last8": 0.63,
+  "frames": 241
+ }
+}

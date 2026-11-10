@@ -1,0 +1,55 @@
+{
+  "prompt": "A river flowing through a forest, camera slowly panning. Audio: gentle water sounds and birdsong.",
+  "default_steps": 20,
+  "results": [
+    {
+      "horizon": "960x960_10s",
+      "steps": 20,
+      "seed": 100,
+      "run": {
+        "returncode": 0,
+        "seconds": 533.97,
+        "peak_vram_gb": null,
+        "log": "/local/ovi_speed10_anchor/gen_960x960_10s_20steps.log"
+      },
+      "video": "/local/ovi_speed10_anchor/960x960_10s_20steps/A_river_flowing_through_a_forest,_camera_slowly_pa_960x960_100_0.mp4",
+      "n_frames": 48,
+      "quality": {
+        "sharpness": 23.290977966489702,
+        "temporal_flicker": 0.34436484152677344,
+        "motion_coherence": 0.6698384617031337,
+        "colour_stability": 6.767775047909143,
+        "n_frames": 48
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "horizon": "960x960_10s",
+      "steps": 20,
+      "seed": 100,
+      "seconds": 533.97,
+      "speedup_vs_default": 1.0,
+      "acceptable": true,
+      "ratios": {
+        "sharpness": 1.0,
+        "temporal_flicker": 1.0,
+        "motion_coherence": 1.0,
+        "colour_stability": 1.0
+      },
+      "outside": [],
+      "reason": "all 4 metrics within 10% of baseline"
+    }
+  ],
+  "summary": [
+    {
+      "horizon": "960x960_10s",
+      "steps": 20,
+      "n_seeds": 1,
+      "acceptable_all_seeds": true,
+      "acceptable_any_seed": true,
+      "outside_counts": {},
+      "speedup_median": 1.0
+    }
+  ]
+}

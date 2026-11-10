@@ -1,0 +1,822 @@
+{
+  "layer": 12,
+  "scale": 0.5,
+  "rank_cut_overlap": 1.0,
+  "rank_cut_columns": [
+    102,
+    987,
+    431,
+    914,
+    3252,
+    296,
+    989,
+    51,
+    1176,
+    2107,
+    2177,
+    178
+  ],
+  "ratios": {
+    "0.95": {
+      "k": 4,
+      "k_jittered": 4,
+      "overlap": 1.0,
+      "columns": [
+        102,
+        987,
+        431,
+        914
+      ],
+      "describe": "4 columns within 95% of the top score (0.132075) out of the best 200"
+    },
+    "0.9": {
+      "k": 4,
+      "k_jittered": 4,
+      "overlap": 1.0,
+      "columns": [
+        102,
+        987,
+        431,
+        914
+      ],
+      "describe": "4 columns within 90% of the top score (0.125123) out of the best 200"
+    },
+    "0.8": {
+      "k": 12,
+      "k_jittered": 12,
+      "overlap": 1.0,
+      "columns": [
+        102,
+        987,
+        431,
+        914,
+        3252,
+        296,
+        989,
+        51,
+        1176,
+        2107,
+        2177,
+        178
+      ],
+      "describe": "12 columns within 80% of the top score (0.111221) out of the best 200"
+    }
+  },
+  "effects": {
+    "0.95": {
+      "k": 4,
+      "columns": [
+        102,
+        987,
+        431,
+        914
+      ],
+      "baseline": [
+        {
+          "probe": "arith_target",
+          "expected": "132",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1869,
+          "text_chars": 6254
+        },
+        {
+          "probe": "arith_17x23",
+          "expected": "391",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 676,
+          "text_chars": 2244
+        },
+        {
+          "probe": "arith_347x28",
+          "expected": "9716",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 5699
+        },
+        {
+          "probe": "arith_9x8",
+          "expected": "72",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 181,
+          "text_chars": 583
+        },
+        {
+          "probe": "logic",
+          "expected": "yes",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 621,
+          "text_chars": 1999
+        },
+        {
+          "probe": "fact_planet",
+          "expected": "Mercury",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 482,
+          "text_chars": 1805
+        },
+        {
+          "probe": "guard_capital",
+          "expected": "Paris",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 232,
+          "text_chars": 794
+        },
+        {
+          "probe": "guard_hammer",
+          "expected": "nail",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1204,
+          "text_chars": 4584
+        },
+        {
+          "probe": "guard_poem",
+          "expected": "sea",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1971,
+          "text_chars": 7355
+        }
+      ],
+      "edited": [
+        {
+          "probe": "arith_target",
+          "expected": "132",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 323,
+          "text_chars": 888
+        },
+        {
+          "probe": "arith_17x23",
+          "expected": "391",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 6107
+        },
+        {
+          "probe": "arith_347x28",
+          "expected": "9716",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1798,
+          "text_chars": 4211
+        },
+        {
+          "probe": "arith_9x8",
+          "expected": "72",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 181,
+          "text_chars": 583
+        },
+        {
+          "probe": "logic",
+          "expected": "yes",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 298,
+          "text_chars": 970
+        },
+        {
+          "probe": "fact_planet",
+          "expected": "Mercury",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 354,
+          "text_chars": 1295
+        },
+        {
+          "probe": "guard_capital",
+          "expected": "Paris",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 231,
+          "text_chars": 808
+        },
+        {
+          "probe": "guard_hammer",
+          "expected": "nail",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 8391
+        },
+        {
+          "probe": "guard_poem",
+          "expected": "sea",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 7081
+        }
+      ],
+      "verdicts": [
+        {
+          "probe": "arith_target",
+          "baseline": 1869,
+          "edited": 323,
+          "state": "improved"
+        },
+        {
+          "probe": "arith_17x23",
+          "baseline": 676,
+          "edited": 2048,
+          "state": "regressed"
+        },
+        {
+          "probe": "arith_347x28",
+          "baseline": 2048,
+          "edited": 1798,
+          "state": "unchanged"
+        },
+        {
+          "probe": "arith_9x8",
+          "baseline": 181,
+          "edited": 181,
+          "state": "unchanged"
+        },
+        {
+          "probe": "logic",
+          "baseline": 621,
+          "edited": 298,
+          "state": "improved"
+        },
+        {
+          "probe": "fact_planet",
+          "baseline": 482,
+          "edited": 354,
+          "state": "improved"
+        },
+        {
+          "probe": "guard_capital",
+          "baseline": 232,
+          "edited": 231,
+          "state": "unchanged"
+        },
+        {
+          "probe": "guard_hammer",
+          "baseline": 1204,
+          "edited": 2048,
+          "state": "regressed"
+        },
+        {
+          "probe": "guard_poem",
+          "baseline": 1971,
+          "edited": 2048,
+          "state": "regressed"
+        }
+      ]
+    },
+    "0.9": {
+      "k": 4,
+      "columns": [
+        102,
+        987,
+        431,
+        914
+      ],
+      "baseline": [
+        {
+          "probe": "arith_target",
+          "expected": "132",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1869,
+          "text_chars": 6254
+        },
+        {
+          "probe": "arith_17x23",
+          "expected": "391",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 676,
+          "text_chars": 2244
+        },
+        {
+          "probe": "arith_347x28",
+          "expected": "9716",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 5699
+        },
+        {
+          "probe": "arith_9x8",
+          "expected": "72",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 181,
+          "text_chars": 583
+        },
+        {
+          "probe": "logic",
+          "expected": "yes",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 621,
+          "text_chars": 1999
+        },
+        {
+          "probe": "fact_planet",
+          "expected": "Mercury",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 482,
+          "text_chars": 1805
+        },
+        {
+          "probe": "guard_capital",
+          "expected": "Paris",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 232,
+          "text_chars": 794
+        },
+        {
+          "probe": "guard_hammer",
+          "expected": "nail",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1204,
+          "text_chars": 4584
+        },
+        {
+          "probe": "guard_poem",
+          "expected": "sea",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1971,
+          "text_chars": 7355
+        }
+      ],
+      "edited": [
+        {
+          "probe": "arith_target",
+          "expected": "132",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 323,
+          "text_chars": 888
+        },
+        {
+          "probe": "arith_17x23",
+          "expected": "391",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 6107
+        },
+        {
+          "probe": "arith_347x28",
+          "expected": "9716",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1798,
+          "text_chars": 4211
+        },
+        {
+          "probe": "arith_9x8",
+          "expected": "72",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 181,
+          "text_chars": 583
+        },
+        {
+          "probe": "logic",
+          "expected": "yes",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 298,
+          "text_chars": 970
+        },
+        {
+          "probe": "fact_planet",
+          "expected": "Mercury",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 354,
+          "text_chars": 1295
+        },
+        {
+          "probe": "guard_capital",
+          "expected": "Paris",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 231,
+          "text_chars": 808
+        },
+        {
+          "probe": "guard_hammer",
+          "expected": "nail",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 8391
+        },
+        {
+          "probe": "guard_poem",
+          "expected": "sea",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 7081
+        }
+      ],
+      "verdicts": [
+        {
+          "probe": "arith_target",
+          "baseline": 1869,
+          "edited": 323,
+          "state": "improved"
+        },
+        {
+          "probe": "arith_17x23",
+          "baseline": 676,
+          "edited": 2048,
+          "state": "regressed"
+        },
+        {
+          "probe": "arith_347x28",
+          "baseline": 2048,
+          "edited": 1798,
+          "state": "unchanged"
+        },
+        {
+          "probe": "arith_9x8",
+          "baseline": 181,
+          "edited": 181,
+          "state": "unchanged"
+        },
+        {
+          "probe": "logic",
+          "baseline": 621,
+          "edited": 298,
+          "state": "improved"
+        },
+        {
+          "probe": "fact_planet",
+          "baseline": 482,
+          "edited": 354,
+          "state": "improved"
+        },
+        {
+          "probe": "guard_capital",
+          "baseline": 232,
+          "edited": 231,
+          "state": "unchanged"
+        },
+        {
+          "probe": "guard_hammer",
+          "baseline": 1204,
+          "edited": 2048,
+          "state": "regressed"
+        },
+        {
+          "probe": "guard_poem",
+          "baseline": 1971,
+          "edited": 2048,
+          "state": "regressed"
+        }
+      ]
+    },
+    "0.8": {
+      "k": 12,
+      "columns": [
+        102,
+        987,
+        431,
+        914,
+        3252,
+        296,
+        989,
+        51,
+        1176,
+        2107,
+        2177,
+        178
+      ],
+      "baseline": [
+        {
+          "probe": "arith_target",
+          "expected": "132",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1869,
+          "text_chars": 6254
+        },
+        {
+          "probe": "arith_17x23",
+          "expected": "391",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 676,
+          "text_chars": 2244
+        },
+        {
+          "probe": "arith_347x28",
+          "expected": "9716",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 5699
+        },
+        {
+          "probe": "arith_9x8",
+          "expected": "72",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 181,
+          "text_chars": 583
+        },
+        {
+          "probe": "logic",
+          "expected": "yes",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 621,
+          "text_chars": 1999
+        },
+        {
+          "probe": "fact_planet",
+          "expected": "Mercury",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 482,
+          "text_chars": 1805
+        },
+        {
+          "probe": "guard_capital",
+          "expected": "Paris",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 232,
+          "text_chars": 794
+        },
+        {
+          "probe": "guard_hammer",
+          "expected": "nail",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1204,
+          "text_chars": 4584
+        },
+        {
+          "probe": "guard_poem",
+          "expected": "sea",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1971,
+          "text_chars": 7355
+        }
+      ],
+      "edited": [
+        {
+          "probe": "arith_target",
+          "expected": "132",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 791,
+          "text_chars": 2753
+        },
+        {
+          "probe": "arith_17x23",
+          "expected": "391",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 278,
+          "text_chars": 773
+        },
+        {
+          "probe": "arith_347x28",
+          "expected": "9716",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1375,
+          "text_chars": 3521
+        },
+        {
+          "probe": "arith_9x8",
+          "expected": "72",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 220,
+          "text_chars": 717
+        },
+        {
+          "probe": "logic",
+          "expected": "yes",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 436,
+          "text_chars": 1361
+        },
+        {
+          "probe": "fact_planet",
+          "expected": "Mercury",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 738,
+          "text_chars": 2754
+        },
+        {
+          "probe": "guard_capital",
+          "expected": "Paris",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 201,
+          "text_chars": 709
+        },
+        {
+          "probe": "guard_hammer",
+          "expected": "nail",
+          "correct": true,
+          "looped": false,
+          "hit_cap": true,
+          "repeated": false,
+          "tokens": 2048,
+          "text_chars": 7705
+        },
+        {
+          "probe": "guard_poem",
+          "expected": "sea",
+          "correct": true,
+          "looped": false,
+          "hit_cap": false,
+          "repeated": false,
+          "tokens": 1474,
+          "text_chars": 5270
+        }
+      ],
+      "verdicts": [
+        {
+          "probe": "arith_target",
+          "baseline": 1869,
+          "edited": 791,
+          "state": "improved"
+        },
+        {
+          "probe": "arith_17x23",
+          "baseline": 676,
+          "edited": 278,
+          "state": "improved"
+        },
+        {
+          "probe": "arith_347x28",
+          "baseline": 2048,
+          "edited": 1375,
+          "state": "improved"
+        },
+        {
+          "probe": "arith_9x8",
+          "baseline": 181,
+          "edited": 220,
+          "state": "unchanged"
+        },
+        {
+          "probe": "logic",
+          "baseline": 621,
+          "edited": 436,
+          "state": "improved"
+        },
+        {
+          "probe": "fact_planet",
+          "baseline": 482,
+          "edited": 738,
+          "state": "regressed"
+        },
+        {
+          "probe": "guard_capital",
+          "baseline": 232,
+          "edited": 201,
+          "state": "unchanged"
+        },
+        {
+          "probe": "guard_hammer",
+          "baseline": 1204,
+          "edited": 2048,
+          "state": "regressed"
+        },
+        {
+          "probe": "guard_poem",
+          "baseline": 1971,
+          "edited": 1474,
+          "state": "improved"
+        }
+      ]
+    }
+  }
+}

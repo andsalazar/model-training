@@ -1,0 +1,106 @@
+{
+  "model": "960x960_10s",
+  "native_latents": [
+    61,
+    314
+  ],
+  "latents": [
+    181,
+    942
+  ],
+  "seconds": 30,
+  "steps": 30,
+  "seed": 100,
+  "sampler": {
+    "solver_name": "unipc",
+    "shift": 5.0,
+    "video_guidance_scale": 4.0,
+    "audio_guidance_scale": 3.0,
+    "slg_layer": 11,
+    "video_negative_prompt": "jitter, bad hands, blur, distortion",
+    "audio_negative_prompt": "robotic, muffled, echo, distorted"
+  },
+  "generate_seconds": 3704.5,
+  "peak_allocated_gb": 66.17,
+  "latents_saved": true,
+  "frames": 721,
+  "audio_samples": 482304,
+  "analysis": {
+    "whole": {
+      "sharpness": 14.251094413591971,
+      "temporal_flicker": 0.07836683762775434,
+      "motion_coherence": 0.1604670986442885,
+      "colour_stability": 3.936367600424477,
+      "n_frames": 48,
+      "colour_r2": 0.082,
+      "colour_drift": 0.87,
+      "delta_entropy": {
+        "slope": 0.2400030520865215,
+        "r_squared": 0.19871183557101146,
+        "early_mean": 2992.0017489356314,
+        "late_mean": 3020.345555317915,
+        "collapsing": false
+      },
+      "audio": {
+        "rms": 0.00829,
+        "centroid_hz": 2470.3
+      }
+    },
+    "windows": [
+      {
+        "window": 0,
+        "seconds": [
+          0,
+          10
+        ],
+        "sharpness": 13.840630150947472,
+        "temporal_flicker": 0.07613195218546802,
+        "motion_coherence": 0.1677502111955153,
+        "colour_stability": 3.9499724067244837,
+        "n_frames": 48,
+        "colour_r2": 0.081,
+        "colour_drift": 1.42,
+        "audio": {
+          "rms": 0.00831,
+          "centroid_hz": 2476.1
+        }
+      },
+      {
+        "window": 1,
+        "seconds": [
+          10,
+          20
+        ],
+        "sharpness": 14.069731203864333,
+        "temporal_flicker": 0.0771199536035178,
+        "motion_coherence": 0.15560118260380035,
+        "colour_stability": 0.34893945153862305,
+        "n_frames": 48,
+        "colour_r2": 0.228,
+        "colour_drift": 0.34,
+        "audio": {
+          "rms": 0.00832,
+          "centroid_hz": 2468.3
+        }
+      },
+      {
+        "window": 2,
+        "seconds": [
+          20,
+          30
+        ],
+        "sharpness": 14.65610662849235,
+        "temporal_flicker": 0.07769032810288556,
+        "motion_coherence": 0.13344511242315815,
+        "colour_stability": 0.3536163371339724,
+        "n_frames": 48,
+        "colour_r2": 0.065,
+        "colour_drift": 0.18,
+        "audio": {
+          "rms": 0.00822,
+          "centroid_hz": 2468.5
+        }
+      }
+    ]
+  }
+}

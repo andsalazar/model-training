@@ -1,0 +1,38 @@
+[
+  {
+    "label": "target",
+    "prompt": "What is 12 times 11? Reply with only the digits.",
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 191,
+    "text_chars": 517
+  },
+  {
+    "label": "control",
+    "prompt": "What is 12 times 11? Answer with just the number.",
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 533,
+    "text_chars": 1187
+  },
+  {
+    "label": "heldout",
+    "prompt": "What is 17 times 23? Reply with only the digits.",
+    "looped": false,
+    "hit_cap": true,
+    "repeated": false,
+    "tokens": 2048,
+    "text_chars": 5507
+  },
+  {
+    "label": "heldout2",
+    "prompt": "What is 13 times 14? Reply with only the digits.",
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 655,
+    "text_chars": 1990
+  }
+]

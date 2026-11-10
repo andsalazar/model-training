@@ -1,0 +1,194 @@
+[
+  {
+    "file": "audio_off_first2_river_s100.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 13042 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00484,
+      "peak": 0.0329,
+      "centroid_mean_hz": 2533.3,
+      "centroid_slope_hz_per_frame": 0.4,
+      "centroid_r2": 0.013,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "audio_off_first2_river_s200.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 7885 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00464,
+      "peak": 0.0239,
+      "centroid_mean_hz": 2621.3,
+      "centroid_slope_hz_per_frame": -0.761,
+      "centroid_r2": 0.046,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "audio_off_first2_river_s300.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 10917 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01082,
+      "peak": 0.0687,
+      "centroid_mean_hz": 2378.1,
+      "centroid_slope_hz_per_frame": 0.311,
+      "centroid_r2": 0.013,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "audio_off_first2_violin_s100.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8175 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.06368,
+      "peak": 0.3278,
+      "centroid_mean_hz": 1745.5,
+      "centroid_slope_hz_per_frame": 0.178,
+      "centroid_r2": 0.001,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "video_only_river_s100.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 12852 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00468,
+      "peak": 0.0211,
+      "centroid_mean_hz": 2551.2,
+      "centroid_slope_hz_per_frame": 0.057,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "video_only_river_s200.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8212 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.00452,
+      "peak": 0.0227,
+      "centroid_mean_hz": 2623.0,
+      "centroid_slope_hz_per_frame": -0.442,
+      "centroid_r2": 0.03,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "video_only_river_s300.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 10841 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.01021,
+      "peak": 0.0474,
+      "centroid_mean_hz": 2407.1,
+      "centroid_slope_hz_per_frame": 0.022,
+      "centroid_r2": 0.0,
+      "n_spectral_frames": 77
+    }
+  },
+  {
+    "file": "video_only_violin_s100.mp4",
+    "dir": "fix_eval2",
+    "audio_streams": 1,
+    "streams": [
+      {
+        "codec_type": "video",
+        "raw": "Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 960x960, 8249 kb/s, 24 fps, 24 tbr, 12288 tbn (default)"
+      },
+      {
+        "codec_type": "audio",
+        "raw": "Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 128 kb/s (default)"
+      }
+    ],
+    "audio": {
+      "seconds": 5.02,
+      "rms": 0.07303,
+      "peak": 0.3941,
+      "centroid_mean_hz": 1712.5,
+      "centroid_slope_hz_per_frame": 0.658,
+      "centroid_r2": 0.008,
+      "n_spectral_frames": 77
+    }
+  }
+]

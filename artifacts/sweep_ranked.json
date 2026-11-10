@@ -1,0 +1,162 @@
+{
+  "cols": [
+    102,
+    987,
+    914,
+    989,
+    431,
+    296,
+    178,
+    3252,
+    51,
+    2107,
+    1575,
+    46
+  ],
+  "rows": [
+    {
+      "scale": "ranked_s0.5",
+      "probe": "target",
+      "prompt": "What is 12 times 11? Reply with only the digits.",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 164,
+      "text_chars": 528
+    },
+    {
+      "scale": "ranked_s0.5",
+      "probe": "control",
+      "prompt": "What is 12 times 11? Answer with just the number.",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 268,
+      "text_chars": 806
+    },
+    {
+      "scale": "ranked_s0.5",
+      "probe": "heldout_17x23",
+      "prompt": "What is 17 times 23? Reply with only the digits.",
+      "expected": "391",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 556,
+      "text_chars": 1503
+    },
+    {
+      "scale": "ranked_s0.5",
+      "probe": "heldout_13x14",
+      "prompt": "What is 13 times 14? Reply with only the digits.",
+      "expected": "182",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 259,
+      "text_chars": 762
+    },
+    {
+      "scale": "ranked_s0.5",
+      "probe": "heldout_9x8",
+      "prompt": "What is 9 times 8? Reply with only the digits.",
+      "expected": "72",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 183,
+      "text_chars": 622
+    },
+    {
+      "scale": "ranked_s0.5",
+      "probe": "nonmath",
+      "prompt": "Name the capital of France. Reply with only the city.",
+      "expected": "Paris",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 204,
+      "text_chars": 728
+    },
+    {
+      "scale": "ranked_s1.0",
+      "probe": "target",
+      "prompt": "What is 12 times 11? Reply with only the digits.",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 164,
+      "text_chars": 528
+    },
+    {
+      "scale": "ranked_s1.0",
+      "probe": "control",
+      "prompt": "What is 12 times 11? Answer with just the number.",
+      "expected": "132",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 220,
+      "text_chars": 631
+    },
+    {
+      "scale": "ranked_s1.0",
+      "probe": "heldout_17x23",
+      "prompt": "What is 17 times 23? Reply with only the digits.",
+      "expected": "391",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 676,
+      "text_chars": 1472
+    },
+    {
+      "scale": "ranked_s1.0",
+      "probe": "heldout_13x14",
+      "prompt": "What is 13 times 14? Reply with only the digits.",
+      "expected": "182",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 598,
+      "text_chars": 1737
+    },
+    {
+      "scale": "ranked_s1.0",
+      "probe": "heldout_9x8",
+      "prompt": "What is 9 times 8? Reply with only the digits.",
+      "expected": "72",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 315,
+      "text_chars": 1154
+    },
+    {
+      "scale": "ranked_s1.0",
+      "probe": "nonmath",
+      "prompt": "Name the capital of France. Reply with only the city.",
+      "expected": "Paris",
+      "correct": true,
+      "looped": false,
+      "hit_cap": false,
+      "repeated": false,
+      "tokens": 204,
+      "text_chars": 716
+    }
+  ]
+}

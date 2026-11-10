@@ -1,0 +1,122 @@
+[
+  {
+    "probe": "arith_12x11",
+    "prompt": "What is 12 times 11? Reply with only the digits.",
+    "expected": "132",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 1869,
+    "text_chars": 6254,
+    "tail": "\"? Yes.\n    *   Does it mean \"Just the number\"? Yes.\n    *   Okay.\n\n    *   Wait, I'll check if there are any hidden characters. No.\n    *   Okay.\n</think>\n\n132"
+  },
+  {
+    "probe": "arith_9x8",
+    "prompt": "What is 9 times 8? Reply with only the digits.",
+    "expected": "72",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 181,
+    "text_chars": 583,
+    "tail": "gits.\n    *   Final string: \"72\"\n\n4.  **Verify:** Does 9 * 8 equal 72? Yes. Is it a digit-only response? Yes.\n\n5.  **Construct Final Response:** 72\n</think>\n\n72"
+  },
+  {
+    "probe": "arith_17x23",
+    "prompt": "What is 17 times 23? Reply with only the digits.",
+    "expected": "391",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 676,
+    "text_chars": 2244,
+    "tail": "it's simple.\n\nI will provide the number \"391\".\nWait, checking if there are any edge cases.\n17 * 23 = 391.\nNo trick.\n\nFinal decision: Output \"391\".\n</think>\n\n391"
+  },
+  {
+    "probe": "arith_347x28",
+    "prompt": "What is 347 times 28? Reply with only the digits.",
+    "expected": "9716",
+    "correct": true,
+    "looped": false,
+    "hit_cap": true,
+    "repeated": false,
+    "tokens": 2048,
+    "text_chars": 5699,
+    "tail": "   Wait, hold on. I should consider if there is any other interpretation.\n    *   \"What is X?\" -> \"Answer\".\n    *   \"Reply with only the digits.\" -> Output ONLY"
+  },
+  {
+    "probe": "logic_syllogism",
+    "prompt": "All cats are mammals. All mammals are animals. Are all cats animals? Reply yes or no.",
+    "expected": "yes",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 1516,
+    "text_chars": 5599,
+    "tail": " No, the question asks \"Are ALL cats animals?\"\n    Okay, yes.\n\n    Final check on constraints: \"Reply yes or no.\"\n    I will output exactly \"yes\".\n</think>\n\nyes"
+  },
+  {
+    "probe": "logic_order",
+    "prompt": "If A is taller than B, and B is taller than C, is A taller than C? Reply yes or no.",
+    "expected": "yes",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 277,
+    "text_chars": 890,
+    "tail": "*   Does A > B imply A > C? Yes.\n    *   Is the constraint met? Yes.\n    *   Is the format correct? Yes.\n\n5.  **Construct Final Response:** \"yes\".\n</think>\n\nYes"
+  },
+  {
+    "probe": "fact_capital",
+    "prompt": "Name the capital of France. Reply with only the city.",
+    "expected": "Paris",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 232,
+    "text_chars": 794,
+    "tail": " it strictly a city name? Yes.\n    *   Are there any forbidden words or specific formatting? No.\n\n7.  **Final Output Generation:**\n    *   Paris\n</think>\n\nParis"
+  },
+  {
+    "probe": "fact_planet",
+    "prompt": "Which planet is closest to the Sun? Reply with only the name.",
+    "expected": "Mercury",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 482,
+    "text_chars": 1805,
+    "tail": " a trick related to something else? No, it's straightforward astronomy knowledge.\n    *   Answer: Mercury.\n\n7.  **Final Decision:** Mercury.cw\n</think>\n\nMercury"
+  },
+  {
+    "probe": "long_legit",
+    "prompt": "List three uses of a hammer, one per line.",
+    "expected": "nail",
+    "correct": true,
+    "looped": false,
+    "hit_cap": false,
+    "repeated": false,
+    "tokens": 1204,
+    "text_chars": 4584,
+    "tail": "e.\n</think>\n\n1. Construction \u2013 to drive nails into wood or metal.\n2. Manufacturing \u2013 to cut or shape metal sheets.\n3. Repair \u2013 to fix broken parts or machinery."
+  },
+  {
+    "probe": "format_csv",
+    "prompt": "Output exactly three comma-separated colours, nothing else.",
+    "expected": ",",
+    "correct": true,
+    "looped": false,
+    "hit_cap": true,
+    "repeated": false,
+    "tokens": 2048,
+    "text_chars": 6693,
+    "tail": "F0000#00FF00#0000FF.\n    *   No, commas are needed.\n    *   #FF0000, #00FF00, #0000FF.\n    *   Okay, that's it.\n\n    *   Wait, I need to make sure I don't add a"
+  }
+]

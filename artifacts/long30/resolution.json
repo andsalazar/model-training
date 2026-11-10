@@ -1,0 +1,66 @@
+[
+  {
+    "file": "/local/long30/10s_30steps_s100.mp4",
+    "hf_fraction": 0.01612,
+    "effective_px": 557,
+    "psnr_down2": 27.43,
+    "psnr_down4": 21.89
+  },
+  {
+    "file": "/local/long30/30s_30steps_s100.mp4",
+    "hf_fraction": 0.02259,
+    "effective_px": 551,
+    "psnr_down2": 32.63,
+    "psnr_down4": 29.34
+  },
+  {
+    "file": "/local/pilot5s/teacher/river_s100.mp4",
+    "hf_fraction": 0.01728,
+    "effective_px": 597,
+    "psnr_down2": 30.26,
+    "psnr_down4": 25.81
+  },
+  {
+    "file": "/local/pilot5s/eval/base_unipc30_s100.mp4",
+    "hf_fraction": 0.03121,
+    "effective_px": 718,
+    "psnr_down2": 27.23,
+    "psnr_down4": 23.14
+  },
+  {
+    "file": "/local/pilot5s/eval/base_unipc12_s100.mp4",
+    "hf_fraction": 0.03551,
+    "effective_px": 703,
+    "psnr_down2": 24.39,
+    "psnr_down4": 19.93
+  },
+  {
+    "file": "/local/pilot5s/eval/base_euler12_s100.mp4",
+    "hf_fraction": 0.0556,
+    "effective_px": 761,
+    "psnr_down2": 23.11,
+    "psnr_down4": 19.31
+  },
+  {
+    "file": "/local/pilot5s/eval/adapter_euler12_s100.mp4",
+    "hf_fraction": 0.02576,
+    "effective_px": 632,
+    "psnr_down2": 29.78,
+    "psnr_down4": 25.29
+  },
+  {
+    "file": "RAW decode of /local/long30/10s_30steps_s100_latents.pt",
+    "hf_fraction": 0.01941,
+    "effective_px": 597,
+    "psnr_down2": 26.8,
+    "psnr_down4": 21.56,
+    "psnr_raw_vs_mp4": 32.42,
+    "mp4": {
+      "file": "/local/long30/10s_30steps_s100.mp4",
+      "hf_fraction": 0.01612,
+      "effective_px": 557,
+      "psnr_down2": 27.43,
+      "psnr_down4": 21.89
+    }
+  }
+]

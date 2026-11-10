@@ -1,0 +1,70 @@
+{
+  "model": "960x960_10s",
+  "native_latents": [
+    61,
+    314
+  ],
+  "latents": [
+    61,
+    314
+  ],
+  "seconds": 10,
+  "steps": 30,
+  "seed": 100,
+  "sampler": {
+    "solver_name": "unipc",
+    "shift": 5.0,
+    "video_guidance_scale": 4.0,
+    "audio_guidance_scale": 3.0,
+    "slg_layer": 11,
+    "video_negative_prompt": "jitter, bad hands, blur, distortion",
+    "audio_negative_prompt": "robotic, muffled, echo, distorted"
+  },
+  "generate_seconds": 634.0,
+  "peak_allocated_gb": 60.4,
+  "latents_saved": true,
+  "frames": 241,
+  "audio_samples": 160768,
+  "analysis": {
+    "whole": {
+      "sharpness": 23.601769399572458,
+      "temporal_flicker": 0.3224553662680277,
+      "motion_coherence": 0.6717011920977237,
+      "colour_stability": 5.395576141322984,
+      "n_frames": 48,
+      "colour_r2": 0.272,
+      "colour_drift": 7.34,
+      "delta_entropy": {
+        "slope": 1.301021864521558,
+        "r_squared": 0.10936086640137921,
+        "early_mean": 3929.251253580301,
+        "late_mean": 3973.6157363400916,
+        "collapsing": false
+      },
+      "audio": {
+        "rms": 0.01083,
+        "centroid_hz": 2484.0
+      }
+    },
+    "windows": [
+      {
+        "window": 0,
+        "seconds": [
+          0,
+          10
+        ],
+        "sharpness": 23.601769399572458,
+        "temporal_flicker": 0.3224553662680277,
+        "motion_coherence": 0.6717011920977237,
+        "colour_stability": 5.395576141322984,
+        "n_frames": 48,
+        "colour_r2": 0.272,
+        "colour_drift": 7.34,
+        "audio": {
+          "rms": 0.01083,
+          "centroid_hz": 2483.2
+        }
+      }
+    ]
+  }
+}

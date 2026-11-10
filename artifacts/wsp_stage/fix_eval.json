@@ -1,0 +1,178 @@
+[
+  {
+    "tag": "river_100",
+    "variant": "no_first2_steps",
+    "steps_seen": 12,
+    "seconds": 114.2,
+    "last8_max_jump": 0.78,
+    "body_max_jump": 0.54,
+    "end_luma_change": 0.67,
+    "quality": {
+      "sharpness": 37.83941074906877,
+      "temporal_flicker": 0.2285250382025151,
+      "motion_coherence": 0.3742729262545124,
+      "colour_stability": 1.2973064461448198,
+      "n_frames": 48,
+      "colour_r2": 0.535,
+      "colour_drift": 2.3
+    },
+    "audio": {
+      "rms": 0.004275,
+      "centroid_hz": 2549.5
+    }
+  },
+  {
+    "tag": "river_100",
+    "variant": "no_first1_step",
+    "steps_seen": 12,
+    "seconds": 113.6,
+    "last8_max_jump": 0.72,
+    "body_max_jump": 0.83,
+    "end_luma_change": 0.11,
+    "quality": {
+      "sharpness": 38.700869103399654,
+      "temporal_flicker": 0.2208481738264844,
+      "motion_coherence": 0.3607559586079324,
+      "colour_stability": 1.2245196168273809,
+      "n_frames": 48,
+      "colour_r2": 0.584,
+      "colour_drift": 2.21
+    },
+    "audio": {
+      "rms": 0.004513,
+      "centroid_hz": 2530.8
+    }
+  },
+  {
+    "tag": "river_200",
+    "variant": "no_first2_steps",
+    "steps_seen": 12,
+    "seconds": 113.8,
+    "last8_max_jump": 0.43,
+    "body_max_jump": 0.73,
+    "end_luma_change": 0.31,
+    "quality": {
+      "sharpness": 31.513220835957444,
+      "temporal_flicker": 0.1160195728318611,
+      "motion_coherence": 0.25860023413907474,
+      "colour_stability": 1.1475539507236872,
+      "n_frames": 48,
+      "colour_r2": 0.646,
+      "colour_drift": 2.22
+    },
+    "audio": {
+      "rms": 0.003923,
+      "centroid_hz": 2609.9
+    }
+  },
+  {
+    "tag": "river_200",
+    "variant": "no_first1_step",
+    "steps_seen": 12,
+    "seconds": 113.8,
+    "last8_max_jump": 0.75,
+    "body_max_jump": 0.99,
+    "end_luma_change": 0.17,
+    "quality": {
+      "sharpness": 29.98272531931781,
+      "temporal_flicker": 0.10537176300570707,
+      "motion_coherence": 0.2490934242179912,
+      "colour_stability": 1.5031717294829043,
+      "n_frames": 48,
+      "colour_r2": 0.565,
+      "colour_drift": 2.79
+    },
+    "audio": {
+      "rms": 0.004266,
+      "centroid_hz": 2607.2
+    }
+  },
+  {
+    "tag": "river_300",
+    "variant": "no_first2_steps",
+    "steps_seen": 12,
+    "seconds": 112.9,
+    "last8_max_jump": 0.41,
+    "body_max_jump": 0.7,
+    "end_luma_change": 0.94,
+    "quality": {
+      "sharpness": 32.91202540324909,
+      "temporal_flicker": 0.24684278650538932,
+      "motion_coherence": 0.42455642614911665,
+      "colour_stability": 1.5020513698563758,
+      "n_frames": 48,
+      "colour_r2": 0.458,
+      "colour_drift": 2.48
+    },
+    "audio": {
+      "rms": 0.008941,
+      "centroid_hz": 2387.0
+    }
+  },
+  {
+    "tag": "river_300",
+    "variant": "no_first1_step",
+    "steps_seen": 12,
+    "seconds": 112.6,
+    "last8_max_jump": 0.43,
+    "body_max_jump": 0.82,
+    "end_luma_change": 1.28,
+    "quality": {
+      "sharpness": 30.27056836529695,
+      "temporal_flicker": 0.23889414369028686,
+      "motion_coherence": 0.43468154344047166,
+      "colour_stability": 1.414168411795752,
+      "n_frames": 48,
+      "colour_r2": 0.454,
+      "colour_drift": 2.3
+    },
+    "audio": {
+      "rms": 0.009899,
+      "centroid_hz": 2379.1
+    }
+  },
+  {
+    "tag": "violin_100",
+    "variant": "no_first2_steps",
+    "steps_seen": 12,
+    "seconds": 112.6,
+    "last8_max_jump": 0.57,
+    "body_max_jump": 1.1,
+    "end_luma_change": -0.35,
+    "quality": {
+      "sharpness": 46.85754316539529,
+      "temporal_flicker": 0.03972290172958176,
+      "motion_coherence": 0.32422162042824626,
+      "colour_stability": 0.4841397523913282,
+      "n_frames": 48,
+      "colour_r2": 0.395,
+      "colour_drift": 0.68
+    },
+    "audio": {
+      "rms": 0.070038,
+      "centroid_hz": 1804.5
+    }
+  },
+  {
+    "tag": "violin_100",
+    "variant": "no_first1_step",
+    "steps_seen": 12,
+    "seconds": 112.3,
+    "last8_max_jump": 1.51,
+    "body_max_jump": 0.96,
+    "end_luma_change": -1.36,
+    "quality": {
+      "sharpness": 42.229562676833744,
+      "temporal_flicker": 0.03959964702265768,
+      "motion_coherence": 0.3429302339523345,
+      "colour_stability": 0.49245043239022074,
+      "n_frames": 48,
+      "colour_r2": 0.351,
+      "colour_drift": 0.59
+    },
+    "audio": {
+      "rms": 0.070044,
+      "centroid_hz": 1776.4
+    }
+  }
+]

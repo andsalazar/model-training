@@ -1,0 +1,138 @@
+{
+  "20": {
+    "attached": false,
+    "hook_site": "blocks[i].norm1 (forward_pre_hook)",
+    "attention_backend": "flash_attn_2",
+    "layers": [
+      0,
+      2,
+      4,
+      8,
+      11
+    ],
+    "streams": [
+      "video",
+      "audio"
+    ],
+    "fired": {
+      "audio": 180,
+      "video": 180
+    },
+    "fired_total": 360,
+    "no_step": 0,
+    "cfg_pass": "conditional",
+    "other_pass_declined": 160,
+    "decoded_declined": 100,
+    "steps_seen": 20,
+    "model_calls": 40,
+    "step_timesteps": {
+      "0": 999.0,
+      "1": 989.0,
+      "2": 978.0,
+      "3": 965.0,
+      "4": 952.0,
+      "5": 937.0,
+      "6": 920.0,
+      "7": 902.0,
+      "8": 882.0,
+      "9": 859.0,
+      "10": 833.0,
+      "11": 803.0,
+      "12": 768.0,
+      "13": 728.0,
+      "14": 681.0,
+      "15": 624.0,
+      "16": 555.0,
+      "17": 468.0,
+      "18": 356.0,
+      "19": 208.0
+    },
+    "recorded": 100,
+    "notes": [],
+    "seconds": 192.9,
+    "sample_steps": 20,
+    "seed": 42,
+    "sampler": {
+      "solver_name": "unipc",
+      "shift": 5.0,
+      "video_guidance_scale": 4.0,
+      "audio_guidance_scale": 3.0,
+      "slg_layer": 11,
+      "video_negative_prompt": "jitter, bad hands, blur, distortion",
+      "audio_negative_prompt": "robotic, muffled, echo, distorted"
+    }
+  },
+  "30": {
+    "attached": false,
+    "hook_site": "blocks[i].norm1 (forward_pre_hook)",
+    "attention_backend": "flash_attn_2",
+    "layers": [
+      0,
+      2,
+      4,
+      8,
+      11
+    ],
+    "streams": [
+      "video",
+      "audio"
+    ],
+    "fired": {
+      "audio": 270,
+      "video": 270
+    },
+    "fired_total": 540,
+    "no_step": 0,
+    "cfg_pass": "conditional",
+    "other_pass_declined": 240,
+    "decoded_declined": 200,
+    "steps_seen": 30,
+    "model_calls": 60,
+    "step_timesteps": {
+      "0": 999.0,
+      "1": 992.0,
+      "2": 985.0,
+      "3": 978.0,
+      "4": 969.0,
+      "5": 961.0,
+      "6": 952.0,
+      "7": 942.0,
+      "8": 931.0,
+      "9": 920.0,
+      "10": 908.0,
+      "11": 895.0,
+      "12": 882.0,
+      "13": 867.0,
+      "14": 850.0,
+      "15": 833.0,
+      "16": 813.0,
+      "17": 792.0,
+      "18": 768.0,
+      "19": 742.0,
+      "20": 713.0,
+      "21": 681.0,
+      "22": 644.0,
+      "23": 603.0,
+      "24": 555.0,
+      "25": 499.0,
+      "26": 434.0,
+      "27": 356.0,
+      "28": 262.0,
+      "29": 146.0
+    },
+    "recorded": 100,
+    "notes": [],
+    "seconds": 276.0,
+    "sample_steps": 30,
+    "seed": 42,
+    "sampler": {
+      "solver_name": "unipc",
+      "shift": 5.0,
+      "video_guidance_scale": 4.0,
+      "audio_guidance_scale": 3.0,
+      "slg_layer": 11,
+      "video_negative_prompt": "jitter, bad hands, blur, distortion",
+      "audio_negative_prompt": "robotic, muffled, echo, distorted"
+    }
+  }
+}
