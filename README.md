@@ -11,6 +11,9 @@ re-measured, and the ones that did not hold are kept in, with correction banners
    video-and-audio diffusion transformer, and test whether a tiny trained adapter, sized
    and placed like TBC's "neural dynamics adapter", together with WSP-style reads of the
    model's internals, can make generation faster without losing quality.
+3. **Reading weights (Stage 8).** Repeat the paper's most direct "reading" experiment, a
+   language model told to say what a small network does from its raw weights alone, with
+   the paper's networks, fresh ones, a control, and five different readers.
 
 Based on [Sparks of Weight-Space Programming: LLMs can natively read & write
 neural network weights](https://rikiyat.github.io/blog/weight-space-programming/)
@@ -29,16 +32,25 @@ measurement error, not as a new method or a recommended model.
 about the WSP method itself: could the paper's reading of a network's weights be
 replicated with a different, cheaper model as the reader?
 
-- **From the weights alone: no.** Given a static slice of the weight matrix the paper
-  edited, all five editor models tried, including the paper's own, declined to name
-  columns and said doing so would be guesswork
+- **Reading a small network from its raw weights: yes, with the paper's reader only.**
+  The paper's Experiment 2 was repeated: all 23,824 weights of a small diffusion model as
+  text, no tools, "what images does it generate?". GPT-6 Astra named the right shape for
+  the paper's three networks, for three freshly trained ones, and for a plus-shaped cross
+  the paper never used, and declined to name anything for a network with shuffled
+  weights (0% confidence). Four cheaper readers could not: the best, Kimi, was right on 4
+  of 8 and confidently described the shuffled network as a digit. One reply per network,
+  nine networks ([stage8](docs/stage8-reading-weights.md)).
+- **Reading a language model's weights from a static slice: no.** Given a slice of the
+  weight matrix the paper edited in Qwen, all five editor models tried, including the
+  paper's own, declined to name columns and said doing so would be guesswork
   ([stage0](docs/stage0-findings.md)).
 - **With tools to run the model and measure activations: partly.** A cheap editor
   (DeepSeek, $0.03 per million input tokens) captured a direction from activations,
   edited 12,288 weights and cut an over-thinking prompt from 1,869 tokens to 210, with
   the result judged by an independent verifier ([stage1](docs/stage1-findings.md)). That
   is reading *behaviour through measurement*, with the weights as the place the edit
-  lands; it is not reading meaning off raw parameters.
+  lands; it is not reading meaning off raw parameters. The editor never saw a weight
+  value, only tensor names and a tool-ranked list of columns.
 - **It did not hold up as a method.** The same editor reported numbers it had not
   measured, the edit did not reproduce on other hardware, and a stabilised version
   harmed unrelated tasks ([WRITEUP](docs/WRITEUP.md)).
@@ -55,6 +67,7 @@ size and placement, trained by a standard method. See Part 2.
 
 | Finding | Evidence | Where |
 |---|---|---|
+| The paper's weight-reading result (Experiment 2) repeats with its own reader, and not with cheaper ones | GPT-6 Astra: 6 of 6 on the paper's and on fresh networks, a new shape named, a shuffled control declined; Kimi, GLM, DeepSeek, Qwen: 4, 2, 0, 0 of 8. One reply each | [stage8](docs/stage8-reading-weights.md) |
 | The published WSP edit reproduces on Qwen3.5-0.8B | the paper's 25-problem practice subset: 4.0% → 64.0% (paper's released scores for it: 5.0% → 51.0%); the full MATH-500 was not run | [stage0](docs/stage0-findings.md) |
 | An edit derived from activation measurement does not reproduce across hardware | the "top 12 columns" cut sits inside a 0.0012 tie in alignment score | [reproducibility-failure](docs/reproducibility-failure.md) |
 | A fixed direction cannot be behaviour-selective; a LoRA trained on the model's own truncated reasoning can | 9 probes on one model; does not carry over to format compliance (0 of 8) | [WRITEUP](docs/WRITEUP.md) |
@@ -69,7 +82,8 @@ size and placement, trained by a standard method. See Part 2.
 
 Everything ran on rented Runpod GPU pods, driven from a Windows machine over SSH. Total
 GPU spend was roughly **$207** (about $120 through Stage 6 from session notes, $87 for
-Stage 7 from billing reads).
+Stage 7 from billing reads). Stage 8 used no GPU: its networks train on a CPU, and its 45
+model calls cost $21.09 through OpenRouter.
 
 | | |
 |---|---|
@@ -81,7 +95,8 @@ Stage 7 from billing reads).
 | **Text model work** | LoRA fine-tuning of Qwen3.5-0.8B; vLLM serving at 1,539 tokens/s against 36 with `transformers` on the same GPU |
 | **Environment work** | pinned torch 2.6.0 with a prebuilt FlashAttention 2.7.4 wheel on Ampere and Hopper; torch 2.7.1+cu128 with a source build on Blackwell ([pod setup](docs/stage6-pod-setup.md)) |
 | **Pod lifecycle** | a REST client that refuses to touch pods this project did not create, a create-with-fallback script for tight GPU stock, and 190 scripts (155 of them `pod_*` drivers and checks run on the GPU) kept as the working record |
-| **Tests** | 746 tests, no GPU needed (`pytest -q`); the statistics quoted for Stage 7 are pinned to the committed evidence JSON in `artifacts/` |
+| **Small diffusion models (Stage 8)** | five DDPMs (an MLP of 23,824 weights, 40,000 Adam steps each, about 2.5 minutes on a CPU), each checked by generating 1,000 images and classifying them; prompts rebuilt byte for byte from the paper's released weights |
+| **Tests** | 806 tests, no GPU needed (`pytest -q`; 2 of them need the paper's log release checked out and are skipped otherwise); the statistics quoted for Stages 7 and 8 are pinned to the committed evidence in `artifacts/` |
 
 ## Repository layout
 
@@ -394,6 +409,31 @@ timings. No adapter weights are published until that is run.
 ```bash
 python scripts/analyse_v3.py artifacts/v3_5s          # per-variant means
 python scripts/analyse_v3_paired.py artifacts/v3_5s   # paired tests, symmetric distance, per-metric breakdown
+```
+
+## Part 3: reading a network from its weights (Stage 8)
+
+Parts 1 and 2 never tested the paper's "reading" claim itself. Stage 8 does, by repeating
+the paper's Experiment 2 ([docs/stage8-reading-weights.md](docs/stage8-reading-weights.md)).
+A reader gets every weight of a small diffusion model as text, about 100,000 tokens, with
+no tools, and must say what the model draws. The design and the scoring rule were
+committed and pushed before any model was called.
+
+| reader | paper's 3 networks | 3 fresh, same shapes | 2 fresh, new shape (cross) | shuffled-weights control |
+|---|---|---|---|---|
+| GPT-6 Astra (the paper's) | 3/3 | 3/3 | 1/2 by the keyword rule, 2/2 on a plain reading | names nothing, 0% confidence |
+| Kimi | 3/3 | 1/3 | 0/2 | "digit-4-like figures", 76% |
+| GLM | 1/3 | 1/3 | 0/2 | "no large coherent shape", 25% |
+| DeepSeek | 0/3 | 0/3 | 0/2 | "a vertical stroke", 74% |
+| Qwen | 0/3 | 0/3 | 0/2 | no shape named, 62% |
+
+The paper's result repeats with its own reader and extends to networks and a shape it
+had not seen. The project's original question, whether a cheaper model can do the same,
+gets a no on this test. Limits: one reply per network; a 12 × 12 toy whose output layer
+is laid out like the image; no way to check that the reader did not simulate the network.
+
+```bash
+python scripts/read_weights.py score    # re-score the saved replies
 ```
 
 ## Setup

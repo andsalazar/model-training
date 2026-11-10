@@ -276,6 +276,8 @@ async def ask_one(editor, alias: str, trial_id: str, prompt: str, price: tuple[f
             continue
         record["retried_after_cut_off"] = truncated_path.exists()
         write_json(out_path, record)
+        # A transport error from an earlier run is superseded once a reply exists.
+        out_path.with_suffix(".error.json").unlink(missing_ok=True)
         return f"ok, ${total:.3f}, {record['seconds']:.0f}s" + (" (retried)" if record["retried_after_cut_off"] else "")
     return "unreachable"
 
@@ -335,6 +337,10 @@ def stage_score(args) -> int:
                 continue
             reply = json.loads(path.read_text(encoding="utf-8"))
             score = reading.score_answer(reply["answer"], trial["truth"])
+            runs = reading.quoted_runs(reply["answer"])
+            net = load_net(args.dir, trial_id) if runs else None
+            score["quoted_runs"] = len(runs)
+            score["quoted_runs_found"] = sum(reading.locate_run(net, r) is not None for r in runs)
             cost += reply.get("cost_usd") or 0.0
             first = path.with_suffix(".truncated.json")
             if first.exists():
@@ -352,15 +358,20 @@ def stage_score(args) -> int:
             else:
                 counts[group][0] += bool(score["correct"])
                 counts[group][1] += 1
+        mine = [r for r in rows if r["editor"] == alias]
         summary[alias] = {**{k: {"correct": v[0], "n": v[1]} for k, v in counts.items()},
-                          "control": control, "cost_usd": round(cost, 4), "missing": missing}
+                          "control": control, "cost_usd": round(cost, 4), "missing": missing,
+                          "no_images_section": sum(r["guess"] == "missing" for r in mine),
+                          "quoted_runs": sum(r["quoted_runs"] for r in mine),
+                          "quoted_runs_found": sum(r["quoted_runs_found"] for r in mine)}
     write_json(args.dir / "scores.json", {"summary": summary, "rows": rows})
     print(f"{'reader':10}{'paper nets':>12}{'fresh, same':>13}{'fresh, cross':>14}  control (guess, confidence)   cost")
     for alias, s in summary.items():
         cells = [f"{s[k]['correct']}/{s[k]['n']}" for k in ("paper", "fresh_same", "fresh_novel")]
         ctl = ", ".join(f"{c['guess']} {c['confidence']}" for c in s["control"]) or "-"
         print(f"{alias:10}{cells[0]:>12}{cells[1]:>13}{cells[2]:>14}  {ctl:28} ${s['cost_usd']:.2f}"
-              + (f"  missing {len(s['missing'])}" if s["missing"] else ""))
+              f"  no answer {s['no_images_section']}/9  quotes found {s['quoted_runs_found']}/{s['quoted_runs']}"
+              + (f"  not asked {len(s['missing'])}" if s["missing"] else ""))
     print("\nper answer:")
     for r in rows:
         mark = "-" if r["correct"] is None else "yes" if r["correct"] else "NO"

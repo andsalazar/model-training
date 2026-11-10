@@ -267,8 +267,13 @@ KEYWORDS = {
     "triangle": r"triangles?|triangular|pyramids?|wedges?",
     "cross": r"cross|crosses|cross-shaped|plus|plus-shaped|plus-sign",
 }
+#: A section heading: ``Images:``, ``**Images:**``, or a Markdown heading line such as
+#: ``## Images`` with nothing else on it. The second form was added after the first run:
+#: the scorer as first committed required the colon and so read ``## Images`` replies as
+#: having no section (docs/stage8-reading-weights.md, "Scorer correction").
 _SECTION = re.compile(
-    r"^\W*(Observations|Reasoning|Images|Example|Confidence)\W*:", re.IGNORECASE | re.MULTILINE
+    r"^[^\w\n]*(Observations|Reasoning|Images|Example|Confidence)(?:[^\w\n]*:|[^\w\n]*$)",
+    re.IGNORECASE | re.MULTILINE,
 )
 
 
@@ -305,6 +310,48 @@ def confidence(answer: str) -> float | None:
     section = answer_section(answer, "Confidence")
     match = re.search(r"(\d+(?:\.\d+)?)\s*%?", section or "")
     return float(match.group(1)) if match else None
+
+
+_NUMBER = r"[-\u2212]?\d\.\d{3}"
+_RUN = re.compile(rf"{_NUMBER}(?:\s*,?\s+{_NUMBER}){{3,}}")
+
+
+def quoted_runs(answer: str) -> list[list[float]]:
+    """Runs of four or more 3-decimal numbers quoted in a reply."""
+    runs = []
+    for match in _RUN.finditer(answer.replace(",", " ")):
+        runs.append([float(x.replace("\u2212", "-")) for x in re.findall(_NUMBER, match.group(0))])
+    return runs
+
+
+def locate_run(net: dict, values: list[float]) -> str | None:
+    """Where a quoted run of weights occurs in the network, or ``None`` if nowhere.
+
+    Looks along every row and column of every tensor at strides 1..13 (stride 12 in a row
+    of W3 is one image column), and at the four image corners of a 144-long row. A reply
+    that quotes weights the network does not contain is inventing its evidence. A run that
+    is not found may still be a real read at positions this search does not cover.
+    """
+    target = np.asarray(values, dtype=np.float64)
+    n = len(target)
+    for name in TENSORS:
+        tensor = np.round(net[name].astype(np.float64), 3)
+        # Each entry of ``views`` is a 2-D array whose rows are the lines to search.
+        views = [tensor[None, :]] if tensor.ndim == 1 else [tensor, tensor.T]
+        for lines in views:
+            length = lines.shape[1]
+            if n == 4 and length == PIXELS:
+                corners = lines[:, [0, SIZE - 1, PIXELS - SIZE, PIXELS - 1]]
+                if (np.abs(corners - target) < 6e-4).all(axis=1).any():
+                    return f"{name} corners"
+            for stride in range(1, 14):
+                span = (n - 1) * stride
+                if span >= length:
+                    break
+                index = np.arange(length - span)[:, None] + stride * np.arange(n)
+                if (np.abs(lines[:, index] - target) < 6e-4).all(axis=2).any():
+                    return f"{name} stride {stride}"
+    return None
 
 
 def score_answer(answer: str, truth: str | None) -> dict:

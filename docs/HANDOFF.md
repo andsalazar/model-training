@@ -53,6 +53,7 @@ nothing here says the early-layer residual design matters in itself.
 | Can WSP diagnose and fix the adapter's defects? | **inconclusive**: it localised an end-of-clip flash to a cross-modal interaction, but the flash did not reproduce on other hardware (0 of 54 clips) | [stage7-wsp-adapter.md](stage7-wsp-adapter.md), [stage7-v3-5s.md](stage7-v3-5s.md) |
 | Audio? | 12 steps makes audio slightly quieter/brighter; adapters help loudness somewhat but never fix brightness; audio prompt adherence (CLAP) is unaffected by any variant | v2 and v3 docs |
 | 30 s? | Ovi has no 30 s model; the 10 s model at 3× length gives one steady scene with local motion; resolution is ~600 px of 960 even at 10 s (inherent to the VAE) | [stage7-long30.md](stage7-long30.md) |
+| Can a language model read what a network does from its raw weights (the paper's Experiment 2)? | **yes with the paper's reader, no with cheaper ones**: GPT-6 Astra named the shape for the paper's 3 networks, 3 fresh ones and a new shape, and declined on a shuffled control; Kimi 4/8 and fails the control; GLM 2/8; DeepSeek and Qwen 0/8, mostly no answer. One reply per network | [stage8-reading-weights.md](stage8-reading-weights.md) |
 
 **The most important methodological finding:** the same prompt + seed + settings gives a
 *different clip* on an A100 vs an H100, and re-drawing a clip moves the four-metric
@@ -79,6 +80,12 @@ the GPU). Compare the starting-noise tensors across GPU types before explaining 
   the 12-step gap; v2 scaled up; 10 s does not transfer zero-shot, trained at 10 s it is
   faster and softer; WSP read + ablation localised a flash; 30 s probe; v3 re-evaluation
   with 6 unseen prompts, prompt adherence, on-policy training and the noise floor.
+- **Pre-publication review** (2026-11-09): Stage 7 statistics rechecked and claims
+  narrowed; repository made public.
+- **Stage 8** (reading weights, no GPU): repeated the paper's Experiment 2 with its
+  released networks and prompts, five fresh networks, a shuffled control and five
+  readers. Design and scoring were pushed before any model was called. Astra reads the
+  shapes; the cheaper readers do not.
 
 ## 4. Repository map
 
@@ -95,6 +102,8 @@ src/wsp/          library (pip install -e ".[dev]")
   entropy.py        delta-entropy collapse metric
   targeting.py      direction -> weight columns
   runpod.py         REST client with an ownership guard (runs/pods.json)
+  reading.py        Stage 8: shapes, the small DDPM, the paper's prompt and weight-text
+                    format, the shuffled control, the keyword scorer, the quote check
   (activations, agent, audit, runner, tools, verify, stage4/5_data: Stages 0-5)
 scripts/          pod_* run on the GPU pod; analyse_* / create_pod_retry run locally
   pod_adapter_run.py   Stage 7 driver: teacher | train | onpolicy | eval
@@ -107,7 +116,10 @@ scripts/          pod_* run on the GPU pod; analyse_* / create_pod_retry run loc
   analyse_v3.py        per-variant summary of a v3 eval
   analyse_v3_paired.py paired statistics for a v3 eval: bootstrap, exact sign-flip test,
                        symmetric distance, per-metric breakdown (use this for claims)
-tests/            746 tests, all passing (pytest -q, ~20 s, no GPU needed)
+  read_weights.py      Stage 8, local: build | ask | score | quality. `ask` needs the
+                       OpenRouter key and a --max-usd limit; it skips replies it has
+tests/            806 tests, all passing (pytest -q, ~15 s, no GPU needed; 2 need
+                  runs/paper-logs and are skipped without it)
 docs/             one doc per stage; correction banners on superseded results
 artifacts/        the evidence JSON is tracked (3 MB); adapters (*.pt), clips (*.mp4),
                   logs and the three largest raw captures are local only (.gitignore)
@@ -171,6 +183,17 @@ on-policy collect 224 s per clip; training step 14.5 s. The A100 is ~1.9× slowe
   `create_pod_retry.py`. REST v1's `allowedCudaVersions` enum stops at 13.0 while hosts
   report 13.2, so omit it.
 - **Runpod billing reads**: pass `lastN` alone or `startTime` and `endTime` together.
+- **OpenRouter**: large concurrent requests can be refused with HTTP 402
+  `in_flight_budget_exhausted` when credits are low relative to what is in flight; rerun
+  the same `ask` command afterwards, it only fills in what is missing. Reasoning models
+  can spend the whole output limit on reasoning and return an empty answer (Stage 8 saw
+  this at 16,000 and at 64,000 tokens). Live prices differ from
+  `wsp/editors/registry.py` (checked 2026-11-03); Stage 8 records the cost the API
+  reports.
+- **The paper's log release** (prompts, networks, replies for all eight experiments) is
+  cloned sparsely under `runs/paper-logs` (gitignored):
+  `git clone --filter=blob:none --no-checkout https://github.com/RikiyaT/lm_understand-logs runs/paper-logs`,
+  then `git sparse-checkout set exp1_which_game exp2_diffusion harness` and `git checkout`.
 - **Teacher-forced validation loss does not predict rollout quality** (it missed the 10 s
   blur and on-policy overfitting). Judge by full rollouts.
 
@@ -196,9 +219,14 @@ In order of value for the owner's goal:
    fine-detail / spectral term to the loss.
 4. **Audio brightness**: never fixed by any variant; WSP flagged audio block 3 once
    (one A100 read). Worth one clean multi-seed test.
-5. **Publish.** The write-up (README + docs) is prepared for GitHub as a negative-results
-   and methodology case study, and `origin/main`
-   (github.com/andsalazar/model-training) is level with local work. **Hold the Hugging
+5. **Make the reading result sturdier** (API only, no GPU). Stage 8 has one reply per
+   network. Three more Astra replies per network would cost about $45 at the observed
+   $1.67 per reply and would say how stable 7–8 of 8 is. The paper's Experiment 1 (which
+   game a policy network plays; networks and prompts are in `runs/paper-logs`) is the
+   next closest test and needs no training to repeat with its released networks.
+6. **Publish.** The repository is public as a negative-results and methodology case
+   study, and `origin/main` (github.com/andsalazar/model-training) is level with local
+   work. **Hold the Hugging
    Face adapter release until item 1 is done.** If the adapter goes up, label it a
    research artifact, not a recommended model: 12 steps with it is 2.17× faster than 30
    steps, better than plain 12 steps in direction, and below 30-step quality on every
@@ -214,6 +242,8 @@ In order of value for the owner's goal:
 - Approximate total GPU spend for the project: ~$120 through Stage 6, plus ~$87 for
   Stage 7's last two pods, roughly **$207**. Earlier figures come from session notes;
   Stage 7's from billing reads.
+- Stage 8 spent **$21.09** on OpenRouter (45 replies plus cut-off first attempts), from
+  the costs the API reported. The owner approved a $25 limit.
 
 ## 9. Working style the owner expects
 
