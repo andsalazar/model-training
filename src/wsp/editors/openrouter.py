@@ -46,8 +46,9 @@ class OpenRouterEditor(Editor):
         system: str,
         user: str,
         *,
-        temperature: float = 0.0,
+        temperature: float | None = 0.0,
         max_tokens: int = 8192,
+        extra: dict | None = None,
     ) -> EditorResponse:
         payload = {
             "model": self.model_id,
@@ -55,9 +56,13 @@ class OpenRouterEditor(Editor):
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
-            "temperature": temperature,
             "max_tokens": max_tokens,
         }
+        # Some reasoning models reject a temperature; None leaves the provider default.
+        if temperature is not None:
+            payload["temperature"] = temperature
+        if extra:
+            payload.update(extra)
         headers = {
             "Authorization": f"Bearer {self._api_key}",
             "Content-Type": "application/json",

@@ -1,0 +1,196 @@
+{
+ "classifier_accuracy_real": 0.9919999837875366,
+ "recipe": {
+  "steps": 40000,
+  "batch": 512,
+  "lr": 0.001,
+  "dataset_size": 20000,
+  "hidden": 64
+ },
+ "trials": [
+  {
+   "id": "1987dad6",
+   "source": "fresh",
+   "truth": "circle",
+   "seed": 1,
+   "prompt_sha256": "50b6b7ea347f5d32ff370bc62eab8e3f209e7fb8ab5b51d093226548120142e2",
+   "prompt_chars": 158315,
+   "quality": {
+    "classified_as": {
+     "circle": 0.959,
+     "square": 0.002,
+     "triangle": 0.011,
+     "cross": 0.028
+    },
+    "pixel_std_across_samples": 0.4440961182117462,
+    "mean_pixel": -0.5308718681335449,
+    "frac_outside_range": 0.0
+   },
+   "final_loss": 0.20117062938213348,
+   "train_seconds": 147.5
+  },
+  {
+   "id": "246a5b58",
+   "source": "paper",
+   "truth": "triangle",
+   "seed": 0,
+   "prompt_sha256": "d8533653617af859a80f105b8a6360efbf7331be41f85f97212b75fcc63da897",
+   "prompt_chars": 158457,
+   "quality": {
+    "classified_as": {
+     "circle": 0.0,
+     "square": 0.04,
+     "triangle": 0.96,
+     "cross": 0.0
+    },
+    "pixel_std_across_samples": 0.3669581711292267,
+    "mean_pixel": -0.6544706225395203,
+    "frac_outside_range": 0.0
+   },
+   "paper_reported_intended": 1.0
+  },
+  {
+   "id": "a6a9dfb7",
+   "source": "paper",
+   "truth": "square",
+   "seed": 0,
+   "prompt_sha256": "fbb9f8b4b1b63dd4460d7168159b135b1420e70e24bcddd00f986e191f417172",
+   "prompt_chars": 158187,
+   "quality": {
+    "classified_as": {
+     "circle": 0.022,
+     "square": 0.966,
+     "triangle": 0.011,
+     "cross": 0.001
+    },
+    "pixel_std_across_samples": 0.5200774669647217,
+    "mean_pixel": -0.502651572227478,
+    "frac_outside_range": 0.0
+   },
+   "paper_reported_intended": 0.984
+  },
+  {
+   "id": "a6b02be9",
+   "source": "control",
+   "truth": null,
+   "shuffled_from": "1987dad6",
+   "prompt_sha256": "f214070ee859d331430657f35c129bd901c7303c82976aff1cecf374b468ce09",
+   "prompt_chars": 158315,
+   "quality": {
+    "classified_as": {
+     "circle": 0.0,
+     "square": 1.0,
+     "triangle": 0.0,
+     "cross": 0.0
+    },
+    "pixel_std_across_samples": 0.0026666054036468267,
+    "mean_pixel": -0.3444453179836273,
+    "frac_outside_range": 0.0
+   }
+  },
+  {
+   "id": "cdd746d8",
+   "source": "fresh",
+   "truth": "square",
+   "seed": 1,
+   "prompt_sha256": "6cad20dc53703636a39e83bc628efdd5a10bc785c7a5a25e8ee71abd4abf3184",
+   "prompt_chars": 158558,
+   "quality": {
+    "classified_as": {
+     "circle": 0.028,
+     "square": 0.952,
+     "triangle": 0.012,
+     "cross": 0.008
+    },
+    "pixel_std_across_samples": 0.506142795085907,
+    "mean_pixel": -0.56230229139328,
+    "frac_outside_range": 0.0
+   },
+   "final_loss": 0.2262262134552002,
+   "train_seconds": 150.3
+  },
+  {
+   "id": "d88aba69",
+   "source": "paper",
+   "truth": "circle",
+   "seed": 0,
+   "prompt_sha256": "f02e93fcdb15177695684005f4345a6f9fc94d9925ad6c0fe69545203676693b",
+   "prompt_chars": 157889,
+   "quality": {
+    "classified_as": {
+     "circle": 0.963,
+     "square": 0.0,
+     "triangle": 0.001,
+     "cross": 0.036
+    },
+    "pixel_std_across_samples": 0.4321225881576538,
+    "mean_pixel": -0.5069049000740051,
+    "frac_outside_range": 0.0
+   },
+   "paper_reported_intended": 0.994
+  },
+  {
+   "id": "e7e2cc43",
+   "source": "fresh",
+   "truth": "triangle",
+   "seed": 1,
+   "prompt_sha256": "b054fb12f30761d1a762113e1f3c3e2706066cebecfdf37c0f8d38954d5edd6a",
+   "prompt_chars": 158644,
+   "quality": {
+    "classified_as": {
+     "circle": 0.0,
+     "square": 0.005,
+     "triangle": 0.994,
+     "cross": 0.001
+    },
+    "pixel_std_across_samples": 0.3473632335662842,
+    "mean_pixel": -0.6962299346923828,
+    "frac_outside_range": 0.0
+   },
+   "final_loss": 0.15649033086001873,
+   "train_seconds": 144.7
+  },
+  {
+   "id": "edc5465a",
+   "source": "fresh",
+   "truth": "cross",
+   "seed": 1,
+   "prompt_sha256": "0f7748ce226cf2b8803e73d2f97f2428dac165411dbd9583268c27620ef650e3",
+   "prompt_chars": 158903,
+   "quality": {
+    "classified_as": {
+     "circle": 0.0,
+     "square": 0.0,
+     "triangle": 0.008,
+     "cross": 0.992
+    },
+    "pixel_std_across_samples": 0.3724062740802765,
+    "mean_pixel": -0.6923556923866272,
+    "frac_outside_range": 0.0
+   },
+   "final_loss": 0.15948732113838196,
+   "train_seconds": 145.8
+  },
+  {
+   "id": "ee40a412",
+   "source": "fresh",
+   "truth": "cross",
+   "seed": 2,
+   "prompt_sha256": "92881fb6ba9729fe53a4da35dc97030f4890ea26ab503bf1fb4891f7f3fa8de2",
+   "prompt_chars": 159326,
+   "quality": {
+    "classified_as": {
+     "circle": 0.0,
+     "square": 0.0,
+     "triangle": 0.0,
+     "cross": 1.0
+    },
+    "pixel_std_across_samples": 0.36393630504608154,
+    "mean_pixel": -0.6746429204940796,
+    "frac_outside_range": 0.0
+   },
+   "final_loss": 0.1595732804238796,
+   "train_seconds": 178.5
+  }
+ ]
+}

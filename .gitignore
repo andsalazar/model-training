@@ -39,6 +39,8 @@ Thumbs.db
 artifacts/**
 !artifacts/**/
 !artifacts/**/*.json
+# Stage 8's networks are small (97 KB each) and are the thing being read.
+!artifacts/stage8_reading/networks/*.npz
 artifacts/stage6_pod2/direction_audio_v2.json
 artifacts/stage6_pod2/direction_video_v2.json
 artifacts/stage6_pod2/direction_audio_full.json
