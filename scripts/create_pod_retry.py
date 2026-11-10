@@ -41,14 +41,14 @@ PRICES = {"NVIDIA A100-SXM4-80GB": 1.79, "NVIDIA A100 80GB PCIe": 1.79, "NVIDIA 
 #: driver runs this CUDA 12.8 image.
 
 
-def body(public_key: str, disk: int) -> dict:
+def body(public_key: str, disk: int, name: str = "wsp-stage7-v3", gpus: list[str] | None = None) -> dict:
     return {
-        "name": "wsp-stage7-v3",
+        "name": name,
         "imageName": "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404",
         "cloudType": "SECURE",
         "computeType": "GPU",
         "gpuCount": 1,
-        "gpuTypeIds": GPUS,
+        "gpuTypeIds": gpus or GPUS,
         "gpuTypePriority": "custom",
         "containerDiskInGb": disk,
         "volumeInGb": 0,
@@ -64,6 +64,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--interval", type=int, default=180, help="seconds between attempts")
     p.add_argument("--hours", type=float, default=8.0)
     p.add_argument("--state", type=Path, default=Path("runs/pods.json"))
+    p.add_argument("--name", default="wsp-stage7-v3")
+    p.add_argument("--purpose", default="Stage 7 v3: on-policy adapter training, broader eval")
+    p.add_argument("--gpus", nargs="+", default=None, help="GPU type ids in priority order (default: GPUS)")
     args = p.parse_args(argv)
     key = os.environ.get("RUNPOD_MODEL_TRAINING_API_KEY")
     if not key:
@@ -76,7 +79,7 @@ def main(argv: list[str] | None = None) -> int:
             attempt += 1
             stamp = time.strftime("%H:%M:%S")
             try:
-                r = client.post("/pods", json=body(args.public_key, args.disk))
+                r = client.post("/pods", json=body(args.public_key, args.disk, args.name, args.gpus))
             except httpx.HTTPError as exc:
                 print(f"{stamp} attempt {attempt}: network error {type(exc).__name__}", flush=True)
                 time.sleep(args.interval)
@@ -89,9 +92,10 @@ def main(argv: list[str] | None = None) -> int:
                 print("POD_JSON " + json.dumps({k: pod.get(k) for k in ("id", "name", "costPerHr", "machine",
                                                                         "desiredStatus", "gpu")}), flush=True)
                 state = json.loads(args.state.read_text(encoding="utf-8-sig")) if args.state.exists() else {"pods": []}
-                state["pods"].append({"id": pod.get("id"), "name": "wsp-stage7-v3",
+                state["pods"].append({"id": pod.get("id"), "name": args.name,
                                       "cost_per_hr": pod.get("costPerHr", PRICES.get(gpu)), "gpu": gpu,
-                                      "purpose": "Stage 7 v3: on-policy adapter training, broader eval"})
+                                      "purpose": args.purpose,
+                                      "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
                 args.state.write_text(json.dumps(state, indent=4), encoding="utf-8")
                 return 0
             text = r.text[:160].replace("\n", " ")

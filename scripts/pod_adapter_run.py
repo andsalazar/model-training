@@ -53,8 +53,16 @@ P = {
     "skater": "A skateboarder rolling down an empty street at sunset. Audio: wheels on asphalt and the clack of the board.",
     "campfire": "A campfire at night with sparks rising, friends sitting around it. Audio: crackling fire and quiet conversation.",
     "piano": "Close-up of hands playing a grand piano in a concert hall. Audio: a slow classical piano melody.",
+    # Added for the deciding experiment (Stage 7 v4). Never used for training or validation.
+    "harbor": "Fishing boats rocking in a small harbor at dawn, ropes swaying against the masts. Audio: creaking wood, lapping water and distant gulls.",
+    "horse": "A brown horse galloping across an open field, dust rising behind it. Audio: pounding hooves and wind.",
+    "typist": "Close-up of fingers typing on a mechanical keyboard at a desk lit by a lamp. Audio: rapid key clicks.",
+    "fountain": "Children running around a fountain in a city square on a bright afternoon. Audio: splashing water and laughter.",
 }
 UNSEEN = ["violin", "kitchen", "storm", "skater", "campfire", "piano"]
+#: The deciding experiment's ten prompts: none was used to train or select any adapter.
+DECIDE_PROMPTS = UNSEEN + ["harbor", "horse", "typist", "fountain"]
+DECIDE_SEEDS = [100, 200, 300]
 
 #: The pilot's six trajectories come first so their teacher files are reused.
 _PILOT = [("river", 1), ("river", 2), ("fan", 1), ("coast", 1), ("fox", 1), ("city", 1)]
@@ -80,6 +88,11 @@ SETS["v3_5s"] = {**SETS["v2_5s"],
 SETS["v3_10s"] = {**SETS["v2_10s"],
                   "eval": [("river", 100), ("river", 200), ("violin", 100), ("piano", 100)]}
 SETS["v3_check"] = {"train": [("river", 1)], "val": [("market", 1)], "eval": [("violin", 100)]}
+#: v4, the deciding experiment: one set per seed, so a run that is cut short still holds
+#: every prompt at the seeds it finished.
+for _seed in DECIDE_SEEDS:
+    SETS[f"decide_s{_seed}"] = {**SETS["v2_5s"], "eval": [(n, _seed) for n in DECIDE_PROMPTS]}
+SETS["decide_check"] = {"train": [("river", 1)], "val": [("market", 1)], "eval": [("harbor", 100)]}
 TEACHER_STEPS = 48
 STUDENT_STEPS = 12
 
@@ -89,6 +102,9 @@ VARIANTS = {
     "base_euler12": (False, STUDENT_STEPS, "euler"),
     "adapter_euler12": (True, STUDENT_STEPS, "euler"),
     "base_unipc30": (False, 30, "unipc"),
+    # v4: the step counts between 12 and 30, to place the adapter on the base model's curve.
+    "base_unipc16": (False, 16, "unipc"),
+    "base_unipc20": (False, 20, "unipc"),
 }
 
 
@@ -110,7 +126,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--offload-text", action="store_true")
     p.add_argument("--init-adapter", type=Path, default=None)
     p.add_argument("--adapter", type=Path, default=None, help="eval: adapter state (default best)")
-    p.add_argument("--variants", nargs="+", default=list(VARIANTS), choices=list(VARIANTS))
+    p.add_argument("--variants", nargs="+", choices=list(VARIANTS),
+                   default=["base_unipc12", "base_euler12", "adapter_euler12", "base_unipc30"])
     p.add_argument("--eval-dir", type=Path, default=None, help="default: WORK/eval")
     p.add_argument("--max-samples", type=int, default=None, help="cap samples per epoch (checks)")
     p.add_argument("--only", choices=["all", "eval"], default="all",

@@ -34,6 +34,22 @@ class TestSets:
         assert [n for n, _ in ev].count("river") == 3
         assert {n for n, _ in ev} - {"river"} == set(run.UNSEEN)
 
+    def test_deciding_experiment_is_ten_untouched_prompts_at_three_seeds(self):
+        used = {n for spec in run.SETS.values() for n, _ in spec["train"] + spec["val"]}
+        assert len(run.DECIDE_PROMPTS) == 10 == len(set(run.DECIDE_PROMPTS))
+        assert not used & set(run.DECIDE_PROMPTS)
+        clips = [item for seed in run.DECIDE_SEEDS for item in run.SETS[f"decide_s{seed}"]["eval"]]
+        assert len(clips) == 30 == len(set(clips))
+        assert {seed for _, seed in clips} == {100, 200, 300}
+
+    def test_the_step_counts_between_12_and_30_are_base_model_unipc(self):
+        assert run.VARIANTS["base_unipc16"] == (False, 16, "unipc")
+        assert run.VARIANTS["base_unipc20"] == (False, 20, "unipc")
+
+    def test_default_variants_are_unchanged_by_the_new_ones(self):
+        args = run.parse_args(["eval", "--set", "check", "--work", "w"])
+        assert args.variants == ["base_unipc12", "base_euler12", "adapter_euler12", "base_unipc30"]
+
     def test_every_prompt_is_defined(self):
         for spec in run.SETS.values():
             for name, _ in spec["train"] + spec["val"] + spec["eval"]:
