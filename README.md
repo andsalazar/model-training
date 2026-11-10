@@ -8,6 +8,8 @@ Based on [Sparks of Weight-Space Programming: LLMs can natively read & write
 neural network weights](https://rikiyat.github.io/blog/weight-space-programming/)
 (Takehi, Teoh, Zhang, Khattab — MIT CSAIL, November 2026).
 
+> **Picking this project up?** Start with [docs/HANDOFF.md](docs/HANDOFF.md).
+
 ## Why this exists
 
 The paper's headline result: GPT-6 Astra read Qwen3.5-0.8B's raw weights,
